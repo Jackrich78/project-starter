@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Wrangler
+.wrangler/
+.dev.vars
+
+# Build output
+dist/
+
+# Local D1 database
+.d1/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store

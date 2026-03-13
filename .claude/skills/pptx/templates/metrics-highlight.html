@@ -1,0 +1,62 @@
+<!-- Template: Metrics Highlight
+     Capacity: 80-120 words
+     Best for: KPIs, research findings, statistics, data summaries
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+:root {
+  --primary: #2C3E50;
+  --accent: #3498DB;
+  --bg: #FFFFFF;
+  --bg-alt: #F0F3F5;
+  --text: #333333;
+  --text-light: #666666;
+}
+html { background: var(--bg); }
+body {
+  width: 720pt; height: 405pt; margin: 0; padding: 0;
+  background: var(--bg); font-family: Arial, sans-serif;
+  display: flex; flex-direction: column;
+}
+.content-area { padding: 30pt 45pt 50pt 45pt; flex: 1; }
+h1 { color: var(--primary); font-size: 28pt; margin: 0 0 20pt 0; font-weight: bold; }
+.two-col { display: flex; gap: 30pt; margin-top: 10pt; }
+.col { flex: 1; }
+.box {
+  background: var(--bg-alt); padding: 15pt; border-radius: 8pt; margin: 8pt 0;
+}
+.metric { color: var(--primary); font-size: 32pt; margin: 0; font-weight: bold; }
+.metric-label { color: var(--text-light); font-size: 12pt; margin: 5pt 0 0 0; }
+p { color: var(--text); font-size: 12pt; margin: 0 0 8pt 0; line-height: 1.4; }
+</style>
+</head>
+<body>
+<div class="content-area">
+  <h1>Key Metrics Overview</h1>
+  <div class="two-col">
+    <div class="col">
+      <div class="box">
+        <p class="metric">85%</p>
+        <p class="metric-label">Primary Metric Label</p>
+      </div>
+      <div class="box">
+        <p class="metric">2.4x</p>
+        <p class="metric-label">Secondary Metric Label</p>
+      </div>
+    </div>
+    <div class="col">
+      <p><b>Context:</b> Brief explanation of what these metrics mean and why they matter</p>
+      <ul style="color: var(--text); font-size: 11pt; margin: 10pt 0; padding-left: 20pt;">
+        <li style="margin: 4pt 0;">Supporting detail for primary metric</li>
+        <li style="margin: 4pt 0;">Supporting detail for secondary metric</li>
+        <li style="margin: 4pt 0;">Trend or comparison data point</li>
+        <li style="margin: 4pt 0;">Source or methodology note</li>
+      </ul>
+      <p style="margin-top: 10pt;"><b>Result:</b> Key takeaway from <span style="color: #3498DB;">the data</span></p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

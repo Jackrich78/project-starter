@@ -1,0 +1,31 @@
+rules:
+  - id: js-security-innerHTML-xss
+    patterns:
+      - pattern-either:
+          - pattern: $EL.innerHTML = $VAL
+          - pattern: $EL.outerHTML = $VAL
+    message: >
+      Direct assignment to innerHTML/outerHTML can lead to DOM-based XSS.
+      Use textContent for text, or sanitize HTML with DOMPurify before assignment.
+    languages: [javascript, typescript]
+    severity: WARNING
+    metadata:
+      owasp: "A03:2021 Injection"
+      cwe: "CWE-79: Cross-site Scripting (XSS)"
+      confidence: HIGH
+
+  - id: js-security-document-write
+    patterns:
+      - pattern-either:
+          - pattern: document.write(...)
+          - pattern: document.writeln(...)
+    message: >
+      document.write/writeln can lead to DOM-based XSS and interferes with
+      page rendering. Use DOM manipulation methods (createElement, appendChild)
+      instead.
+    languages: [javascript, typescript]
+    severity: WARNING
+    metadata:
+      owasp: "A03:2021 Injection"
+      cwe: "CWE-79: Cross-site Scripting (XSS)"
+      confidence: MEDIUM

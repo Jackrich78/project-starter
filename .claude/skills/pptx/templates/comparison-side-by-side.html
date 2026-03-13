@@ -1,0 +1,72 @@
+<!-- Template: Comparison Side-by-Side
+     Capacity: 100-150 words
+     Best for: Before/after, pros/cons, option comparison, two approaches
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+:root {
+  --primary: #2C3E50;
+  --accent: #3498DB;
+  --bg: #FFFFFF;
+  --bg-alt: #F0F3F5;
+  --text: #333333;
+  --text-light: #666666;
+}
+html { background: var(--bg); }
+body {
+  width: 720pt; height: 405pt; margin: 0; padding: 0;
+  background: var(--bg); font-family: Arial, sans-serif;
+  display: flex; flex-direction: column;
+}
+.content-area { padding: 30pt 45pt 50pt 45pt; flex: 1; }
+h1 { color: var(--primary); font-size: 28pt; margin: 0 0 15pt 0; font-weight: bold; text-align: center; }
+.two-col { display: flex; gap: 25pt; margin-top: 10pt; }
+.col { flex: 1; }
+.box {
+  background: var(--bg-alt); padding: 12pt; border-radius: 8pt; margin: 6pt 0;
+}
+.box p { color: var(--text); font-size: 11pt; margin: 0; }
+h3 { color: var(--primary); font-size: 16pt; margin: 0 0 10pt 0; font-weight: bold; text-align: center; }
+p { color: var(--text); font-size: 11pt; margin: 0 0 8pt 0; line-height: 1.4; }
+</style>
+</head>
+<body>
+<div class="content-area">
+  <h1>Comparison Title</h1>
+  <div class="two-col">
+    <div class="col">
+      <h3>Option A</h3>
+      <div class="box">
+        <p><b>Strength:</b> Key advantage of this approach</p>
+      </div>
+      <div class="box">
+        <p><b>Detail:</b> Supporting information and context</p>
+      </div>
+      <div class="box">
+        <p><b>Outcome:</b> Expected result or metric</p>
+      </div>
+      <div class="box">
+        <p><b>Cost:</b> Investment or trade-off required</p>
+      </div>
+    </div>
+    <div class="col">
+      <h3>Option B</h3>
+      <div class="box">
+        <p><b>Strength:</b> Key advantage of this approach</p>
+      </div>
+      <div class="box">
+        <p><b>Detail:</b> Supporting information and context</p>
+      </div>
+      <div class="box">
+        <p><b>Outcome:</b> Expected result or metric</p>
+      </div>
+      <div class="box">
+        <p><b>Cost:</b> Investment or trade-off required</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

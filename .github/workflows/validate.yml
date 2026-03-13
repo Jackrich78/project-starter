@@ -1,0 +1,65 @@
+# .github/workflows/validate.yml
+# Base validation workflow for Project Starter template
+# Runs on every push and PR - target: <15 seconds
+
+name: Validate
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+# Cancel in-progress runs for the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate Template
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # CUSTOMIZATION: Add language-specific linters below
+      # Example: ESLint for TypeScript, Ruff for Python, etc.
+
+      - name: Lint Markdown
+        uses: DavidAnson/markdownlint-cli2-action@v22
+        with:
+          config: '.markdownlint.json'
+          globs: '**/*.md'
+        continue-on-error: true
+
+      - name: Validate YAML (actionlint)
+        run: |
+          bash <(curl -sL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+          ./actionlint -color
+        shell: bash
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check Python Hook Syntax
+        run: |
+          echo "Checking Python syntax in .claude/hooks/..."
+          find .claude/hooks -name "*.py" -exec python3 -m py_compile {} \;
+          echo "Python syntax check passed."
+
+      - name: Validate Template Structure
+        run: |
+          chmod +x .github/tests/validate-structure.sh
+          ./.github/tests/validate-structure.sh
+
+      # CUSTOMIZATION: Add your project-specific validation steps below
+      # Examples:
+      # - TypeScript: npx tsc --noEmit
+      # - ESLint: npx eslint .
+      # - Python: ruff check .
+      # - Terraform: terraform validate

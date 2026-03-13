@@ -1,0 +1,18 @@
+rules:
+  - id: py-security-insecure-pickle-loads
+    patterns:
+      - pattern-either:
+          - pattern: pickle.loads($DATA)
+          - pattern: pickle.load($DATA)
+          - pattern: _pickle.loads($DATA)
+          - pattern: _pickle.load($DATA)
+    message: >
+      pickle.loads/load deserializes arbitrary Python objects and can execute
+      arbitrary code during deserialization. Never unpickle data from untrusted
+      sources. Use JSON, MessagePack, or Protocol Buffers instead.
+    languages: [python]
+    severity: ERROR
+    metadata:
+      owasp: "A08:2021 Software and Data Integrity Failures"
+      cwe: "CWE-502: Deserialization of Untrusted Data"
+      confidence: HIGH

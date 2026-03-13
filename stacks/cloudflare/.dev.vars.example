@@ -1,0 +1,10 @@
+# Cloudflare Workers Environment Variables
+# Copy this file to .dev.vars and fill in your values
+# .dev.vars is gitignored - never commit secrets
+
+# Slack Integration (if using /slack endpoint)
+SLACK_SIGNING_SECRET=your-slack-signing-secret-here
+
+# Add other secrets as needed:
+# API_KEY=your-api-key
+# DATABASE_URL=your-database-url

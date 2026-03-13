@@ -1,0 +1,33 @@
+rules:
+  - id: js-security-child-process-exec
+    patterns:
+      - pattern-either:
+          - pattern: child_process.exec($CMD, ...)
+          - pattern: child_process.execSync($CMD, ...)
+          - pattern: require("child_process").exec($CMD, ...)
+          - pattern: require("child_process").execSync($CMD, ...)
+    message: >
+      Unsafe use of child_process exec/execSync with dynamic input.
+      Use execFile/execFileSync with explicit arguments array instead.
+    languages: [javascript, typescript]
+    severity: ERROR
+    metadata:
+      owasp: "A03:2021 Injection"
+      cwe: "CWE-78: OS Command Injection"
+      confidence: HIGH
+
+  - id: js-security-child-process-spawn-shell
+    patterns:
+      - pattern-either:
+          - pattern: "child_process.spawn($CMD, ..., {shell: true, ...})"
+          - pattern: "child_process.spawnSync($CMD, ..., {shell: true, ...})"
+    message: >
+      spawn/spawnSync called with shell: true. This enables shell interpolation
+      and can lead to command injection. Remove shell: true and pass arguments
+      as an array.
+    languages: [javascript, typescript]
+    severity: WARNING
+    metadata:
+      owasp: "A03:2021 Injection"
+      cwe: "CWE-78: OS Command Injection"
+      confidence: HIGH

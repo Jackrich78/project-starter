@@ -1,0 +1,54 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE/Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Claude Code session-specific files
+.claude/logs/agent.db
+.claude/logs/sessions/*
+!.claude/logs/sessions/.gitkeep
+.claude/session-state.json
+.claude/settings.local.json
+
+# Environment (user implementation)
+.env
+.env.local
+.env.*.local
+
+# Dependencies (stack-agnostic)
+node_modules/
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+
+# Test coverage
+coverage/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Spikes (temporary exploratory code)
+spikes/
+
+# Demo outputs (personal content)
+demos/
+workspace

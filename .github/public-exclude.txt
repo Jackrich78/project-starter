@@ -1,0 +1,34 @@
+# .github/public-exclude.txt
+# Authoritative blacklist for the public repo snapshot.
+# Used by the git archive workflow in docs/guides/two-remote-sync.md.
+# Paths relative to repo root. Applied: rm -rf /tmp/release/$pattern
+# NOTE: glob patterns need a separate rm -f step (see workflow).
+
+# Brand-specific skills
+.claude/skills/sd-brand-guidelines
+.claude/skills/linkedin-carousel
+.claude/skills/linkedin-post
+.claude/skills/linkedin-script
+.claude/skills/linkedin-shared
+
+# Brand-specific commands
+.claude/commands/demo.md
+
+# All private feature docs — clean slate for public users
+docs/features
+
+# Private research, guides, and working docs
+docs/research
+docs/guides/creating-branded-presentations.md
+
+# PPTX HTML build sources (compiled .pptx stays; raw HTML sources are internal)
+docs/system/pptx-workspace
+
+# Personal workspace files (committed before .gitignore entry was added)
+workspace
+
+# Runtime files — gitignored but listed as safety backstop
+.claude/logs/agent.db
+.claude/logs/security.log
+.claude/session-state.json
+.claude/settings.local.json
