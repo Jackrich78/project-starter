@@ -226,14 +226,6 @@ def suggest_next_action(changes, branch):
             "message": "No changes to commit. Keep coding!"
         }
 
-    # Check if on main branch
-    if branch in ['main', 'master']:
-        return {
-            "action": "create_branch",
-            "message": "You're on the main branch. Create a feature branch first.",
-            "command": "git checkout -b feat/your-feature-name"
-        }
-
     # Check if there are test files
     test_files = [f for f in changes['modified'] + changes['added']
                   if 'test' in f.lower() or '.test.' in f or '.spec.' in f]

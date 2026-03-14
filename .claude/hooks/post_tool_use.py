@@ -165,8 +165,8 @@ def main():
         input_data = json.load(sys.stdin)
 
         # Get tool name and parameters
-        tool_name = input_data.get("tool", "")
-        params = input_data.get("params", {})
+        tool_name = input_data.get("tool_name", "")
+        tool_input = input_data.get("tool_input", {})
 
         # Only process Edit and Write tools
         if tool_name not in ["Edit", "Write"]:
@@ -174,7 +174,7 @@ def main():
             sys.exit(0)
 
         # Get the file path that was modified
-        file_path = params.get("file_path", "")
+        file_path = tool_input.get("file_path", "")
         if not file_path:
             sys.exit(0)
 
