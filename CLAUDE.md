@@ -26,6 +26,7 @@ Full index: `.claude/agents/README.md`
 
 ## Commands
 
+- `/setup [docs path]` - One-time project initialization from template
 - `/explore [topic]` - Discover and define features → PRD
 - `/blueprint FEAT-XXX` - Technical grounding + implementation plan
 - `/build FEAT-XXX` - TDD implementation with isolated subagents + QA

@@ -137,6 +137,36 @@ your-project/
 
 ## First Steps After Setup
 
+## Recommended: Run `/setup`
+
+The fastest way to configure your project is the interactive `/setup` command:
+
+```bash
+# In Claude Code
+/setup
+```
+
+This will:
+1. Read any existing docs you've prepared and extract project context
+2. Interview you about gaps (project name, tech stack, goals, etc.)
+3. Generate tailored CLAUDE.md, PROJECT.md, README.md, and architecture docs
+4. Create a feature roadmap with the Tech-Product Lead agent
+5. Optionally run Librarian + Challenger review
+6. Set up GitHub repo (if `gh` CLI is available)
+
+If you have existing planning docs, pass them as arguments:
+```bash
+/setup path/to/my-notes.md path/to/research/
+```
+
+After `/setup` completes, run `/prime` to verify context loads correctly, then `/explore FEAT-001` to start your first feature.
+
+---
+
+## Manual Alternative
+
+If you prefer to configure manually (or `/setup` isn't available):
+
 ### 1. Update PROJECT.md
 
 Replace the template content with your project's:
@@ -150,8 +180,6 @@ Customize the quick start section:
 - Your test command
 - Your dev command
 - Project-specific context rules
-
-In your first Claude Code session, type: `"Help me update CLAUDE.md and PROJECT.md for my project. I'm building [your description]."` Claude will interview you and produce a tailored configuration. CLAUDE.md loads at the start of every session — accurate context here shapes every response Claude will ever give you.
 
 See [Working With Claude](working-with-claude.md) for guidance on what to include and how to keep it lean.
 

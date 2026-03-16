@@ -98,6 +98,7 @@ Task(
 
 | Command | Primary Agent | Purpose |
 |---------|--------------|---------|
+| `/setup` | Main + Product-Engineering Lead + Librarian + Challenger | Project initialization |
 | `/explore` | Main + Researcher | Feature discovery → PRD |
 | `/blueprint` | Main + Researcher + Challenger | Technical grounding + implementation plan |
 | `/build` | Main | TDD implementation |
@@ -112,6 +113,19 @@ Task(
 | `/update-docs` | Main | Update documentation index |
 
 ### Workflow Patterns
+
+**New Project Flow:**
+```
+/setup [docs path]
+    ↓
+Main Agent → Interview + Doc Generation
+    ↓
+Product-Engineering Lead → Feature Roadmap
+    ↓
+Librarian + Challenger (opt-in) → Review
+    ↓
+Git & GitHub Setup
+```
 
 **Feature Development Flow:**
 ```
