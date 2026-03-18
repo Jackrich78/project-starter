@@ -5,9 +5,9 @@ Apply brand fonts to a PPTX presentation.
 <!-- CUSTOMIZE: Replace font names with your brand fonts -->
 
 This script post-processes a PPTX file to apply brand typography:
-- Your Heading Font for headings (>=18pt)
-- Your Body Font for body text (<18pt)
-- Your Mono Font for code/commands (replaces Courier New)
+- Bebas Neue for display headings (>=24pt)
+- Inter for body text (<24pt)
+- JetBrains Mono for code/commands (replaces Courier New)
 
 It also adjusts text frames to prevent wrapping issues when fonts change.
 
@@ -24,22 +24,24 @@ from pptx.util import Pt, Emu
 from pptx.enum.text import MSO_AUTO_SIZE
 
 # CUSTOMIZE: Replace with your brand fonts
-FONT_HEADING = "Your Heading Font"
-FONT_BODY = "Your Body Font"
-FONT_CODE = "Your Mono Font"  # e.g., Roboto Mono, Fira Code, JetBrains Mono
+FONT_DISPLAY = "Bebas Neue"
+FONT_BODY = "Inter"
+FONT_CODE = "JetBrains Mono"
 
-# Threshold for heading vs body (in points)
-HEADING_THRESHOLD_PT = 18
+# Threshold for display vs body (in points)
+# Bebas Neue for H1 (42pt+), Inter for everything below
+DISPLAY_THRESHOLD_PT = 24
 
-# Width expansion factor for text boxes (adjust if your fonts are wider/narrower than Arial)
-WIDTH_EXPANSION = 1.08
+# Width expansion factor for text boxes (Bebas Neue is narrower than Arial,
+# Inter is similar width — modest expansion handles edge cases)
+WIDTH_EXPANSION = 1.05
 
 
 def apply_brand_fonts(input_path, output_path):
     """Apply brand fonts to all text in the presentation."""
     prs = Presentation(input_path)
 
-    stats = {"heading": 0, "body": 0, "code": 0}
+    stats = {"display": 0, "body": 0, "code": 0}
 
     for slide_idx, slide in enumerate(prs.slides):
         for shape in slide.shapes:
@@ -47,7 +49,7 @@ def apply_brand_fonts(input_path, output_path):
                 continue
 
             tf = shape.text_frame
-            has_heading = False
+            has_display = False
             has_code = False
 
             # First pass: identify content type and apply fonts
@@ -68,17 +70,17 @@ def apply_brand_fonts(input_path, output_path):
 
                     # Determine target font based on size
                     size_pt = font_size.pt if font_size else 14
-                    if size_pt >= HEADING_THRESHOLD_PT:
-                        run.font.name = FONT_HEADING
-                        stats["heading"] += 1
-                        has_heading = True
+                    if size_pt >= DISPLAY_THRESHOLD_PT:
+                        run.font.name = FONT_DISPLAY
+                        stats["display"] += 1
+                        has_display = True
                     else:
                         run.font.name = FONT_BODY
                         stats["body"] += 1
 
             # Second pass: adjust text frame settings
-            if has_heading:
-                # For headings: disable word wrap, let shape expand
+            if has_display:
+                # For display headings: disable word wrap, let shape expand
                 tf.word_wrap = False
                 tf.auto_size = MSO_AUTO_SIZE.SHAPE_TO_FIT_TEXT
 
@@ -96,7 +98,7 @@ def apply_brand_fonts(input_path, output_path):
     prs.save(output_path)
 
     print(f"Brand fonts applied:")
-    print(f"  Headings ({FONT_HEADING}): {stats['heading']}")
+    print(f"  Display ({FONT_DISPLAY}): {stats['display']}")
     print(f"  Body ({FONT_BODY}): {stats['body']}")
     print(f"  Code ({FONT_CODE}): {stats['code']}")
     print(f"\nSaved to: {output_path}")

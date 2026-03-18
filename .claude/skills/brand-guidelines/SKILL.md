@@ -7,91 +7,124 @@ description: "Apply your brand identity (colors, typography, visual style) to pr
 # Brand Guidelines
 
 <!-- CUSTOMIZE: Replace "Your Brand" with your organization name -->
-Apply your brand identity to any branded content.
+Apply your brand identity to any branded content. Read the aesthetic direction first, then use the quick reference below.
+
+**Before creating anything visual**, read [aesthetic-direction.md](references/aesthetic-direction.md) to understand the design philosophy. The quick reference below gives you the values; the aesthetic direction tells you *how* to use them.
 
 ## Quick Reference
 
+### Brand Colors (Bold & Saturated)
+
 <!-- CUSTOMIZE: Replace all hex values with your brand colors -->
-**Core Colors:**
-- Primary: `#1E3A5F` (headings, brand identity) — Deep Slate Blue
-- Background: `#F8F9FA` (primary background) — Off-White
-- Secondary: `#6B8FA8` (accents, supporting elements) — Steel Blue
-- Body: `#535250` (body text) — Charcoal
-- Accent: `#2E6FD9` (CTAs - use sparingly, max 2-3 per page) — Blue Accent
+| Color | Hex | Use For |
+|-------|-----|---------|
+| Signal Red | `#E63946` | Primary CTAs, key metrics, brand anchor |
+| Royal Blue | `#2563EB` | Technical content, frameworks, architecture |
+| Emerald | `#10B981` | Results, benefits, positive indicators |
+| Amber | `#F59E0B` | Highlights, warnings, important notes |
+| Violet | `#7C3AED` | AI/tech features, differentiation |
+
+**Rule**: Max 2-3 saturated colors per slide/diagram. Color in **shapes and graphics**, not in backgrounds or large text blocks.
+
+### Text & Background
+
+| Role | Hex | Name |
+|------|-----|------|
+| Headings | `#1A1A2E` | Near Black |
+| Body text | `#374151` | Dark Gray |
+| Muted/captions | `#6B7280` | Medium Gray |
+| Background | `#FFFFFF` | White |
+| Alt background | `#F3F4F6` | Cool Gray |
+| Dark sections | `#1A1A2E` | Near Black |
+
+**Forbidden**: Pure black (#000000) for text — use Near Black. Saturated colors as full-page backgrounds. Light text on light backgrounds.
+
+### Typography
 
 <!-- CUSTOMIZE: Replace with your brand fonts -->
-**Typography:**
-- Headings: Your Heading Font (36pt/24pt/18pt)
-- Body: Your Body Font (16pt/14pt/12pt)
-- Fallback: Arial, sans-serif
+| Level | Font | Size | Weight |
+|-------|------|------|--------|
+| H1 Hero | Bebas Neue | 56pt | 400 (bold by design) |
+| H1 | Bebas Neue | 42pt | 400 |
+| H2 | Inter | 28pt | ExtraBold (800) |
+| H3 | Inter | 20pt | Bold (700) |
+| Subtitle | Inter | 18pt | SemiBold (600) |
+| Body | Inter | 16pt | Regular (400) |
+| Standard | Inter | 14pt | Regular (400) |
+| Small | Inter | 12pt | Regular (400) |
+| Caption | Inter | 11pt | Medium (500) |
+| Big Number | Bebas Neue | 72pt | 400 |
 
-**Core Principles:**
-- Professional & Trustworthy (high contrast, clean layouts)
-- Clear Hierarchy (consistent heading/body/accent usage)
-- Systems Thinking (show connections, flows, architecture)
-- Authentic (real screenshots, actual examples)
+**Bebas Neue** is uppercase-only. Use for short, punchy headlines (5-8 words). Max 1-2 Bebas elements per page.
+
+**Inter** handles everything else. Use weight variation (Regular through ExtraBold) for sub-hierarchy.
+
+**Fallbacks**: Bebas Neue -> Impact, Arial Black, sans-serif. Inter -> Arial, sans-serif.
+
+### Core Principles
+
+1. **Bold Geometry** — Saturated colors in geometric shapes, white backgrounds, overlapping elements for depth
+2. **Extreme Contrast** — Big Bebas Neue headlines next to clean Inter body creates visual energy
+3. **Whitespace is Design** — At least 40% whitespace per slide. Dense information needs more space, not less
+4. **Color Has Purpose** — Every saturated color choice should answer "why this color here?"
+5. **Audience-First** — Non-technical audiences. Large text, familiar metaphors, one idea per visual
 
 ## Color Combinations
 
 **Most Common Patterns:**
 
-1. **Primary headings on background** → `#1E3A5F` text on `#F8F9FA` background
-2. **Body text on background** → `#535250` text on `#F8F9FA` background
-3. **Secondary accents on background** → `#6B8FA8` elements on `#F8F9FA` background
+1. **Near Black headings on White** -> `#1A1A2E` text on `#FFFFFF` background (AAA contrast)
+2. **Dark Gray body on White** -> `#374151` text on `#FFFFFF` background (AAA contrast)
+3. **White text on Near Black** -> `#FFFFFF` text on `#1A1A2E` background (inverted sections)
 
-**Emphasis:**
-- Accent on background (sparingly) → `#2E6FD9` on `#F8F9FA`
-- Light text on primary (high impact) → `#F8F9FA` text on `#1E3A5F` background
+**Accent Usage:**
+- Signal Red numbers/metrics on White -> `#E63946` for key stats, bold callouts
+- Royal Blue shapes/borders on White -> `#2563EB` for structural elements, diagrams
+- Emerald for positive data -> `#10B981` for growth charts, success indicators
 
 **Forbidden:**
 - Light text on light backgrounds
-- Secondary text on primary background (low contrast)
-- Multiple accent colors on same slide
-- Pure black (#000000) — use primary or body color instead
+- More than 3 saturated colors on one slide
+- Saturated colors as full-page backgrounds
+- Pure black (#000000) — use Near Black (#1A1A2E)
+- Drop shadows, gradients, or decorative borders
 
-## Typography Rules
+## Application by Content Type
 
-<!-- CUSTOMIZE: Replace font names and sizes with your brand's typography -->
-**Font Hierarchy:**
-- **Your Heading Font** for all headings (H1/H2/H3)
-- **Your Body Font** for all body text and paragraphs
-- **Arial** fallback when brand fonts unavailable
+### PowerPoint/Slides
+<!-- CUSTOMIZE: Adjust colors and fonts for each content type -->
+- Title slide: Bebas Neue 56pt `#1A1A2E` + one geometric color block
+- Content heading: Bebas Neue 42pt `#1A1A2E`
+- Sub-heading: Inter ExtraBold 28pt `#1A1A2E`
+- Body: Inter Regular 16pt `#374151`
+- Background: `#FFFFFF`
+- Accent bars/shapes: Any brand color (Signal Red, Royal Blue, etc.)
+- Section dividers: Overlapping geometric shapes in 2-3 brand colors
 
-**Size Scale:**
-- H1 Hero: 46pt | H1: 36pt | H2: 24pt | H3: 18pt
-- Body: 16pt | Standard: 14pt | Small: 12pt | Caption: 11pt
+### Technical Diagrams (Excalidraw)
+- Canvas: `#FFFFFF`
+- Shape fills: Brand colors with lighter tint fills + darker stroke
+- Text hierarchy: Near Black titles, Dark Gray labels, Medium Gray annotations
+- Evidence artifacts: `#1A1A2E` background + colored text
+- Overlapping shapes encouraged at section boundaries
 
-**Rules:**
-- Never mix fonts in same text block
-- Maintain 1.4-1.6 line height for body text
-- Minimum 24pt for text in social media images
-
-## Visual Style Principles
-
-**1. Professional & Trustworthy**
-- High contrast (WCAG AA: 4.5:1 minimum)
-- Clean, grid-based layouts
-- Real data and authentic examples
-
-**2. Clear Hierarchy**
-- Consistent heading/body/accent usage
-- Size and weight create visual hierarchy
-- Generous white space
-
-**3. Systems Thinking**
-- Show connections with arrows and flow diagrams
-- Visual flows (left-to-right, top-to-bottom)
-- Architecture diagrams showing relationships
+### Documents/Reports
+- H1: Bebas Neue 42pt `#1A1A2E`
+- H2: Inter ExtraBold 28pt `#1A1A2E`
+- H3: Inter Bold 20pt `#1A1A2E`
+- Body: Inter Regular 14pt `#374151`
+- Background: `#FFFFFF`
 
 ## Resources
 
 **Detailed specifications:**
+- See [aesthetic-direction.md](references/aesthetic-direction.md) for design philosophy and anti-patterns
 - See [colors-and-typography.md](references/colors-and-typography.md) for complete color palette with RGB values and contrast ratios
 - See [technical-implementation.md](references/technical-implementation.md) for CSS variables, Python-PPTX code, and implementation snippets
 
 **Scripts:**
 - `scripts/brand_colors.py` — Python constants for all brand colors (RGB and hex)
-- `scripts/apply_brand_fonts.py` — Font post-processor for PPTX files
+- `scripts/apply_brand_fonts.py` — Font post-processor for PPTX files (applies Bebas Neue + Inter)
 
 **Extending this skill:**
 - Add an `assets/` directory for logos and brand imagery
@@ -102,29 +135,15 @@ Apply your brand identity to any branded content.
 
 Before finalizing branded content:
 - [ ] Text meets WCAG AA contrast (4.5:1 minimum)
-- [ ] Primary color for headings, body color for text
-- [ ] Correct background color (not pure white)
-- [ ] Accent color used sparingly (max 2-3 elements)
-- [ ] Correct fonts for headings vs body
-- [ ] Font sizes follow hierarchy
-- [ ] Generous white space, not overcrowded
-
-## Application by Content Type
-
-<!-- CUSTOMIZE: Adjust colors and fonts for each content type -->
-**PowerPoint/Slides:**
-- Title: 46pt Heading Font `#6B8FA8` or `#1E3A5F`
-- Content heading: 36pt Heading Font `#1E3A5F`
-- Body: 16pt Body Font `#535250`
-- Background: `#F8F9FA` or `#EEF1F5`
-- Bullets: `#6B8FA8`
-
-**Documents/Reports:**
-- H1: 36pt Heading Font `#1E3A5F`
-- H2: 24pt Heading Font `#1E3A5F`
-- H3: 18pt Heading Font `#1E3A5F`
-- Body: 14pt Body Font `#535250`
-- Background: White or `#F8F9FA`
+- [ ] Near Black for headings, Dark Gray for body
+- [ ] White background (not off-white, not colored)
+- [ ] Max 2-3 saturated colors used as accents
+- [ ] Bebas Neue for H1 only (short headlines, max 1-2 per page)
+- [ ] Inter with correct weight for each hierarchy level
+- [ ] Font sizes follow the scale (no sizes between levels)
+- [ ] At least 40% whitespace on slides
+- [ ] No drop shadows, gradients, or decorative borders
+- [ ] Geometric shapes overlap where appropriate for visual depth
 
 ## Integration with PPTX Skill
 
@@ -139,7 +158,7 @@ When used with PPTX generation:
 The `html2pptx` workflow only supports web-safe fonts (Arial, etc.). To apply brand fonts after generating a PPTX:
 
 ```bash
-# Apply brand fonts to an existing PPTX
+# Apply Bebas Neue + Inter to an existing PPTX
 python .claude/skills/brand-guidelines/scripts/apply_brand_fonts.py input.pptx output.pptx
 
 # Or overwrite the input file
@@ -148,7 +167,7 @@ python .claude/skills/brand-guidelines/scripts/apply_brand_fonts.py presentation
 
 **Requirements:**
 - `pip install python-pptx`
-- Target platform must have your brand fonts installed
+- Target platform must have Bebas Neue and Inter installed (available free from Google Fonts)
 
 **Troubleshooting:**
 If pip fails with "externally-managed-environment" error:

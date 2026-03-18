@@ -1,17 +1,17 @@
 """
-Brand Colors — Neutral Starter Palette
----------------------------------------
+Brand Colors — Bold Geometry Palette
+-------------------------------------
 <!-- CUSTOMIZE: Replace all color values with your brand colors -->
 
 Ready-to-use color constants for Python applications.
 
 Usage with python-pptx:
     from brand_colors import BrandColors
-    shape.fill.fore_color.rgb = BrandColors.PRIMARY
+    shape.fill.fore_color.rgb = BrandColors.RED
 
 Usage as hex strings:
     from brand_colors import HexColors
-    css_color = HexColors.PRIMARY  # '#1E3A5F'
+    css_color = HexColors.RED  # '#E63946'
 """
 
 try:
@@ -24,82 +24,115 @@ except ImportError:
 # CUSTOMIZE: Replace hex values with your brand colors
 class HexColors:
     """Brand colors as hex strings"""
-    # Primary Colors
-    PRIMARY = '#1E3A5F'
-    BACKGROUND = '#F8F9FA'
-    SECONDARY = '#6B8FA8'
+    # Brand Colors (Bold & Saturated)
+    RED = '#E63946'
+    BLUE = '#2563EB'
+    GREEN = '#10B981'
+    AMBER = '#F59E0B'
+    VIOLET = '#7C3AED'
 
     # Text Colors
-    TEXT_PRIMARY = '#1E3A5F'
-    BODY_TEXT = '#535250'
-    ALT_DARK = '#15191B'
-    TEXT_MUTED = '#B7B7B7'
-
-    # Accent
-    ACCENT = '#2E6FD9'
+    TEXT_HEADING = '#1A1A2E'
+    TEXT_BODY = '#374151'
+    TEXT_MUTED = '#6B7280'
+    TEXT_LIGHT = '#9CA3AF'
 
     # Backgrounds
-    BG_PRIMARY = '#F8F9FA'
-    BG_ALT = '#EEF1F5'
-    BG_DARK = '#15191B'
+    BG_WHITE = '#FFFFFF'
+    BG_ALT = '#F3F4F6'
+    BG_DARK = '#1A1A2E'
 
-    # Supporting Grays
-    GRAY_MEDIUM = '#B7B7B7'
-    GRAY_LIGHT = '#D9D9D9'
+    # Borders & Supporting
+    BORDER = '#E5E7EB'
+    BORDER_HOVER = '#D1D5DB'
+
+    # Legacy aliases (for backward compatibility)
+    PRIMARY = RED
+    SECONDARY = BLUE
+    ACCENT = RED
+    BACKGROUND = BG_WHITE
+    BODY_TEXT = TEXT_BODY
+    TEXT_PRIMARY = TEXT_HEADING
+    ALT_DARK = BG_DARK
+    BG_PRIMARY = BG_WHITE
+    GRAY_MEDIUM = TEXT_MUTED
+    GRAY_LIGHT = BORDER
 
 
 # CUSTOMIZE: Replace RGB tuples with your brand colors
 class RGBColors:
     """Brand colors as RGB tuples (r, g, b)"""
-    # Primary Colors
-    PRIMARY = (30, 58, 95)
-    BACKGROUND = (248, 249, 250)
-    SECONDARY = (107, 143, 168)
+    # Brand Colors (Bold & Saturated)
+    RED = (230, 57, 70)
+    BLUE = (37, 99, 235)
+    GREEN = (16, 185, 129)
+    AMBER = (245, 158, 11)
+    VIOLET = (124, 58, 237)
 
     # Text Colors
-    TEXT_PRIMARY = (30, 58, 95)
-    BODY_TEXT = (83, 82, 80)
-    ALT_DARK = (21, 25, 27)
-    TEXT_MUTED = (183, 183, 183)
-
-    # Accent
-    ACCENT = (46, 111, 217)
+    TEXT_HEADING = (26, 26, 46)
+    TEXT_BODY = (55, 65, 81)
+    TEXT_MUTED = (107, 114, 128)
+    TEXT_LIGHT = (156, 163, 175)
 
     # Backgrounds
-    BG_PRIMARY = (248, 249, 250)
-    BG_ALT = (238, 241, 245)
-    BG_DARK = (21, 25, 27)
+    BG_WHITE = (255, 255, 255)
+    BG_ALT = (243, 244, 246)
+    BG_DARK = (26, 26, 46)
 
-    # Supporting Grays
-    GRAY_MEDIUM = (183, 183, 183)
-    GRAY_LIGHT = (217, 217, 217)
+    # Borders & Supporting
+    BORDER = (229, 231, 235)
+    BORDER_HOVER = (209, 213, 219)
+
+    # Legacy aliases
+    PRIMARY = RED
+    SECONDARY = BLUE
+    ACCENT = RED
+    BACKGROUND = BG_WHITE
+    BODY_TEXT = TEXT_BODY
+    TEXT_PRIMARY = TEXT_HEADING
+    ALT_DARK = BG_DARK
+    BG_PRIMARY = BG_WHITE
+    GRAY_MEDIUM = TEXT_MUTED
+    GRAY_LIGHT = BORDER
 
 
 if _HAS_PPTX:
     class BrandColors:
         """Brand colors as python-pptx RGBColor objects"""
-        # Primary Colors
-        PRIMARY = RGBColor(30, 58, 95)
-        BACKGROUND = RGBColor(248, 249, 250)
-        SECONDARY = RGBColor(107, 143, 168)
+        # Brand Colors (Bold & Saturated)
+        RED = RGBColor(230, 57, 70)
+        BLUE = RGBColor(37, 99, 235)
+        GREEN = RGBColor(16, 185, 129)
+        AMBER = RGBColor(245, 158, 11)
+        VIOLET = RGBColor(124, 58, 237)
 
         # Text Colors
-        TEXT_PRIMARY = RGBColor(30, 58, 95)
-        BODY_TEXT = RGBColor(83, 82, 80)
-        ALT_DARK = RGBColor(21, 25, 27)
-        TEXT_MUTED = RGBColor(183, 183, 183)
-
-        # Accent
-        ACCENT = RGBColor(46, 111, 217)
+        TEXT_HEADING = RGBColor(26, 26, 46)
+        TEXT_BODY = RGBColor(55, 65, 81)
+        TEXT_MUTED = RGBColor(107, 114, 128)
+        TEXT_LIGHT = RGBColor(156, 163, 175)
 
         # Backgrounds
-        BG_PRIMARY = RGBColor(248, 249, 250)
-        BG_ALT = RGBColor(238, 241, 245)
-        BG_DARK = RGBColor(21, 25, 27)
+        BG_WHITE = RGBColor(255, 255, 255)
+        BG_ALT = RGBColor(243, 244, 246)
+        BG_DARK = RGBColor(26, 26, 46)
 
-        # Supporting Grays
-        GRAY_MEDIUM = RGBColor(183, 183, 183)
-        GRAY_LIGHT = RGBColor(217, 217, 217)
+        # Borders & Supporting
+        BORDER = RGBColor(229, 231, 235)
+        BORDER_HOVER = RGBColor(209, 213, 219)
+
+        # Legacy aliases
+        PRIMARY = RED
+        SECONDARY = BLUE
+        ACCENT = RED
+        BACKGROUND = BG_WHITE
+        BODY_TEXT = TEXT_BODY
+        TEXT_PRIMARY = TEXT_HEADING
+        ALT_DARK = BG_DARK
+        BG_PRIMARY = BG_WHITE
+        GRAY_MEDIUM = TEXT_MUTED
+        GRAY_LIGHT = BORDER
 else:
     # Fallback when python-pptx not installed
     BrandColors = RGBColors
@@ -107,19 +140,23 @@ else:
 
 # Quick reference dictionary
 COLOR_REFERENCE = {
-    'primary': {
-        'primary': {'hex': '#1E3A5F', 'rgb': (30, 58, 95)},
-        'background': {'hex': '#F8F9FA', 'rgb': (248, 249, 250)},
-        'secondary': {'hex': '#6B8FA8', 'rgb': (107, 143, 168)},
+    'brand': {
+        'red': {'hex': '#E63946', 'rgb': (230, 57, 70), 'use': 'CTAs, key metrics, brand anchor'},
+        'blue': {'hex': '#2563EB', 'rgb': (37, 99, 235), 'use': 'Technical content, frameworks'},
+        'green': {'hex': '#10B981', 'rgb': (16, 185, 129), 'use': 'Results, benefits, positive'},
+        'amber': {'hex': '#F59E0B', 'rgb': (245, 158, 11), 'use': 'Highlights, warnings'},
+        'violet': {'hex': '#7C3AED', 'rgb': (124, 58, 237), 'use': 'Innovation, AI, premium'},
     },
     'text': {
-        'primary': {'hex': '#1E3A5F', 'rgb': (30, 58, 95)},
-        'body': {'hex': '#535250', 'rgb': (83, 82, 80)},
-        'alt-dark': {'hex': '#15191B', 'rgb': (21, 25, 27)},
-        'muted': {'hex': '#B7B7B7', 'rgb': (183, 183, 183)},
+        'heading': {'hex': '#1A1A2E', 'rgb': (26, 26, 46)},
+        'body': {'hex': '#374151', 'rgb': (55, 65, 81)},
+        'muted': {'hex': '#6B7280', 'rgb': (107, 114, 128)},
+        'light': {'hex': '#9CA3AF', 'rgb': (156, 163, 175)},
     },
-    'accent': {
-        'accent': {'hex': '#2E6FD9', 'rgb': (46, 111, 217)},
+    'background': {
+        'white': {'hex': '#FFFFFF', 'rgb': (255, 255, 255)},
+        'alt': {'hex': '#F3F4F6', 'rgb': (243, 244, 246)},
+        'dark': {'hex': '#1A1A2E', 'rgb': (26, 26, 46)},
     },
 }
 
@@ -136,23 +173,22 @@ def rgb_to_hex(r, g, b):
 
 
 if __name__ == '__main__':
-    print("Brand Colors — Neutral Starter Palette")
+    print("Brand Colors — Bold Geometry Palette")
     print("=" * 50)
-    print("\nPrimary Colors:")
-    print(f"  Primary:    {HexColors.PRIMARY} {RGBColors.PRIMARY}")
-    print(f"  Background: {HexColors.BACKGROUND} {RGBColors.BACKGROUND}")
-    print(f"  Secondary:  {HexColors.SECONDARY} {RGBColors.SECONDARY}")
+    print("\nBrand Colors:")
+    print(f"  Signal Red:  {HexColors.RED} {RGBColors.RED}")
+    print(f"  Royal Blue:  {HexColors.BLUE} {RGBColors.BLUE}")
+    print(f"  Emerald:     {HexColors.GREEN} {RGBColors.GREEN}")
+    print(f"  Amber:       {HexColors.AMBER} {RGBColors.AMBER}")
+    print(f"  Violet:      {HexColors.VIOLET} {RGBColors.VIOLET}")
 
     print("\nText Colors:")
-    print(f"  Primary: {HexColors.TEXT_PRIMARY} {RGBColors.TEXT_PRIMARY}")
-    print(f"  Body:    {HexColors.BODY_TEXT} {RGBColors.BODY_TEXT}")
-    print(f"  Alt:     {HexColors.ALT_DARK} {RGBColors.ALT_DARK}")
+    print(f"  Heading: {HexColors.TEXT_HEADING} {RGBColors.TEXT_HEADING}")
+    print(f"  Body:    {HexColors.TEXT_BODY} {RGBColors.TEXT_BODY}")
     print(f"  Muted:   {HexColors.TEXT_MUTED} {RGBColors.TEXT_MUTED}")
-
-    print("\nAccent:")
-    print(f"  Accent:  {HexColors.ACCENT} {RGBColors.ACCENT}")
+    print(f"  Light:   {HexColors.TEXT_LIGHT} {RGBColors.TEXT_LIGHT}")
 
     print("\nBackgrounds:")
-    print(f"  Primary: {HexColors.BG_PRIMARY} {RGBColors.BG_PRIMARY}")
-    print(f"  Alt:     {HexColors.BG_ALT} {RGBColors.BG_ALT}")
-    print(f"  Dark:    {HexColors.BG_DARK} {RGBColors.BG_DARK}")
+    print(f"  White: {HexColors.BG_WHITE} {RGBColors.BG_WHITE}")
+    print(f"  Alt:   {HexColors.BG_ALT} {RGBColors.BG_ALT}")
+    print(f"  Dark:  {HexColors.BG_DARK} {RGBColors.BG_DARK}")
