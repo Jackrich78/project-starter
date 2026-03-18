@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html { background: #FFFFFF; }
+body {
+  width: 720pt; height: 405pt; margin: 0; padding: 0;
+  background: #FFFFFF; font-family: Arial, sans-serif;
+  display: flex; flex-direction: column;
+}
+</style>
+</head>
+<body>
+  <!-- HEADER -->
+  <div style="padding: 18pt 30pt 0 30pt;">
+    <p style="color: #6B7280; font-size: 9pt; font-weight: bold; margin: 0 0 4pt 0; font-family: Arial, sans-serif;">COMMANDS REFERENCE</p>
+    <h1 style="color: #1A1A2E; font-size: 28pt; font-weight: bold; margin: 0; font-family: Arial, sans-serif;">14 commands — start with the six in bold</h1>
+  </div>
+  <!-- CONTENT: two columns -->
+  <div style="padding: 8pt 30pt 50pt 30pt; flex: 1; display: flex; gap: 20pt;">
+    <!-- Left: PRIMARY commands (highlighted) -->
+    <div style="flex: 1; display: flex; flex-direction: column;">
+      <p style="color: #E63946; font-size: 9pt; font-weight: bold; margin: 0 0 5pt 0; font-family: Arial, sans-serif;">PRIMARY</p>
+      <div style="border-left: 4pt solid #E63946; padding: 4pt 10pt; background: #F3F4F6; margin-bottom: 4pt;">
+        <p style="color: #1A1A2E; font-family: Courier New, monospace; font-size: 10pt; font-weight: bold; margin: 0 0 1pt 0;">/setup [docs]</p>
+        <p style="color: #374151; font-size: 8pt; margin: 0; font-family: Arial, sans-serif;">Configure project, generate initial docs from source material</p>
+      </div>
+      <div style="border-left: 4pt solid #E63946; padding: 4pt 10pt; background: #F3F4F6; margin-bottom: 4pt;">
+        <p style="color: #1A1A2E; font-family: Courier New, monospace; font-size: 10pt; font-weight: bold; margin: 0 0 1pt 0;">/explore [topic]</p>
+        <p style="color: #374151; font-size: 8pt; margin: 0; font-family: Arial, sans-serif;">Interview-driven feature spec → structured PRD with success criteria</p>
+      </div>
+      <div style="border-left: 4pt solid #E63946; padding: 4pt 10pt; background: #F3F4F6; margin-bottom: 4pt;">
+        <p style="color: #1A1A2E; font-family: Courier New, monospace; font-size: 10pt; font-weight: bold; margin: 0 0 1pt 0;">/blueprint FEAT-XXX</p>
+        <p style="color: #374151; font-size: 8pt; margin: 0; font-family: Arial, sans-serif;">Reads codebase, validates assumptions, drafts implementation steps</p>
+      </div>
+      <div style="border-left: 4pt solid #E63946; padding: 4pt 10pt; background: #F3F4F6; margin-bottom: 4pt;">
+        <p style="color: #1A1A2E; font-family: Courier New, monospace; font-size: 10pt; font-weight: bold; margin: 0 0 1pt 0;">/build FEAT-XXX</p>
+        <p style="color: #374151; font-size: 8pt; margin: 0; font-family: Arial, sans-serif;">TDD with 3 isolated agents + QA reviewer → tested, reviewed code</p>
+      </div>
+      <div style="border-left: 4pt solid #E63946; padding: 4pt 10pt; background: #F3F4F6; margin-bottom: 4pt;">
+        <p style="color: #1A1A2E; font-family: Courier New, monospace; font-size: 10pt; font-weight: bold; margin: 0 0 1pt 0;">/qa [target]</p>
+        <p style="color: #374151; font-size: 8pt; margin: 0; font-family: Arial, sans-serif;">Semgrep SAST + OWASP review → APPROVED / NEEDS_FIXES / BLOCKED</p>
+      </div>
+      <div style="border-left: 4pt solid #E63946; padding: 4pt 10pt; background: #F3F4F6;">
+        <p style="color: #1A1A2E; font-family: Courier New, monospace; font-size: 10pt; font-weight: bold; margin: 0 0 1pt 0;">/commit</p>
+        <p style="color: #374151; font-size: 8pt; margin: 0; font-family: Arial, sans-serif;">QA gate → conventional commit → push → verify CI passes</p>
+      </div>
+    </div>
+    <!-- Right: SECONDARY commands (muted) -->
+    <div style="flex: 1; display: flex; flex-direction: column;">
+      <p style="color: #6B7280; font-size: 9pt; font-weight: bold; margin: 0 0 5pt 0; font-family: Arial, sans-serif;">SECONDARY</p>
+      <div style="border-left: 3pt solid #E5E7EB; padding: 3pt 10pt; margin-bottom: 3pt;">
+        <p style="color: #1A1A2E; font-family: Courier New, monospace; font-size: 9pt; margin: 0 0 1pt 0;">/debug [issue]</p>
+        <p style="color: #6B7280; font-size: 8pt; margin: 0; font-family: Arial, sans-serif;">6-phase systematic bug investigation</p>
+      </div>
+      <div style="border-left: 3pt solid #E5E7EB; padding: 3pt 10pt; margin-bottom: 3pt;">
+        <p style="color: #1A1A2E; font-family: Courier New, monospace; font-size: 9pt; margin: 0 0 1pt 0;">/handover</p>
+        <p style="color: #6B7280; font-size: 8pt; margin: 0; font-family: Arial, sans-serif;">Token-budgeted session summary (under 1,500 tokens)</p>
+      </div>
+      <div style="border-left: 3pt solid #E5E7EB; padding: 3pt 10pt; margin-bottom: 3pt;">
+        <p style="color: #1A1A2E; font-family: Courier New, monospace; font-size: 9pt; margin: 0 0 1pt 0;">/prime [mode]</p>
+        <p style="color: #6B7280; font-size: 8pt; margin: 0; font-family: Arial, sans-serif;">Load context at session start (think, build, review)</p>
+      </div>
+      <div style="border-left: 3pt solid #E5E7EB; padding: 3pt 10pt; margin-bottom: 3pt;">
+        <p style="color: #1A1A2E; font-family: Courier New, monospace; font-size: 9pt; margin: 0 0 1pt 0;">/retro</p>
+        <p style="color: #6B7280; font-size: 8pt; margin: 0; font-family: Arial, sans-serif;">Extract patterns → reusable skills</p>
+      </div>
+      <div style="border-left: 3pt solid #E5E7EB; padding: 3pt 10pt; margin-bottom: 3pt;">
+        <p style="color: #1A1A2E; font-family: Courier New, monospace; font-size: 9pt; margin: 0 0 1pt 0;">/logs</p>
+        <p style="color: #6B7280; font-size: 8pt; margin: 0; font-family: Arial, sans-serif;">Query SQLite audit trail</p>
+      </div>
+      <div style="border-left: 3pt solid #E5E7EB; padding: 3pt 10pt; margin-bottom: 3pt;">
+        <p style="color: #1A1A2E; font-family: Courier New, monospace; font-size: 9pt; margin: 0 0 1pt 0;">/create-specialist [lib]</p>
+        <p style="color: #6B7280; font-size: 8pt; margin: 0; font-family: Arial, sans-serif;">Generate domain-expert agent for any library</p>
+      </div>
+      <div style="border-left: 3pt solid #E5E7EB; padding: 3pt 10pt; margin-bottom: 3pt;">
+        <p style="color: #1A1A2E; font-family: Courier New, monospace; font-size: 9pt; margin: 0 0 1pt 0;">/update-docs</p>
+        <p style="color: #6B7280; font-size: 8pt; margin: 0; font-family: Arial, sans-serif;">Validate cross-references across docs</p>
+      </div>
+      <div style="border-left: 3pt solid #E5E7EB; padding: 3pt 10pt;">
+        <p style="color: #1A1A2E; font-family: Courier New, monospace; font-size: 9pt; margin: 0 0 1pt 0;">/demo</p>
+        <p style="color: #6B7280; font-size: 8pt; margin: 0; font-family: Arial, sans-serif;">Guided walkthrough of the full workflow</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

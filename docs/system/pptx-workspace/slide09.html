@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html { background: #FFFFFF; }
+body {
+  width: 720pt; height: 405pt; margin: 0; padding: 0;
+  background: #FFFFFF; font-family: Arial, sans-serif;
+  display: flex; flex-direction: column;
+}
+</style>
+</head>
+<body>
+  <!-- HEADER -->
+  <div style="padding: 18pt 30pt 0 30pt;">
+    <p style="color: #6B7280; font-size: 9pt; font-weight: bold; margin: 0 0 4pt 0; font-family: Arial, sans-serif;">WHAT IT LOOKS LIKE</p>
+    <h1 style="color: #1A1A2E; font-size: 28pt; font-weight: bold; margin: 0; font-family: Arial, sans-serif;">A typical session, from setup to commit</h1>
+  </div>
+  <!-- CONTENT -->
+  <div style="padding: 8pt 30pt 50pt 30pt; flex: 1; display: flex; flex-direction: column;">
+    <p style="color: #374151; font-size: 10pt; margin: 0 0 6pt 0; font-family: Arial, sans-serif;">Four commands, four artifacts, one green CI run:</p>
+    <!-- Block 1: /setup -->
+    <div style="background: #1A1A2E; padding: 8pt 14pt; border-radius: 4pt; margin-bottom: 5pt;">
+      <p style="color: #FFFFFF; font-family: Courier New, monospace; font-size: 9pt; margin: 0; line-height: 1.55;">$ /setup docs/research/my-project-notes.md<br>
+  → configures PROJECT.md, CLAUDE.md, and initial docs<br>
+  → installs stack scaffolding if specified</p>
+    </div>
+    <!-- Block 2: /explore -->
+    <div style="background: #1A1A2E; padding: 8pt 14pt; border-radius: 4pt; margin-bottom: 5pt;">
+      <p style="color: #FFFFFF; font-family: Courier New, monospace; font-size: 9pt; margin: 0; line-height: 1.55;">$ /explore add a health check endpoint<br>
+  → asks 3 clarifying questions<br>
+  → creates docs/features/FEAT-001_health-check/prd.md</p>
+    </div>
+    <!-- Block 3: /build -->
+    <div style="background: #1A1A2E; padding: 8pt 14pt; border-radius: 4pt; margin-bottom: 5pt;">
+      <p style="color: #FFFFFF; font-family: Courier New, monospace; font-size: 9pt; margin: 0; line-height: 1.55;">$ /build FEAT-001<br>
+  → RED:   tdd-test-writer writes failing tests (sees PRD only)<br>
+  → GREEN: tdd-implementer writes minimal code (sees tests only)<br>
+  → REFACTOR + QA: clean up → 15 SAST rules + OWASP → APPROVED</p>
+    </div>
+    <!-- Block 4: /commit -->
+    <div style="background: #1A1A2E; padding: 8pt 14pt; border-radius: 4pt;">
+      <p style="color: #FFFFFF; font-family: Courier New, monospace; font-size: 9pt; margin: 0; line-height: 1.55;">$ /commit<br>
+  → QA gate passes → conventional commit → CI passes in 12s</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html { background: #FFFFFF; }
+body {
+  width: 720pt; height: 405pt; margin: 0; padding: 0;
+  background: #FFFFFF; font-family: Arial, sans-serif;
+  display: flex; flex-direction: column;
+}
+.chip {
+  display: inline-block;
+  font-family: Courier New, monospace;
+  font-size: 7pt;
+  background: #1A1A2E;
+  color: #FFFFFF;
+  padding: 2pt 6pt;
+  border-radius: 3pt;
+  margin: 1pt 2pt 1pt 0;
+}
+.card {
+  background: #F3F4F6;
+  border-top: 3pt solid #2563EB;
+  padding: 5pt 8pt;
+  flex: 1;
+}
+.card-label {
+  color: #1A1A2E;
+  font-size: 7.5pt;
+  font-weight: bold;
+  font-variant: small-caps;
+  letter-spacing: 0.5pt;
+  margin: 0 0 3pt 0;
+  font-family: Arial, sans-serif;
+}
+</style>
+</head>
+<body>
+  <!-- HEADER -->
+  <div style="padding: 14pt 30pt 0 30pt;">
+    <p style="color: #6B7280; font-size: 9pt; font-weight: bold; margin: 0 0 2pt 0; font-family: Arial, sans-serif;">WORKING WITH CLAUDE</p>
+    <h1 style="color: #1A1A2E; font-size: 22pt; font-weight: bold; margin: 0; font-family: Arial, sans-serif;">Steer Claude in the moment — five intent modes</h1>
+  </div>
+  <!-- CONTENT -->
+  <div style="padding: 8pt 30pt 0 30pt; flex: 1; display: flex; flex-direction: column; gap: 5pt;">
+    <!-- Top row: 3 cards -->
+    <div style="display: flex; gap: 8pt; flex: 1;">
+      <!-- Card 1: Slow down -->
+      <div class="card">
+        <p class="card-label">Slow down and reason deeply</p>
+        <span class="chip">think carefully</span>
+        <span class="chip">think step by step</span>
+        <span class="chip">think ultra hard</span>
+        <p style="color: #374151; font-size: 6.5pt; margin: 3pt 0 0 0; font-family: Arial, sans-serif; font-style: italic;">Before complex decisions, architecture, or debugging</p>
+      </div>
+      <!-- Card 2: Stop -->
+      <div class="card">
+        <p class="card-label">Stop — don't fill gaps</p>
+        <span class="chip">do not assume</span>
+        <span class="chip">do not guess</span>
+        <span class="chip">ask if unsure</span>
+        <p style="color: #374151; font-size: 6.5pt; margin: 3pt 0 0 0; font-family: Arial, sans-serif; font-style: italic;">When Claude seems confident without reading the file</p>
+      </div>
+      <!-- Card 3: Verify -->
+      <div class="card">
+        <p class="card-label">Verify before moving on</p>
+        <span class="chip">validate your work</span>
+        <span class="chip">check your work</span>
+        <span class="chip">do user end to end testing</span>
+        <p style="color: #374151; font-size: 6.5pt; margin: 3pt 0 0 0; font-family: Arial, sans-serif; font-style: italic;">After implementation, to catch self-introduced errors</p>
+      </div>
+    </div>
+    <!-- Bottom row: 2 cards -->
+    <div style="display: flex; gap: 8pt; flex: 1;">
+      <!-- Card 4: Challenge -->
+      <div class="card">
+        <p class="card-label">Challenge the approach</p>
+        <span class="chip">take the contrarian view</span>
+        <span class="chip">ask the sub agents</span>
+        <p style="color: #374151; font-size: 6.5pt; margin: 3pt 0 0 0; font-family: Arial, sans-serif; font-style: italic;">Stress-testing a plan before committing to a direction</p>
+      </div>
+      <!-- Card 5: Control scope -->
+      <div class="card">
+        <p class="card-label">Control scope and output</p>
+        <span class="chip">tell me succinctly</span>
+        <span class="chip">only change what I asked</span>
+        <span class="chip">preserve references</span>
+        <p style="color: #374151; font-size: 6.5pt; margin: 3pt 0 0 0; font-family: Arial, sans-serif; font-style: italic;">Preventing scope creep, verbosity, or silent reference changes</p>
+      </div>
+    </div>
+    <!-- Footer note -->
+    <div style="background: #1A1A2E; padding: 6pt 14pt; border-radius: 4pt; margin-bottom: 6pt;">
+      <p style="color: #FFFFFF; font-size: 8pt; margin: 0; font-family: Arial, sans-serif;">All phrases are situational — you combine them. <span style="font-family: Courier New, monospace; font-size: 7.5pt;">"Think ultra hard, do not assume, validate your work"</span> before a risky refactor. See Claude Code best practices: code.claude.com/docs</p>
+    </div>
+  </div>
+</body>
+</html>
