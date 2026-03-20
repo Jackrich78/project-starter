@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @import url('brand-vars.css');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 810pt;
+    height: 1012.5pt;
+    background: var(--brand-light-bg);
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .top-zone {
+    height: 60px;
+    flex-shrink: 0;
+    padding: 15px 80px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .top-label {
+    font-size: 18pt;
+    font-weight: bold;
+    color: var(--brand-text-dark);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .top-accent {
+    width: 40px;
+    height: 3px;
+    background: var(--brand-accent);
+  }
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 80px;
+  }
+  .headline {
+    font-family: 'Arial Black', Arial, sans-serif;
+    font-size: 60pt;
+    font-weight: 900;
+    color: var(--brand-text-heading);
+    line-height: 1.05;
+    margin-bottom: 48px;
+    text-transform: uppercase;
+  }
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .pipeline-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 16px;
+  }
+  .pipeline-left {
+    display: flex;
+    justify-content: flex-end;
+    flex: 1;
+  }
+  .pipeline-right {
+    display: flex;
+    justify-content: flex-start;
+    flex: 1;
+  }
+  .command-badge {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-family: 'Arial Black', Arial, sans-serif;
+    font-size: 26pt;
+    font-weight: bold;
+    color: #FFFFFF;
+    text-align: center;
+    text-transform: uppercase;
+  }
+  .artifact-box {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 22pt;
+    color: var(--brand-text-muted);
+    text-align: center;
+    background: transparent;
+    border-width: 2px;
+    border-style: solid;
+  }
+  .pipeline-arrow {
+    font-family: 'Arial Black', Arial, sans-serif;
+    font-size: 32pt;
+    color: var(--brand-text-muted);
+    text-align: center;
+    padding: 4px 0;
+    width: 100%;
+  }
+  .annotation {
+    font-size: 22pt;
+    color: var(--brand-text-muted);
+    font-weight: bold;
+    font-style: italic;
+    text-align: center;
+    margin-top: 8px;
+  }
+  .bottom-zone {
+    height: 100px;
+    flex-shrink: 0;
+    padding: 0 80px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+  .bottom-separator {
+    position: absolute;
+    bottom: 100px;
+    left: 80px;
+    right: 80px;
+    height: 1px;
+    background: var(--brand-border);
+  }
+  .headshot {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .handle {
+    font-size: 18pt;
+    font-weight: bold;
+    color: var(--brand-text-muted);
+  }
+</style>
+</head>
+<body>
+  <div class="top-zone">
+    <p class="top-label">Project Starter</p>
+    <div class="top-accent"></div>
+  </div>
+  <div class="content">
+    <h1 class="headline">{{HEADLINE}}</h1>
+    <div class="pipeline">
+      {{PIPELINE_CONTENT}}
+    </div>
+  </div>
+  <div class="bottom-separator"></div>
+  <div class="bottom-zone">
+    <p class="handle">@jackrich7</p>
+    <img class="headshot" src="{{HEADSHOT_PATH}}" />
+  </div>
+</body>
+</html>

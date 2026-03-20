@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @import url('brand-vars.css');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 810pt;
+    height: 1012.5pt;
+    background: var(--brand-light-bg);
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .top-zone {
+    height: 60px;
+    flex-shrink: 0;
+    padding: 15px 80px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .top-label {
+    font-size: 18pt;
+    font-weight: bold;
+    color: var(--brand-text-dark);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .top-accent {
+    width: 40px;
+    height: 3px;
+    background: var(--brand-accent);
+  }
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 80px;
+  }
+  .headline {
+    font-family: 'Arial Black', Arial, sans-serif;
+    font-size: 60pt;
+    font-weight: 900;
+    color: var(--brand-text-heading);
+    line-height: 1.05;
+    margin-bottom: 48px;
+    text-transform: uppercase;
+  }
+  .story-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .story-line {
+    font-size: 24pt;
+    color: var(--brand-text-body);
+    line-height: 1.4;
+  }
+  .story-line-emphasis {
+    font-size: 24pt;
+    color: var(--brand-text-dark);
+    line-height: 1.4;
+    font-weight: bold;
+  }
+  .story-line-pivot {
+    font-size: 24pt;
+    color: var(--brand-text-dark);
+    line-height: 1.4;
+    font-weight: bold;
+    font-style: italic;
+    padding-left: 20px;
+    border-left: 5px solid var(--brand-lavender);
+  }
+  .bottom-zone {
+    height: 100px;
+    flex-shrink: 0;
+    padding: 0 80px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+  .bottom-separator {
+    position: absolute;
+    bottom: 100px;
+    left: 80px;
+    right: 80px;
+    height: 1px;
+    background: var(--brand-border);
+  }
+  .headshot {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .handle {
+    font-size: 18pt;
+    font-weight: bold;
+    color: var(--brand-text-muted);
+  }
+</style>
+</head>
+<body>
+  <div class="top-zone">
+    <p class="top-label">Project Starter</p>
+    <div class="top-accent"></div>
+  </div>
+  <div class="content">
+    <h1 class="headline">{{HEADLINE}}</h1>
+    <div class="story-lines">
+      <p class="story-line">{{LINE_1}}</p>
+      <p class="story-line-emphasis">{{LINE_2}}</p>
+      <p class="story-line-pivot">{{LINE_3}}</p>
+    </div>
+  </div>
+  <div class="bottom-separator"></div>
+  <div class="bottom-zone">
+    <p class="handle">@jackrich7</p>
+    <img class="headshot" src="{{HEADSHOT_PATH}}" />
+  </div>
+</body>
+</html>

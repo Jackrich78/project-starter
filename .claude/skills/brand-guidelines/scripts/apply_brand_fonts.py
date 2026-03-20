@@ -2,17 +2,18 @@
 """
 Apply brand fonts to a PPTX presentation.
 
-<!-- CUSTOMIZE: Replace font names with your brand fonts -->
+This script post-processes a PPTX file to apply brand typography using
+font-name-based mapping (not size-based):
 
-This script post-processes a PPTX file to apply brand typography:
-- Bebas Neue for display headings (>=24pt)
-- Inter for body text (<24pt)
-- JetBrains Mono for code/commands (replaces Courier New)
-
-It also adjusts text frames to prevent wrapping issues when fonts change.
+- Arial Black → Bebas Neue (display headings)
+- Arial (bold+italic) → Roboto SemiBold (clear bold, keep italic)
+- Arial (bold only) → Roboto Medium (clear bold)
+- Arial (normal, ≤18pt) → Roboto Medium
+- Arial (normal, >18pt) → Roboto Light
+- Courier/Mono → JetBrains Mono
 
 Usage:
-    python apply_brand_fonts.py input.pptx output.pptx
+    python apply_brand_fonts.py input.pptx [output.pptx]
 
 Dependencies:
     pip install python-pptx
@@ -23,17 +24,13 @@ from pptx import Presentation
 from pptx.util import Pt, Emu
 from pptx.enum.text import MSO_AUTO_SIZE
 
-# CUSTOMIZE: Replace with your brand fonts
 FONT_DISPLAY = "Bebas Neue"
-FONT_BODY = "Inter"
+FONT_BODY_LIGHT = "Roboto Light"
+FONT_BODY_MEDIUM = "Roboto Medium"
+FONT_BODY_SEMIBOLD = "Roboto SemiBold"
 FONT_CODE = "JetBrains Mono"
 
-# Threshold for display vs body (in points)
-# Bebas Neue for H1 (42pt+), Inter for everything below
-DISPLAY_THRESHOLD_PT = 24
-
-# Width expansion factor for text boxes (Bebas Neue is narrower than Arial,
-# Inter is similar width — modest expansion handles edge cases)
+# Width expansion factor for text boxes
 WIDTH_EXPANSION = 1.05
 
 
@@ -41,7 +38,7 @@ def apply_brand_fonts(input_path, output_path):
     """Apply brand fonts to all text in the presentation."""
     prs = Presentation(input_path)
 
-    stats = {"display": 0, "body": 0, "code": 0}
+    stats = {"display": 0, "light": 0, "medium": 0, "semibold": 0, "code": 0}
 
     for slide_idx, slide in enumerate(prs.slides):
         for shape in slide.shapes:
@@ -50,9 +47,7 @@ def apply_brand_fonts(input_path, output_path):
 
             tf = shape.text_frame
             has_display = False
-            has_code = False
 
-            # First pass: identify content type and apply fonts
             for para in tf.paragraphs:
                 for run in para.runs:
                     if not run.text.strip():
@@ -60,46 +55,62 @@ def apply_brand_fonts(input_path, output_path):
 
                     current_font = run.font.name or ""
                     font_size = run.font.size
+                    size_pt = font_size.pt if font_size else 14
+                    is_bold = run.font.bold
+                    is_italic = run.font.italic
 
-                    # Handle monospace/code fonts
+                    # 1. Monospace/code fonts
                     if "Courier" in current_font or "Mono" in current_font:
                         run.font.name = FONT_CODE
                         stats["code"] += 1
-                        has_code = True
                         continue
 
-                    # Determine target font based on size
-                    size_pt = font_size.pt if font_size else 14
-                    if size_pt >= DISPLAY_THRESHOLD_PT:
+                    # 2. Arial Black → Bebas Neue (display headings)
+                    if "Arial Black" in current_font:
                         run.font.name = FONT_DISPLAY
                         stats["display"] += 1
                         has_display = True
-                    else:
-                        run.font.name = FONT_BODY
-                        stats["body"] += 1
+                        continue
 
-            # Second pass: adjust text frame settings
+                    # 3. Everything else (Arial, sans-serif, etc.) → Roboto variants
+                    if is_bold and is_italic:
+                        run.font.name = FONT_BODY_SEMIBOLD
+                        run.font.bold = False  # weight is in the font name
+                        # keep italic
+                        stats["semibold"] += 1
+                    elif is_bold and not is_italic:
+                        run.font.name = FONT_BODY_MEDIUM
+                        run.font.bold = False  # weight is in the font name
+                        stats["medium"] += 1
+                    elif size_pt <= 18:
+                        run.font.name = FONT_BODY_MEDIUM
+                        stats["medium"] += 1
+                    else:
+                        run.font.name = FONT_BODY_LIGHT
+                        stats["light"] += 1
+
+            # Adjust text frame for display headings
             if has_display:
-                # For display headings: disable word wrap, let shape expand
                 tf.word_wrap = False
                 tf.auto_size = MSO_AUTO_SIZE.SHAPE_TO_FIT_TEXT
 
-            # Expand text box width slightly for all shapes
+            # Expand text box width slightly
             if shape.width:
                 try:
                     new_width = int(shape.width * WIDTH_EXPANSION)
-                    # Keep centered by adjusting left position
                     width_delta = new_width - shape.width
                     shape.left = shape.left - int(width_delta / 2)
                     shape.width = new_width
                 except Exception:
-                    pass  # Some shapes may not allow width changes
+                    pass
 
     prs.save(output_path)
 
     print(f"Brand fonts applied:")
     print(f"  Display ({FONT_DISPLAY}): {stats['display']}")
-    print(f"  Body ({FONT_BODY}): {stats['body']}")
+    print(f"  Body Light ({FONT_BODY_LIGHT}): {stats['light']}")
+    print(f"  Body Medium ({FONT_BODY_MEDIUM}): {stats['medium']}")
+    print(f"  Body SemiBold ({FONT_BODY_SEMIBOLD}): {stats['semibold']}")
     print(f"  Code ({FONT_CODE}): {stats['code']}")
     print(f"\nSaved to: {output_path}")
 

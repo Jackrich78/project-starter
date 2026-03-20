@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @import url('brand-vars.css');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 810pt;
+    height: 1012.5pt;
+    background: var(--brand-dark-bg);
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .top-zone {
+    height: 60px;
+    flex-shrink: 0;
+    padding: 15px 80px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .top-label {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #FFFFFF;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .top-accent {
+    width: 40px;
+    height: 3px;
+    background: var(--brand-accent);
+  }
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 80px;
+    text-align: center;
+  }
+  .headline {
+    font-family: 'Arial Black', Arial, sans-serif;
+    font-size: 60pt;
+    font-weight: 900;
+    color: #FFFFFF;
+    line-height: 1.05;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+  }
+  .license {
+    font-size: 20pt;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.4;
+    margin-bottom: 24px;
+  }
+  .link-note {
+    font-size: 20pt;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.4;
+    margin-bottom: 32px;
+  }
+  .comment-driver {
+    font-size: 24pt;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.4;
+    font-style: italic;
+  }
+  .bottom-zone {
+    height: 100px;
+    flex-shrink: 0;
+    padding: 0 80px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+  .bottom-separator {
+    position: absolute;
+    bottom: 100px;
+    left: 80px;
+    right: 80px;
+    height: 1px;
+    background: rgba(255,255,255,0.2);
+  }
+  .headshot {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .handle {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #FFFFFF;
+  }
+</style>
+</head>
+<body>
+  <div class="top-zone">
+    <p class="top-label">Project Starter</p>
+    <div class="top-accent"></div>
+  </div>
+  <div class="content">
+    <h1 class="headline">{{HEADLINE}}</h1>
+    <p class="license">{{LICENSE}}</p>
+    <p class="link-note">{{LINK_NOTE}}</p>
+    <p class="comment-driver">{{COMMENT_DRIVER}}</p>
+  </div>
+  <div class="bottom-separator"></div>
+  <div class="bottom-zone">
+    <p class="handle">@jackrich7</p>
+    <img class="headshot" src="{{HEADSHOT_PATH}}" />
+  </div>
+</body>
+</html>

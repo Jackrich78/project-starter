@@ -8,26 +8,30 @@ Complete brand color palette with contrast ratios and typography specifications.
 
 ## Color Palette
 
-### Brand Colors (Bold & Saturated)
+### Brand Colors (Teal-Based Nature Palette)
 
 <!-- CUSTOMIZE: Replace with your brand's primary colors -->
 | Name | Hex | RGB | Personality | Use For |
 |------|-----|-----|-------------|---------|
-| Signal Red | `#E63946` | (230, 57, 70) | Energy, urgency | Primary CTAs, key metrics, brand anchor |
-| Royal Blue | `#2563EB` | (37, 99, 235) | Trust, structure | Technical content, frameworks, architecture |
-| Emerald | `#10B981` | (16, 185, 129) | Growth, success | Results, benefits, positive indicators |
-| Amber | `#F59E0B` | (245, 158, 11) | Attention, warmth | Highlights, warnings, important notes |
-| Violet | `#7C3AED` | (124, 58, 237) | Innovation, premium | AI/tech features, differentiation |
+| Deep Teal | `#0D5B65` | (13, 91, 101) | Depth, trust, nature | Dark backgrounds, headline text on light slides |
+| Very Dark Teal | `#0A2F33` | (10, 47, 51) | Authority, grounding | Card heading text |
+| Lime Chartreuse | `#B1F208` | (177, 242, 8) | Energy, freshness | Top accent bar, primary brand accent |
+| Lavender | `#B6A2F1` | (182, 162, 241) | Creativity, calm | Card borders ("remembers"), pivot lines |
+| Teal Mint | `#29C9A5` | (41, 201, 165) | Growth, progress | Card borders ("plans"), positive indicators |
+| Light Mint | `#A7EDDD` | (167, 237, 221) | Clarity, lightness | Card borders (QA step), lighter teal variant |
+| Lime Green | `#A4E001` | (164, 224, 1) | Action, completion | Card borders ("evolves", commit step) |
 
-**Rule**: Max 2-3 saturated colors per slide or diagram section. These are accents, not backgrounds.
+**Rule**: Max 2-3 accent colours per slide or diagram section. These are accents, not backgrounds.
 
 ### Text Colors
 
 | Name | Hex | RGB | Usage |
 |------|-----|-----|-------|
-| Near Black | `#1A1A2E` | (26, 26, 46) | Headings, primary text — all Bebas Neue text |
-| Dark Gray | `#374151` | (55, 65, 81) | Body text, paragraphs — default Inter text |
-| Medium Gray | `#6B7280` | (107, 114, 128) | Muted text, captions, secondary labels |
+| Near Black | `#1A1A2E` | (26, 26, 46) | Callout text, emphasis — bold italic Roboto |
+| Deep Teal | `#0D5B65` | (13, 91, 101) | Headings on light backgrounds — all Bebas Neue text on light slides |
+| Very Dark Teal | `#0A2F33` | (10, 47, 51) | Card headings — Roboto Medium on card blocks |
+| Dark Gray | `#374151` | (55, 65, 81) | Body text, paragraphs — default Roboto text |
+| Medium Gray | `#6B7280` | (107, 114, 128) | Muted text, captions, handles, secondary labels |
 | Light Gray | `#9CA3AF` | (156, 163, 175) | Disabled text, subtle annotations |
 
 ### Backgrounds
@@ -36,8 +40,8 @@ Complete brand color palette with contrast ratios and typography specifications.
 | Name | Hex | RGB | Usage |
 |------|-----|-----|-------|
 | White | `#FFFFFF` | (255, 255, 255) | Primary background — slides, diagrams, docs |
-| Cool Gray | `#F3F4F6` | (243, 244, 246) | Alt background — cards, callout boxes |
-| Near Black | `#1A1A2E` | (26, 26, 46) | Dark sections, code blocks, evidence artifacts |
+| Mint | `#E7FBF6` | (231, 251, 246) | Card/block background — benefit cards, comparison blocks |
+| Deep Teal | `#0D5B65` | (13, 91, 101) | Dark sections, bookend slides (1 + 6) |
 
 ### Supporting Colors
 
@@ -52,12 +56,12 @@ Complete brand color palette with contrast ratios and typography specifications.
 
 | Combination | Ratio | Level | Notes |
 |-------------|-------|-------|-------|
-| Near Black (#1A1A2E) on White (#FFFFFF) | ~16.2:1 | AAA | Headings |
+| Deep Teal (#0D5B65) on White (#FFFFFF) | ~7.5:1 | AAA | Headings on light slides |
+| Very Dark Teal (#0A2F33) on Mint (#E7FBF6) | ~11.8:1 | AAA | Card headings |
 | Dark Gray (#374151) on White (#FFFFFF) | ~9.7:1 | AAA | Body text |
 | Medium Gray (#6B7280) on White (#FFFFFF) | ~5.2:1 | AA | Muted text |
-| Signal Red (#E63946) on White (#FFFFFF) | ~4.6:1 | AA | Accent elements |
-| Royal Blue (#2563EB) on White (#FFFFFF) | ~4.8:1 | AA | Accent elements |
-| White (#FFFFFF) on Near Black (#1A1A2E) | ~16.2:1 | AAA | Inverted sections |
+| White (#FFFFFF) on Deep Teal (#0D5B65) | ~7.5:1 | AAA | Dark slide text |
+| Lime Chartreuse (#B1F208) on Deep Teal (#0D5B65) | ~8.2:1 | AAA | Accent bar on dark |
 
 ---
 
@@ -68,43 +72,56 @@ Complete brand color palette with contrast ratios and typography specifications.
 <!-- CUSTOMIZE: Replace font names with your brand fonts -->
 | Role | Font | Weight | Google Fonts | Fallback |
 |------|------|--------|-------------|----------|
-| Display / H1 | Bebas Neue | 400 (only weight — it's bold by design) | [Bebas Neue](https://fonts.google.com/specimen/Bebas+Neue) | Impact, Arial Black, sans-serif |
-| H2 | Inter | ExtraBold (800) | [Inter](https://fonts.google.com/specimen/Inter) | Arial, sans-serif |
-| H3 | Inter | Bold (700) | Inter | Arial, sans-serif |
-| Subtitle | Inter | SemiBold (600) | Inter | Arial, sans-serif |
-| Body | Inter | Regular (400) | Inter | Arial, sans-serif |
-| Small / Caption | Inter | Medium (500) | Inter | Arial, sans-serif |
+| Display / H1 | Bebas Neue | Bold | [Bebas Neue](https://fonts.google.com/specimen/Bebas+Neue) | Impact, Arial Black, sans-serif |
+| Sub-headline | Bebas Neue | Regular | Bebas Neue | Impact, Arial Black, sans-serif |
+| Body | Roboto Light | 300 | [Roboto](https://fonts.google.com/specimen/Roboto) | Arial, sans-serif |
+| Body (emphasis) | Roboto Medium | 500 | Roboto | Arial, sans-serif |
+| Callout / Pivot | Roboto SemiBold | 600 Italic | Roboto | Arial, sans-serif |
+| Small / Label | Roboto Medium | 500 | Roboto | Arial, sans-serif |
 | Code | JetBrains Mono | Regular (400) | [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono) | Courier New, monospace |
 
 ### Size Scale
 
 | Level | Font | Size | Weight | Line Height | Letter Spacing | Color |
 |-------|------|------|--------|-------------|----------------|-------|
-| H1 Hero | Bebas Neue | 56pt | 400 | 1.0 | 0.02em | `#1A1A2E` |
-| H1 | Bebas Neue | 42pt | 400 | 1.05 | 0.02em | `#1A1A2E` |
-| H2 | Inter | 28pt | ExtraBold (800) | 1.2 | -0.01em | `#1A1A2E` |
-| H3 | Inter | 20pt | Bold (700) | 1.3 | 0 | `#1A1A2E` |
-| Subtitle | Inter | 18pt | SemiBold (600) | 1.4 | 0 | `#374151` |
-| Body | Inter | 16pt | Regular (400) | 1.6 | 0 | `#374151` |
-| Standard | Inter | 14pt | Regular (400) | 1.5 | 0 | `#374151` |
-| Small | Inter | 12pt | Regular (400) | 1.4 | 0 | `#6B7280` |
-| Caption | Inter | 11pt | Medium (500) | 1.4 | 0.01em | `#6B7280` |
-| Big Number | Bebas Neue | 72pt | 400 | 1.0 | 0 | Any brand color |
+| H1 Hero | Bebas Neue | 60pt | Bold | 1.0 | 0.02em | `#0D5B65` (light) / `#FFFFFF` (dark) |
+| Sub-headline | Bebas Neue | 30pt | Regular | 1.1 | 0.02em | Per slide |
+| Pipeline badge | Bebas Neue | 26pt | Bold | 1.0 | 0 | `#FFFFFF` |
+| Body | Roboto Light | 24pt | 300 | 1.4 | 0 | `#374151` |
+| Body (compact) | Roboto Light | 22pt | 300 | 1.4 | 0 | `#374151` |
+| Callout | Roboto SemiBold | 24-26pt | 600 Italic | 1.4 | 0 | `#1A1A2E` |
+| Card heading | Roboto Medium | 24pt | 500 | 1.3 | 0 | `#0A2F33` |
+| Card body | Roboto Light | 22pt | 300 | 1.4 | 0 | `#374151` |
+| License | Roboto Light | 20pt | 300 | 1.4 | 0 | `#FFFFFF` 70% |
+| Top bar / Handle | Roboto Medium | 18pt | 500 | 1.4 | 3px | `#1A1A2E` / `#FFFFFF` |
 
 ### Typography Rules
 
 - **Bebas Neue is uppercase-only** — it has no lowercase glyphs. Use it exclusively for short, punchy headlines (5-8 words max)
 - **Never mix fonts** in the same text block
-- **Inter weight = hierarchy**: Regular (body) < SemiBold (subtitle) < Bold (H3) < ExtraBold (H2)
-- **Minimum body size**: 16pt for presentations, 14pt for documents
-- **Minimum readable size**: 12pt — anything smaller is invisible to general audiences
-- **Line height increases as size decreases**: Big headlines are tight (1.0), body text is open (1.6)
+- **Roboto weight = hierarchy**: Light (body) < Medium (labels, emphasis) < SemiBold Italic (callouts)
+- **Minimum body size**: 20pt for presentations, 14pt for documents
+- **Minimum readable size**: 18pt — anything smaller is invisible on mobile
+- **Line height increases as size decreases**: Big headlines are tight (1.0), body text is open (1.4)
 
 ### Pairing Philosophy
 
-The Bebas Neue + Inter pairing works through **extreme contrast**:
+The Bebas Neue + Roboto pairing works through **extreme contrast**:
 
 - **Bebas Neue**: Tall, narrow, geometric, all-caps — commands attention
-- **Inter**: Wide, open, humanist curves, mixed-case — invites reading
+- **Roboto**: Clean, neutral, versatile weight range — invites reading
 
-The tension between the two creates visual energy. Bebas Neue says "look here." Inter says "now read this." Don't dilute this by using Bebas Neue for too many elements — one or two per page maximum.
+The tension between the two creates visual energy. Bebas Neue says "look here." Roboto says "now read this." Don't dilute this by using Bebas Neue for too many elements — one or two per page maximum.
+
+### Font Post-Processor Mapping
+
+The `apply_brand_fonts.py` script maps HTML placeholder fonts to brand fonts:
+
+| HTML Font | Condition | Maps To |
+|-----------|-----------|---------|
+| `Arial Black` | Any | Bebas Neue |
+| `Arial` | bold + italic | Roboto SemiBold (clears bold, keeps italic) |
+| `Arial` | bold only | Roboto Medium (clears bold) |
+| `Arial` | normal, ≤18pt | Roboto Medium |
+| `Arial` | normal, >18pt | Roboto Light |
+| `Courier` / `Mono` | Any | JetBrains Mono |

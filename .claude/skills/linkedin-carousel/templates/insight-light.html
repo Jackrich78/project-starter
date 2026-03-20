@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @import url('brand-vars.css');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 810pt;
+    height: 1012.5pt;
+    background: var(--brand-light-bg);
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .top-zone {
+    height: 60px;
+    flex-shrink: 0;
+    padding: 15px 80px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .top-label {
+    font-size: 18pt;
+    font-weight: bold;
+    color: var(--brand-text-dark);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .top-accent {
+    width: 40px;
+    height: 3px;
+    background: var(--brand-accent);
+  }
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 80px;
+  }
+  .headline {
+    font-family: 'Arial Black', Arial, sans-serif;
+    font-size: 60pt;
+    font-weight: 900;
+    color: var(--brand-text-heading);
+    line-height: 1.05;
+    margin-bottom: 48px;
+    text-transform: uppercase;
+  }
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .card {
+    background: var(--brand-card-bg);
+    border-radius: 8px;
+    padding: 24px 24px 24px 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+  }
+  .card-border {
+    width: 5px;
+    min-height: 100%;
+    border-radius: 2px;
+    flex-shrink: 0;
+    align-self: stretch;
+    margin-right: 20px;
+  }
+  .card-border-lavender { background: var(--brand-lavender); }
+  .card-border-teal { background: var(--brand-teal-mint); }
+  .card-border-lime { background: var(--brand-lime); }
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .card-title {
+    font-size: 24pt;
+    font-weight: bold;
+    color: var(--brand-text-card-heading);
+    line-height: 1.3;
+  }
+  .card-desc {
+    font-size: 22pt;
+    color: var(--brand-text-body);
+    line-height: 1.4;
+  }
+  .bottom-zone {
+    height: 100px;
+    flex-shrink: 0;
+    padding: 0 80px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+  .bottom-separator {
+    position: absolute;
+    bottom: 100px;
+    left: 80px;
+    right: 80px;
+    height: 1px;
+    background: var(--brand-border);
+  }
+  .headshot {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .handle {
+    font-size: 18pt;
+    font-weight: bold;
+    color: var(--brand-text-muted);
+  }
+</style>
+</head>
+<body>
+  <div class="top-zone">
+    <p class="top-label">Project Starter</p>
+    <div class="top-accent"></div>
+  </div>
+  <div class="content">
+    <h1 class="headline">{{HEADLINE}}</h1>
+    <div class="cards">
+      <div class="card">
+        <div class="card-border card-border-lavender"></div>
+        <div class="card-content">
+          <p class="card-title">{{CARD_1_TITLE}}</p>
+          <p class="card-desc">{{CARD_1_DESC}}</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-border card-border-teal"></div>
+        <div class="card-content">
+          <p class="card-title">{{CARD_2_TITLE}}</p>
+          <p class="card-desc">{{CARD_2_DESC}}</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-border card-border-lime"></div>
+        <div class="card-content">
+          <p class="card-title">{{CARD_3_TITLE}}</p>
+          <p class="card-desc">{{CARD_3_DESC}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-separator"></div>
+  <div class="bottom-zone">
+    <p class="handle">@jackrich7</p>
+    <img class="headshot" src="{{HEADSHOT_PATH}}" />
+  </div>
+</body>
+</html>

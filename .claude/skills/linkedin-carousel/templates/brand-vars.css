@@ -1,0 +1,24 @@
+/* brand-vars.css — shared CSS variables, @import'd by all templates */
+:root {
+  /* Backgrounds */
+  --brand-dark-bg: #0D5B65;
+  --brand-light-bg: #FFFFFF;
+  --brand-card-bg: #E7FBF6;
+
+  /* Accents */
+  --brand-accent: #B1F208;
+  --brand-lavender: #B6A2F1;
+  --brand-teal-mint: #29C9A5;
+  --brand-light-mint: #A7EDDD;
+  --brand-lime: #A4E001;
+
+  /* Text */
+  --brand-text-heading: #0D5B65;
+  --brand-text-card-heading: #0A2F33;
+  --brand-text-dark: #1A1A2E;
+  --brand-text-body: #374151;
+  --brand-text-muted: #6B7280;
+
+  /* Borders */
+  --brand-border: #E5E7EB;
+}
