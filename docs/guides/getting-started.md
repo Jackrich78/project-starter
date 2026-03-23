@@ -76,6 +76,7 @@ git push -u origin main
 
 | Command | Purpose |
 |---------|---------|
+| `/setup [docs]` | One-time project initialization from template |
 | `/explore [topic]` | Discover and define a feature → PRD |
 | `/blueprint FEAT-XXX` | Create implementation plan with test stubs |
 | `/build FEAT-XXX` | TDD implementation with isolated subagents + QA |

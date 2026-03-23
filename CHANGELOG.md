@@ -14,7 +14,7 @@ Initial public release.
 ### Included
 
 - 12 specialized agents (TDD, QA, research, planning, and more)
-- 12 workflow commands (`/explore`, `/blueprint`, `/build`, `/qa`, `/commit`, etc.)
+- 13 workflow commands (`/setup`, `/explore`, `/blueprint`, `/build`, `/qa`, `/commit`, etc.)
 - Skills system for learned patterns via `/retro`
 - Observability with SQLite + JSON logs
 - Security hooks and SAST integration (Semgrep)

@@ -4,9 +4,15 @@ updated: 2026-03-08
 
 # Commands Reference
 
-13 commands ship with the harness. 12 are part of the core workflow (one — `/demo` — is a content-creation extension). Commands are defined in `.claude/commands/` and invoked by typing them in Claude Code.
+13 commands ship with the harness, all part of the core workflow. Commands are defined in `.claude/commands/` and invoked by typing them in Claude Code.
 
 ---
+
+## Setup
+
+| Command | What it does | When to run |
+|---------|-------------|-------------|
+| `/setup [docs]` | One-time project initialization: interviews you about the project, generates CLAUDE.md, PROJECT.md, README.md, and architecture docs. Creates a feature roadmap with the Tech-Product Lead agent. Optionally sets up GitHub. | Once, immediately after cloning the template and before any other command. Pass paths to existing docs to pre-fill context. |
 
 ## Discovery
 

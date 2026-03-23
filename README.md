@@ -21,8 +21,9 @@ The result is development that compounds. The longer you use it, the better the 
 - A TDD pipeline (`/build`) that runs three context-isolated agents — test writer, implementer, refactorer — so each phase is unbiased by the others.
 - A QA gate that runs 15 SAST rules and an OWASP checklist before any commit is allowed through.
 - A session continuity system: `/handover` captures what you did and what's next in under 1,500 tokens; `/prime` loads it at the start of the next session.
+- A setup command (`/setup`) that interviews you about your project, generates tailored documentation, and creates a feature roadmap — so you go from template to working project in one session.
 - 12 agents with defined responsibilities — researchers, challengers, TDD specialists, and quality reviewers — each scoped to a single job.
-- 16 skills that accumulate across features via `/retro`, so patterns you discover in one feature are available in the next.
+- 18 skills that accumulate across features via `/retro`, so patterns you discover in one feature are available in the next.
 
 ---
 
@@ -53,7 +54,10 @@ rm -rf .git && git init && git add . && git commit -m "chore: init from project-
 # 4. Open the project in Claude Code
 claude .
 
-# 5. Load context and begin
+# 5. Configure your project (interactive — generates docs, roadmap, and GitHub setup)
+/setup
+
+# 6. Load context and start building
 /prime build
 /explore your first feature idea
 ```
@@ -126,6 +130,12 @@ The three TDD agents in `/build` each run in a fresh 200k-token context window. 
 
 ## Commands
 
+### Setup
+
+| Command | What it does |
+|---------|-------------|
+| `/setup [docs]` | One-time project initialization: interviews you about the project, generates CLAUDE.md, PROJECT.md, README.md, architecture docs, and a feature roadmap. Optionally sets up GitHub. |
+
 ### Discovery
 
 | Command | What it does |
@@ -151,7 +161,7 @@ The three TDD agents in `/build` each run in a fresh 200k-token context window. 
 
 | Command | What it does |
 |---------|-------------|
-| `/prime [mode] [FEAT-XXX]` | Loads context for your session: architecture docs, feature files, and handover. Modes: `think`, `build`, `review`. |
+| `/prime [mode] [FEAT-XXX]` | Loads context for your session: architecture docs, feature files, and handover. Modes: `think`, `build`, `review`, `create`. |
 | `/handover [FEAT-ID]` | Captures what you did, what decisions were made, and what's next — in a token-budgeted summary under 1,500 tokens. |
 | `/retro [FEAT-XXX]` | Reviews completed work, extracts recurring patterns, and crystallizes them into reusable skills. |
 | `/logs [filter]` | Queries the SQLite audit trail. Filters: `recent`, `tools`, `sessions`, `count`. |
@@ -183,7 +193,7 @@ Full agent definitions and tool access: [.claude/agents/README.md](.claude/agent
 
 Skills are modular decision guides bundled with context, templates, and references. Commands import them automatically when relevant — you don't invoke most skills directly. After each feature, `/retro` reviews what you learned and crystallizes recurring patterns into new skills stored in `.claude/skills/`. The harness gets more capable with every feature you ship.
 
-16 skills ship with the harness, covering development workflow, content creation, technical integration, and utilities.
+18 skills ship with the harness, covering development workflow, content creation, technical integration, and utilities.
 
 > Full list with descriptions: [docs/guides/skills-reference.md](docs/guides/skills-reference.md)
 

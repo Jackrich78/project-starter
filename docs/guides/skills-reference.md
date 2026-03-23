@@ -6,7 +6,7 @@ updated: 2026-03-08
 
 Skills are modular decision guides bundled with context, templates, and references. Commands import them automatically when relevant. You can also invoke them directly. Skills live in `.claude/skills/` — add your own via `/retro` or manually.
 
-21 skill directories ship with the harness. 16 are part of the public workflow; 5 are personal content-creation extensions excluded from the core template.
+18 skills ship with the harness, covering development workflow, content creation, technical integration, and utilities.
 
 ---
 
@@ -53,3 +53,5 @@ Standalone tools.
 | Skill | What it does | When to invoke |
 |-------|-------------|----------------|
 | `youtube-transcript-extract` | Processes a raw YouTube transcript and extracts the core insights, filtering out promotional content, filler words, and tangents. Works across tutorials, interviews, lectures, and commentary. | When you paste a raw transcript and want a clean summary of what was actually taught — not the full transcript. |
+| `slack_block_kit` | Generates valid Slack Block Kit JSON for messages, modals, and home tabs. Covers all 13 block types with templating for N8N Jinja2 and Python variables. | When building Slack integrations that need structured message layouts — bot responses, notifications, or interactive workflows. |
+| `linkedin-carousel` | Generates branded LinkedIn carousels as PPTX (4:5 portrait, 810×1012.5pt). Two-stage workflow: content markdown for review, then PPTX generation via html2pptx. | When creating a LinkedIn carousel post — produces slide-by-slide content for approval before generating the final deck. |

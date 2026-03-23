@@ -48,7 +48,7 @@ User → /command → Agent(s) → Skills → Documentation
 
 ### Core Components
 - **Agents** (12): researcher, challenger, first-principles-thinker, specialist-creator, prompt-specialist, n8n-specialist, tech-product-lead, librarian, qa-reviewer, tdd-test-writer, tdd-implementer, tdd-refactorer
-- **Commands** (12): explore, blueprint, build, qa, commit, handover, prime, retro, logs, create-specialist, update-docs, debug
+- **Commands** (13): setup, explore, blueprint, build, qa, commit, handover, prime, retro, logs, create-specialist, update-docs, debug
 - **Skills**: Extensible — add skills via `/retro` or manually in `.claude/skills/`
 - **Hooks** (5): pre_tool_use (security), post_tool_use (logging), pre_compact (state), stop (suggestions), send_event (observability)
 
