@@ -52,3 +52,6 @@ spikes/
 # Demo outputs (personal content)
 demos/
 workspace
+
+# Personal assets (headshots, photos)
+.claude/skills/linkedin-carousel/references/*headshot*

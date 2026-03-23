@@ -137,18 +137,8 @@ Ready for /commit
 
 ## Execution
 
-Invoke the debug skill:
-
-```
-Skill(
-  skill="debug",
-  args="$ARGUMENTS"
-)
-```
-
-The skill will:
-1. Load `.claude/skills/debug/SKILL.md`
-2. Execute the 6-phase debugging workflow
+1. Read `.claude/skills/debug/SKILL.md` for detailed phase instructions
+2. Execute the 6-phase debugging workflow defined there against: **$ARGUMENTS**
 3. Coordinate with other agents as needed:
    - **researcher**: For unknown tech/libraries
    - **challenger**: For complex fix trade-offs
