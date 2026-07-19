@@ -1,0 +1,32 @@
+rules:
+  - id: js-security-jwt-none-algorithm
+    patterns:
+      - pattern-either:
+          - pattern: "jwt.verify($TOKEN, ..., {algorithms: ['none'], ...})"
+          - pattern: "jwt.decode($TOKEN, ..., {algorithms: ['none'], ...})"
+    message: >
+      JWT configured to accept 'none' algorithm. This disables signature
+      verification entirely, allowing token forgery. Remove 'none' from
+      allowed algorithms.
+    languages: [javascript, typescript]
+    severity: ERROR
+    metadata:
+      owasp: "A02:2021 Cryptographic Failures"
+      cwe: "CWE-327: Use of a Broken or Risky Cryptographic Algorithm"
+      confidence: HIGH
+
+  - id: js-security-jwt-hardcoded-secret
+    patterns:
+      - pattern-either:
+          - pattern: jwt.sign($PAYLOAD, "...", ...)
+          - pattern: jwt.verify($TOKEN, "...", ...)
+    message: >
+      JWT secret is hardcoded as a string literal. Move the secret to an
+      environment variable (e.g., process.env.JWT_SECRET) to prevent
+      exposure in source code.
+    languages: [javascript, typescript]
+    severity: ERROR
+    metadata:
+      owasp: "A02:2021 Cryptographic Failures"
+      cwe: "CWE-798: Use of Hard-coded Credentials"
+      confidence: HIGH

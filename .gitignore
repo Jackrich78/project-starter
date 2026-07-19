@@ -1,0 +1,66 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE/Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Claude Code session-specific files
+.claude/logs/agent.db
+.claude/logs/transcripts/
+.claude/logs/sessions/*
+!.claude/logs/sessions/.gitkeep
+.claude/session-state.json
+.claude/settings.local.json
+
+# Environment (user implementation)
+.env
+.env.local
+.env.*.local
+
+# Dependencies (stack-agnostic)
+node_modules/
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+
+# Test coverage
+coverage/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+
+# Local archive of superseded assets (personal content, never committed)
+.claude/_archive/
+
+# Spikes (temporary exploratory code)
+spikes/
+
+# Demo outputs (personal content)
+demos/
+workspace
+docs/features/z-alba
+
+# Agent memory retros — gitignored by default so per-agent retros stay local.
+# Remove the line below (and keep the two exceptions) to opt into tracking retros in git.
+memory/agents/*.md
+!memory/agents/README.md
+!memory/agents/TEMPLATE.md

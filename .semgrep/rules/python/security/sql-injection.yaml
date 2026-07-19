@@ -1,0 +1,33 @@
+rules:
+  - id: py-security-sql-string-concat
+    patterns:
+      - pattern-either:
+          - pattern: cursor.execute("..." + $VAR, ...)
+          - pattern: cursor.execute("..." % $VAR, ...)
+          - pattern: cursor.execute(f"...{$VAR}...", ...)
+    message: >
+      SQL query built with string concatenation or formatting. Use
+      parameterized queries instead: cursor.execute("SELECT * FROM t WHERE
+      id = %s", (user_id,))
+    languages: [python]
+    severity: ERROR
+    metadata:
+      owasp: "A03:2021 Injection"
+      cwe: "CWE-89: SQL Injection"
+      confidence: HIGH
+
+  - id: py-security-sql-execute-format
+    patterns:
+      - pattern-either:
+          - pattern: $DB.execute("..." + $VAR, ...)
+          - pattern: $DB.execute("..." % $VAR, ...)
+          - pattern: $DB.execute(f"...{$VAR}...", ...)
+    message: >
+      SQL query built with string formatting passed to execute(). Use
+      parameterized queries to prevent SQL injection.
+    languages: [python]
+    severity: ERROR
+    metadata:
+      owasp: "A03:2021 Injection"
+      cwe: "CWE-89: SQL Injection"
+      confidence: HIGH

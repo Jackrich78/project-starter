@@ -1,0 +1,60 @@
+<!-- Template: Checklist Vertical
+     Capacity: 5-7 items, ~10-12 words each
+     Best for: Action items, milestones, next steps, timelines
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+:root {
+  --primary: #2C3E50;
+  --accent: #3498DB;
+  --bg: #FFFFFF;
+  --bg-alt: #F0F3F5;
+  --text: #333333;
+  --text-light: #666666;
+}
+html { background: var(--bg); }
+body {
+  width: 720pt; height: 405pt; margin: 0; padding: 0;
+  background: var(--bg); font-family: Arial, sans-serif;
+  display: flex; flex-direction: column;
+}
+.content-area { padding: 30pt 45pt 50pt 45pt; flex: 1; }
+h1 { color: var(--primary); font-size: 32pt; margin: 0 0 12pt 0; text-align: center; font-weight: bold; }
+.box {
+  background: var(--bg-alt); padding: 12pt; border-radius: 8pt; margin: 8pt 0;
+}
+.box p { color: var(--text); font-size: 12pt; margin: 0; }
+.highlight-box {
+  background: var(--primary); padding: 12pt; border-radius: 8pt; margin: 8pt 0 0 0;
+}
+.highlight-box p { color: #FFFFFF; font-size: 13pt; margin: 0; text-align: center; }
+</style>
+</head>
+<body>
+<div class="content-area">
+  <h1>Checklist or Milestone Title</h1>
+  <div style="margin-top: 15pt;">
+    <div class="box">
+      <p><b>Step 1:</b> First action item with a brief description</p>
+    </div>
+    <div class="box">
+      <p><b>Step 2:</b> Second action item with expected outcome</p>
+    </div>
+    <div class="box">
+      <p><b>Step 3:</b> Third action item building on previous steps</p>
+    </div>
+    <div class="box">
+      <p><b>Step 4:</b> Fourth action item with key deliverable</p>
+    </div>
+    <div class="box">
+      <p><b>Step 5:</b> Fifth action item with success criteria</p>
+    </div>
+    <div class="highlight-box">
+      <p><b>Outcome:</b> Summary of expected result or key deadline</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

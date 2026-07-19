@@ -1,0 +1,27 @@
+rules:
+  - id: py-security-dangerous-eval
+    patterns:
+      - pattern: eval($INPUT)
+    message: >
+      eval() executes arbitrary Python code. If $INPUT contains user-controlled
+      data, this enables remote code execution. Use ast.literal_eval() for
+      safe evaluation of literals, or restructure to avoid eval entirely.
+    languages: [python]
+    severity: ERROR
+    metadata:
+      owasp: "A03:2021 Injection"
+      cwe: "CWE-95: Improper Neutralization of Directives in Dynamically Evaluated Code"
+      confidence: HIGH
+
+  - id: py-security-dangerous-exec
+    patterns:
+      - pattern: exec($INPUT)
+    message: >
+      exec() executes arbitrary Python code. If $INPUT contains user-controlled
+      data, this enables remote code execution. Restructure to avoid exec().
+    languages: [python]
+    severity: ERROR
+    metadata:
+      owasp: "A03:2021 Injection"
+      cwe: "CWE-95: Improper Neutralization of Directives in Dynamically Evaluated Code"
+      confidence: HIGH
