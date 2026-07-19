@@ -1,0 +1,32 @@
+# template-version: 2.0.0
+#
+# Template-owned agent manifest for sync-downstream.sh
+#
+# This file lists every core harness agent that sync-downstream.sh will copy
+# to a downstream project. Only agents explicitly listed here are synced —
+# user-created specialist agents are NEVER touched (no --delete).
+#
+# MAINTENANCE: Do not edit this list by hand. The source of truth is the
+# `template-owned: true` frontmatter flag on each agent file. Run
+# `python scripts/validate_manifest.py` to verify bidirectional consistency:
+#   - every file with `template-owned: true` must appear here, AND
+#   - every entry here must resolve to an existing file.
+# A CI step runs this check on every push.
+#
+# CONVENTION: one filename per line, no path prefix (all files are in
+# .claude/agents/), blank lines and comment lines (# ...) are ignored.
+
+agile-coach.md
+challenger.md
+first-principles-thinker.md
+librarian.md
+n8n-specialist.md
+prd-consistency-sim.md
+prompt-specialist.md
+qa-reviewer.md
+researcher.md
+specialist-creator.md
+tdd-implementer.md
+tdd-refactorer.md
+tdd-test-writer.md
+tech-product-lead.md

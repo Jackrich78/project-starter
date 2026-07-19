@@ -1,0 +1,18 @@
+# Semgrep SAST Configuration
+#
+# This file marks SAST as enabled for this project.
+# The qa-reviewer agent checks for this file's existence.
+#
+# Rules live in .semgrep/rules/ (loaded recursively by semgrep).
+# All rules are local YAML - no registry references, fully offline.
+#
+# Validate: semgrep --validate --config .semgrep/rules/
+# Scan:     semgrep scan --config .semgrep/rules/ --json --metrics=off .
+#
+# Rule categories:
+#   javascript/security/ - Child process injection, DOM XSS, JWT vulns
+#   python/security/     - SQL injection, eval, insecure pickle
+#   generic/secrets/     - AWS keys, GitHub tokens, PEM private keys
+#
+# To disable SAST: delete this file (qa-reviewer falls back to LLM-only)
+# To add rules: create YAML files in .semgrep/rules/ following semgrep syntax

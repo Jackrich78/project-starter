@@ -1,0 +1,48 @@
+# .github/pii-patterns.example.txt
+#
+# Starting point for .github/pii-patterns.txt, which is maintainer-private
+# and excluded from the public snapshot (see docs/guides/two-remote-sync.md).
+# Copy this file to .github/pii-patterns.txt and replace the placeholder
+# patterns below with your own real tokens. That file never ships publicly.
+#
+# Format: one POSIX extended regex (grep -E syntax) per line, consumed by
+# scripts/public_release_gate.sh. Blank lines and lines starting with `#`
+# are ignored. Every match found in the filtered export tree is a blocking
+# hit unless waived in .github/release-waivers.txt (format:
+# `path:pattern # reason`).
+#
+# This is a blacklist, not an allowlist — false positives (e.g. known
+# placeholder emails like user@example.com) are expected and get waived
+# individually, not filtered out here. See CLAUDE.md Hard-won rule #1.
+
+# --- Government/national ID number formats (example: replace with yours) ---
+# 8 digits + control letter
+\b[0-9]{8}[A-HJ-NP-TV-Z]\b
+
+# --- Brand / personal name tokens ---
+# Add each real brand, venture, or personal name that must not leak.
+YOUR_BRAND
+YOUR_NAME
+
+# --- Email / domain addresses ---
+# Add each real personal or venture email domain as its own token.
+# Deliberately not a generic any-email regex — that only ever matches
+# documentation placeholders and trains rubber-stamp waivers.
+your-domain\.com
+
+# --- Address hints ---
+# Add any street/city fragments that would identify a real location.
+\bYOUR_CITY\b
+
+# --- Secrets ---
+# 16+ key chars avoids matching prose like "risk-taking" / "task-icon".
+\bsk-[A-Za-z0-9]{16,}
+api_key[[:space:]]*=
+BEGIN [A-Za-z ]*PRIVATE KEY
+
+# --- Private project codenames ---
+# Add any internal/unreleased project codenames that must not leak.
+YOUR_CODENAME
+
+# --- Absolute local paths (leaks local machine username) ---
+/Users/[a-z]+/

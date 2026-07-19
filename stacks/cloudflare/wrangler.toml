@@ -1,0 +1,83 @@
+name = "cloudflare-worker"
+main = "src/index.ts"
+compatibility_date = "2024-11-12"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "production"
+# SLACK_SIGNING_SECRET - use .dev.vars locally, wrangler secret for deployed
+
+# Queue configuration (requires Workers Paid plan)
+# Uncomment when queues are available:
+# [[queues.producers]]
+# binding = "TASKS"
+# queue = "tasks"
+#
+# [[queues.consumers]]
+# queue = "tasks"
+# max_batch_size = 10
+# max_batch_timeout = 5
+# max_retries = 3
+
+# Cron triggers
+[triggers]
+crons = ["0 8 * * *", "0 */4 * * *"]
+
+# ============================================================
+# STAGING ENVIRONMENT (Optional - uncomment when needed)
+# ============================================================
+#
+# Why no [env.production]? The wrangler deploy bug (Issue #3392) means
+# `wrangler deploy` ignores [env.production] and uses top-level config.
+# Keep production at top-level to avoid this trap.
+#
+# To add staging:
+# 1. Create staging resources:
+#    npx wrangler d1 create my-database-staging
+#    npx wrangler kv namespace create CACHE_STAGING
+# 2. Uncomment and configure below
+# 3. Deploy: npm run deploy:staging
+#
+# [env.staging]
+# name = "cloudflare-worker-staging"
+#
+# [env.staging.vars]
+# ENVIRONMENT = "staging"
+#
+# [[env.staging.d1_databases]]
+# binding = "DB"
+# database_name = "my-database-staging"
+# database_id = "your-staging-database-id"
+# ============================================================
+
+# Test environment - includes queue for testing (uses local simulation)
+[env.test]
+[env.test.vars]
+ENVIRONMENT = "test"
+SLACK_SIGNING_SECRET = "test-slack-secret"
+
+[[env.test.queues.producers]]
+binding = "TASKS"
+queue = "tasks"
+
+[[env.test.queues.consumers]]
+queue = "tasks"
+max_batch_size = 10
+max_batch_timeout = 5
+max_retries = 3
+
+# KV namespace - uncomment and add your ID
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id = "your-kv-namespace-id"
+
+# D1 database - uncomment and add your ID
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "my-database"
+# database_id = "your-d1-database-id"
+
+# R2 bucket - uncomment and add your bucket name
+# [[r2_buckets]]
+# binding = "STORAGE"
+# bucket_name = "my-bucket"

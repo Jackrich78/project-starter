@@ -1,0 +1,66 @@
+# .github/public-exclude.txt
+# Authoritative blacklist for the public repo snapshot.
+# Used by the git archive workflow in docs/guides/two-remote-sync.md.
+# Paths relative to repo root. Applied: rm -rf /tmp/release/$pattern
+# NOTE: glob patterns need a separate rm -f step (see workflow).
+
+# Brand-specific skills
+.claude/skills/sd-brand-guidelines
+.claude/skills/linkedin-carousel
+.claude/skills/linkedin-post
+.claude/skills/linkedin-script
+.claude/skills/linkedin-shared
+
+# Personal skill — hook formulas/examples reference the owner's own posts
+# and voice; not generic template content.
+.claude/skills/linkedin-hook
+
+# Brand-specific commands
+.claude/commands/demo.md
+
+# Personal-document skill — eval fixtures contain real personal data
+# (names, national ID numbers, a street address). Never publish.
+.claude/skills/formal-doc
+.claude/skills/formal-doc-workspace
+
+# Individual FEAT-* directories — clean slate for public users
+# NOTE: docs/features/README.md is intentionally kept (not matched by this glob)
+# Glob expansion requires unquoted rm in step 4 of the sync workflow
+docs/features/FEAT-*
+
+# Private research, guides, and working docs
+docs/research
+docs/guides/creating-branded-presentations.md
+docs/z-alba
+
+# PPTX HTML build sources (compiled .pptx stays; raw HTML sources are internal)
+docs/system/pptx-workspace
+
+# Personal workspace files (committed before .gitignore entry was added)
+workspace
+
+# Runtime files — gitignored but listed as safety backstop
+.claude/logs/agent.db
+.claude/logs/security.log
+.claude/session-state.json
+.claude/settings.local.json
+.claude/_archive
+.claude/logs/agent.db.bak
+.claude/settings.json.bak
+
+# Release-gate data files — the pattern file enumerates the very personal
+# tokens it protects (names, brands, domains); never ship it. The gate
+# script itself (scripts/public_release_gate.sh) is generic and does ship.
+.github/pii-patterns.txt
+.github/release-waivers.txt
+
+# Internal-only v2 observability schema tests — they test the v2 send_event/
+# init_db additions that public-overrides deliberately replaces with v1;
+# shipping them makes the public suite fail by construction.
+test/unit/FEAT-035/test_observability_schema.py
+
+# Debug session records — real project/client context accumulates here
+docs/debug
+
+# Internal feature roadmap — public repo ships an empty features placeholder
+docs/features/backlog.md
