@@ -2,29 +2,44 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Bash",
+        "matcher": "Bash|Read|Edit|Write|MultiEdit|NotebookEdit",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 $(git rev-parse --show-toplevel)/.claude/hooks/pre_tool_use.py"
-          },
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre_tool_use.py\""
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
           {
             "type": "command",
-            "command": "python3 $CLAUDE_PROJECT_DIR/.claude/hooks/send_event.py"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/send_event.py\""
           }
         ]
       }
     ],
     "PostToolUse": [
       {
+        "matcher": "*",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 $(git rev-parse --show-toplevel)/.claude/hooks/post_tool_use.py"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/post_tool_use.py\""
           },
           {
             "type": "command",
-            "command": "python3 $CLAUDE_PROJECT_DIR/.claude/hooks/send_event.py"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/send_event.py\""
+          }
+        ]
+      },
+      {
+        "matcher": "Task|Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/subagent_claim_check.py\""
           }
         ]
       }
@@ -34,11 +49,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 $(git rev-parse --show-toplevel)/.claude/hooks/pre_compact.py"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre_compact.py\""
           },
           {
             "type": "command",
-            "command": "python3 $CLAUDE_PROJECT_DIR/.claude/hooks/send_event.py"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/send_event.py\""
           }
         ]
       }
@@ -48,11 +63,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 $(git rev-parse --show-toplevel)/.claude/hooks/stop.py"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/stop.py\""
           },
           {
             "type": "command",
-            "command": "python3 $CLAUDE_PROJECT_DIR/.claude/hooks/send_event.py"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/send_event.py\""
           }
         ]
       }
@@ -62,28 +77,180 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 $CLAUDE_PROJECT_DIR/.claude/hooks/send_event.py"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/send_event.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/session_start_reprime.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/session_prime.py\""
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/send_event.py\""
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/send_event.py\""
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/send_event.py\""
           }
         ]
       }
     ]
   },
-  "security": {
-    "allowed_directories": [
-      ".",
-      "/tmp"
+  "permissions": {
+    "defaultMode": "default",
+    "allow": [
+      "Bash(git status)",
+      "Bash(git status *)",
+      "Bash(git log)",
+      "Bash(git log *)",
+      "Bash(git diff)",
+      "Bash(git diff *)",
+      "Bash(git branch)",
+      "Bash(git branch --list*)",
+      "Bash(git branch -a)",
+      "Bash(git branch -r)",
+      "Bash(git branch --show-current)",
+      "Bash(git show)",
+      "Bash(git show *)",
+      "Bash(git rev-parse)",
+      "Bash(git rev-parse *)",
+      "Bash(git stash list)",
+      "Bash(git stash list *)",
+      "Bash(ls)",
+      "Bash(ls *)",
+      "Bash(pwd)",
+      "Bash(wc)",
+      "Bash(wc *)",
+      "Bash(head)",
+      "Bash(head *)",
+      "Bash(tail)",
+      "Bash(tail *)",
+      "Bash(grep)",
+      "Bash(grep *)",
+      "Bash(rg)",
+      "Bash(rg *)",
+      "Bash(which)",
+      "Bash(which *)",
+      "Bash(echo *)",
+      "Bash(npm test)",
+      "Bash(npm test -- *)",
+      "Bash(npm run test)",
+      "Bash(npm run test -- *)",
+      "Bash(gh issue list)",
+      "Bash(gh issue list *)",
+      "Bash(gh issue view)",
+      "Bash(gh issue view *)",
+      "Bash(gh pr list)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr view)",
+      "Bash(gh pr view *)",
+      "Bash(gh run list)",
+      "Bash(gh run list *)",
+      "Bash(gh run view)",
+      "Bash(gh run view *)",
+      "Bash(gh auth status)",
+      "Bash(gh --version)"
     ],
-    "require_approval_for": [
-      "rm",
-      "git push --force",
-      "npm publish"
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.netrc)",
+      "Read(~/.config/gh/**)",
+      "Read(~/.docker/config.json)",
+      "Read(~/.npmrc)",
+      "Read(~/.pypirc)",
+      "Read(~/.kube/**)",
+      "Read(~/.gnupg/**)",
+      "Read(~/.claude/projects/**/*.jsonl)",
+      "Read(~/.claude/projects/**/subagents/**)",
+      "Read(**/.dev.vars)",
+      "Read(**/.git-credentials)",
+      "Read(**/id_rsa*)",
+      "Read(**/id_ed25519*)",
+      "Read(**/*.p12)",
+      "Read(**/*.pfx)",
+      "Read(**/.npmrc)",
+      "Read(**/.pypirc)",
+      "Read(**/*credentials*)",
+      "Read(**/.secret*)",
+      "Read(**/.credentials.json)",
+      "Read(~/.git-credentials)",
+      "Read(~/.claude/history.jsonl)",
+      "Read(~/.claude/.credentials.json)",
+      "Read(~/.claude/sessions/**)",
+      "Read(~/.claude/shell-snapshots/**)",
+      "Read(~/.claude/paste-cache/**)",
+      "Read(~/.claude/file-history/**)",
+      "Read(~/.claude/session-env/**)",
+      "Read(~/.claude.json)",
+      "Read(~/.config/anthropic/**)",
+      "Read(~/.config/gcloud/**)",
+      "Read(~/.azure/**)",
+      "Read(~/.wrangler/**)",
+      "Read(~/.pgpass)",
+      "Read(~/.vault-token)",
+      "Read(./.github/pii-patterns.txt)",
+      "Read(./.github/release-waivers.txt)",
+      "Read(./.claude/settings.local.json)",
+      "Bash(npm * --node-options*)",
+      "Bash(npm * --script-shell*)",
+      "Bash(npm * --prefix*)",
+      "Bash(npm * --userconfig*)",
+      "Bash(git config remote.*)",
+      "Bash(git config alias.*)",
+      "Bash(git config core.*)",
+      "Bash(git config --global *)",
+      "Bash(git config --system *)",
+      "Bash(rm -rf *)",
+      "Bash(rm -fr *)",
+      "Bash(sudo *)",
+      "Bash(rg --pre*)",
+      "Bash(rg * --pre*)",
+      "Bash(find * -exec*)",
+      "Bash(find * -delete*)",
+      "Bash(git -c *)",
+      "Bash(git * --output*)",
+      "Bash(gh auth status --show-token*)",
+      "Bash(gh auth status -t*)",
+      "Bash(git push --force*)",
+      "Bash(git push -f *)",
+      "Bash(git push --force-with-lease*)",
+      "Bash(git push * +*)",
+      "Bash(git push --mirror*)",
+      "Bash(gh repo delete*)",
+      "Bash(gh gist create*)",
+      "Bash(gh api *)",
+      "Bash(gh secret *)",
+      "Bash(gh variable *)"
     ]
-  },
-  "logging": {
-    "database": ".claude/logs/agent.db",
-    "retention_days": 30
-  },
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   }
 }

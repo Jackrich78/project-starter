@@ -1,194 +1,78 @@
-# Working With Claude
-
-**Purpose:** How to configure your project context and steer Claude's behaviour during sessions.
-
+---
+type: guide
+title: Working with Claude
+description: How to steer a session - plan mode, when to delegate, how to brief a sub-agent, course-correcting, /clear discipline, and which of the four rule layers a new rule belongs in.
+tags: [sessions, steering, delegation, rules]
 ---
 
-## Configuring Your Project Context
+# Working with Claude
 
-Claude Code loads two key files at startup. Getting these right is the highest-leverage thing you can do for output quality.
+Practical steering for a session on this harness. Setup is in `getting-started.md`; the operating contract is CLAUDE.md.
 
-### CLAUDE.md — the startup brain
+## Plan first when the cost of a wrong turn is high
 
-CLAUDE.md is loaded automatically at the start of **every session** — even when it's not relevant. This makes it powerful and expensive at the same time.
+Use plan mode (Shift+Tab to cycle) for anything that touches several files, an unfamiliar area, or a choice between approaches. Read, explore and agree the plan before any edit; skip it for a change you could describe in one sentence. For a feature, the plan is the parent issue's design note and `/blueprint`, not a chat message: it must survive the session. When a plan feels too convenient, ask for the strongest case against it (`grilling` skill, or the `challenger` agent) before approving.
 
-**What to put here:**
-- Your actual test command (`npm test`, `pytest`, `cargo test`)
-- Your dev server command (`npm run dev`, etc.)
-- Tech stack in one line (e.g., "TypeScript, Cloudflare Workers, D1")
-- Project-specific rules Claude must always follow (e.g., "never commit .env", "use Vitest not Jest")
-- Command bindings if you've customised them
+## When to delegate
 
-**What NOT to put here:**
-- Full architecture documentation (load on-demand via `/prime`)
-- Long feature descriptions
-- Anything that only matters in specific contexts
+The main thread is the scarce resource. Delegate when work is:
 
-**Target:** Under 50 lines. Every line costs tokens on every session.
+- **bulky to read** (many files, logs, search results) and you need only the conclusion;
+- **independent** of the next step (run several in parallel in one message);
+- **better judged cold** (review, fact-check, QA: the author should not be the reviewer);
+- **web research** (never on the main thread).
 
-**Example — before (template placeholder):**
-```
-# Project Starter
-Lean agent harness template for AI-assisted development.
+Do inline what is under half a context window and needs your live reasoning. The routing table is CLAUDE.md § Delegation & model policy; `claude-code-guide` answers how Claude Code itself behaves.
 
-## Quick Start
-npm test
-npm run dev
-```
+## Brief a sub-agent so its claim can be true
 
-**Example — after (configured for your project):**
-```
-# Acme API
-Node.js REST API — Express, Postgres, Vitest.
+A sub-agent starts cold: it sees its own prompt and the brief, not your conversation.
 
-## Quick Start
-npm test          # Vitest unit + integration
-npm run dev       # Express on :3000, hot reload
+1. **Give it the live state it reasons about** (the diff, the failing output, file paths), or label what it returns *unverified*. An agent briefed only with a description can only reason from priors.
+2. **State the question and the done shape**: what to return, in what format, how long, and that it must end with `PASS`, `FAIL: <reason>` or `ESCALATION: <reason>`.
+3. **Brief it to disprove, not to comply** when you want a check: "find what is wrong with this" beats "confirm this is right".
+4. **Pass pointers, not payloads**: paths and line ranges, not pasted files.
+5. **Spawn unnamed for one-shot work**; name an agent only to continue it, and end that brief with "SendMessage your report before stopping".
 
-## Rules
-- Never use raw SQL — always use the query builder in src/db/
-- All routes need request validation via src/middleware/validate.ts
-- Tests live in test/ mirroring src/ structure
-```
+Then treat the result as a claim. State its independence tier: **Tier 1** prompt only (agreement means the framing is coherent), **Tier 2** it had tool access (the framing is yours, the data is not), **Tier 3** independent inputs (agreement is evidence). Verify on disk before acting. A one-turn acknowledgement means the work was not done.
 
-**How to configure:** In your first Claude Code session, type:
-```
-Help me update CLAUDE.md and PROJECT.md for my project. I'm building [your description].
-```
+## Course-correct early
 
-Claude will ask clarifying questions and produce a tailored CLAUDE.md. This one conversation shapes every session that follows.
+- **Interrupt (Ctrl+C; Esc only clears the input)** the moment it heads the wrong way; a correction early costs one turn, late costs the rebuild. Double-Esc (or `/rewind`) restores an earlier point if it already went wrong.
+- **Say what is wrong and what you want instead**, with the evidence ("that file does not exist: `ls` shows ..."). Corrections stick better with a reason.
+- **Scope phrases work**: "only change what I asked", "do not guess; ask", "step by step" for a subtle bug, "take the contrarian view" before committing to a direction.
+- **Two failed corrections on the same point: stop and restart** with a better prompt; a context full of dead ends degrades the next attempt.
+- **After compaction**, "I have never seen this" is not "this did not happen": search the session (`scripts/recall.py <term>`) before calling something invented.
 
----
+## `/clear` discipline
 
-### PROJECT.md — the project memory
+One window, one task. `/clear` between unrelated tasks, and when a ticket is done; a ticket that needs a handover before it closes was mis-sized. `/clear` is not re-primed (`docs/system/hooks.md`), so start the next task by naming it, or run `/prime`. `/compact` is for continuing the *same* task; the salvage hook restores paths, commands and your recent words afterwards. Anything worth keeping beyond the window goes on the issue, in the wiki or in `docs/decisions.md` before you clear.
 
-PROJECT.md is loaded on-demand by `/prime`. It's the right place for information that matters when planning and building, but doesn't need to load constantly.
+## Four layers of rules: where does a new rule go?
 
-**What to put here:**
-- Vision and problem statement (1-2 paragraphs)
-- Current status and recent milestones
-- Roadmap with rough priorities
-- Key decisions already made (see table below)
+| Layer | File | Loads | Shared | Put here |
+|---|---|---|---|---|
+| Global | `~/.claude/CLAUDE.md` | every session, every project | no (yours) | personal style, safety rules you want everywhere |
+| Project | `CLAUDE.md` | every session in the repo | yes (git) | the operating contract: rules that apply to all work here |
+| Path-scoped | `.claude/rules/*.md` with `paths:` | when matching files are in play | yes (git) | conventions for one area (tests, hooks, docs) |
+| Auto-memory | `~/.claude/projects/<project>/memory/` | every session, per project and machine | no | what Claude learned about you and the project |
 
-**The "Key Decisions" table** is particularly valuable. It stops Claude from relitigating choices you've already settled:
+| The rule is... | It goes in |
+|---|---|
+| true on every project you touch | global CLAUDE.md |
+| true for everyone on this repo, always | project CLAUDE.md (keep it short: every line is paid every session) |
+| true only when editing one kind of file | `.claude/rules/` with `paths:` |
+| a workflow or procedure | a skill, not a rule |
+| must hold regardless of the model | a hook or test (a rule that failed twice in prose becomes one) |
+| a fact about the system | the wiki page for that fact, linked from where it is needed (`docs/guides/knowledge-architecture.md`) |
+| a personal preference or correction | auto-memory |
+| why an option was chosen or rejected | `docs/decisions.md` |
+| a method an agent should reuse | that agent's memory file (`docs/system/memory-systems.md`) |
 
-```markdown
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Auth method | JWT (no sessions) | Stateless deployment on Workers |
-| Database | D1 (SQLite) | Free tier, no ops, acceptable scale |
-| Test framework | Vitest | Native ESM, faster than Jest |
-```
+If a rule would have to be repeated in two layers, it is in the wrong place or one copy is a pointer.
 
-Without this, Claude may propose alternatives in every session. With it, settled decisions stay settled.
+## See also
 
----
-
-## Steering Claude During Sessions
-
-Once your project is configured, these phrases let you adjust Claude's behaviour in the moment without starting over.
-
-### The five intent modes
-
----
-
-#### 1. Slow down & reason deeply
-
-**When to use:** Before complex decisions, architectural choices, or difficult debugging.
-
-| Phrase | Effect |
-|--------|--------|
-| `think carefully` | Activates extended reasoning before responding |
-| `think ultra hard` | Maximum reasoning effort — use for high-stakes decisions |
-| `step by step` | Forces sequential explanation, surfaces hidden assumptions |
-| `walk me through this exactly` | Detailed narration of logic — good for auditing a plan |
-
----
-
-#### 2. Stop — don't fill gaps
-
-**When to use:** When Claude seems confident without having read the relevant file; when wrong assumptions have burned you before.
-
-| Phrase | Effect |
-|--------|--------|
-| `do not assume` | Claude must state what it doesn't know |
-| `do not guess` | Stronger — refuses to proceed on uncertain information |
-| `ask if unsure` | Invites questions rather than confident-sounding speculation |
-| `ask me questions` | Claude interviews you before acting |
-
----
-
-#### 3. Verify before moving on
-
-**When to use:** After implementation, before a commit, when you want Claude to catch errors it introduced.
-
-| Phrase | Effect |
-|--------|--------|
-| `validate your work` | Claude reviews its own output for correctness |
-| `check your work` | Shorter form — same intent |
-| `do user end to end testing` | Claude traces the full user journey through the code |
-
----
-
-#### 4. Challenge the approach
-
-**When to use:** Before committing to a direction; when a plan feels too convenient; stress-testing architecture.
-
-| Phrase | Effect |
-|--------|--------|
-| `take the contrarian view` | Claude argues against its own proposal |
-| `ask the sub agents` | Spawns a fresh-context agent to review the plan independently |
-
----
-
-#### 5. Control scope & output
-
-**When to use:** Preventing scope creep, reining in verbosity, stopping silent changes to unrelated code.
-
-| Phrase | Effect |
-|--------|--------|
-| `tell me succinctly` | Short answer only — suppresses elaboration |
-| `only change what I asked` | Strict scope enforcement — no opportunistic refactors |
-| `preserve references` | Don't touch cross-references, links, or imports outside the target |
-
----
-
-### Combining phrases for effect
-
-Phrases stack. The right combinations produce qualitatively different behaviour:
-
-**Before a risky refactor:**
-```
-Think ultra hard, do not assume, list files before modifying, validate your work when done.
-```
-
-**When Claude is being verbose:**
-```
-Tell me succinctly.
-```
-
-**When a plan might be wrong:**
-```
-Take the contrarian view, then ask me questions before proceeding.
-```
-
-**When debugging a subtle issue:**
-```
-Step by step. Do not guess. Ask me questions if you need more context.
-```
-
----
-
-### Workflow-specific tips
-
-- **Always `/prime [mode] FEAT-XXX` before starting** — mode shapes mindset, not just context. `think` loads planning instincts; `build` loads TDD discipline.
-- **`/handover` before you stop, even mid-session** — the messy in-progress state IS the state the next session needs to recover. Clean handovers save 10+ minutes of re-orientation.
-- **`/retro` is where value compounds** — skip it and patterns stay in the chat log. Run it and they become reusable skills that improve every future session.
-
----
-
-## See Also
-
-- [Getting Started](getting-started.md) — Setup steps and first session
-- [Commands Reference](commands-reference.md) — Full command documentation
-- [Architecture](../system/architecture.md) — System design and patterns
+- `docs/guides/agent-harness-patterns.md`: patterns behind the delegation rules.
+- `docs/guides/claude-code-lesser-known.md`: loading and enforcement behaviours worth knowing.
+- `docs/system/issue-flow.md`: how a session picks up and closes work.

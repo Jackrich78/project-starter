@@ -1,140 +1,100 @@
-# Project Starter
+# Project Starter — operating contract
 
-Lean agent harness template for AI-assisted development.
+<!-- CUSTOMIZE: replace this line with one sentence on what this project is and for whom. -->
+A Claude Code harness: an orchestrator main thread that delegates to sub-agents, tracks work in GitHub Issues, and keeps what it learns in a linted wiki. **Not all work is code** — documents, research and decisions follow the same discover → spec → build → prove arc. Everything else is a pointer; one home per fact.
 
-> **New project?** See [docs/guides/getting-started.md](docs/guides/getting-started.md) for setup instructions.
+## Governing documents
 
-## Governing documents (orient here first)
-
-<!-- CUSTOMIZE: /setup fills this in with the project's real governing docs. These carry the *what/why* — read the right ones before proposing or building; don't re-litigate a settled decision unless its revisit clause fires. The portable `context-priming` skill (`.claude/skills/context-priming/`) and `/prime` key off this table, so keep it current when a new governing doc is added. This repo picked "Full governance" via `/setup`: `PROJECT.md` and `DECISIONS.md` are real files here; `PRINCIPLES.md` and `docs/ARCHITECTURE.md` are left in the table as the template's example rows and are NOT present in this repo (see `.claude/commands/setup.md` §2.7 for how "Full governance" would generate them) — remove or fill them in if this repo later adopts them. -->
-
-| Document | What it's for | Load |
+| Document | What it is for | Load |
 |---|---|---|
-| `PROJECT.md` | current state + roadmap | orient (all modes) |
-| `PRINCIPLES.md` | operating principles — each states what it *forbids* | orient (all modes) |
-| `DECISIONS.md` | index + the *why* behind every call; superseded entries archived | index always; full entries on-demand |
-| `docs/ARCHITECTURE.md` | design rationale | on-demand (build/review) |
+| `PROJECT.md` | vision · principles · current state · roadmap themes (`#N` links) | every session |
+| `docs/index.md` | wiki entry point (progressive disclosure) | entering an unfamiliar area |
+| `docs/decisions.md` | append-only decision log, rejected options included | before re-opening a settled question |
+| `docs/system/issue-flow.md` | how work lives in GitHub Issues: states, labels, pickup, close-out | before touching an issue |
+| `docs/reference/claude-code.md` | official Claude Code doc links — **ask `claude-code-guide` before changing agents, hooks, settings or skill frontmatter** | before harness changes |
 
-## Quick Start
+## Orchestrator contract
 
-```bash
-# Run tests
-npm test
+1. **Reduce · Offload · Isolate.** The main thread is the bottleneck: reads, greps, scoping and drafting go to sub-agents; pass pointers, not payloads; contain side effects.
+2. **Sub-agent output is a claim, not a fact — and the brief decides whether the claim *can* be true.** Give an agent the live state it reasons about, or label its output unverified. Verify on disk before acting; a one-turn ack means the work was not done.
+3. **State the independence tier with every multi-agent result.** Tier 1 prompt-only (agreement = framing coherence) · Tier 2 tool access (framing is yours, data is not) · Tier 3 independent inputs (agreement is evidence). The `subagent_claim_check` hook reminds you; you apply the tier.
+4. **Spawn unnamed for one-shot work; name an agent only to continue it**, and end a named brief with "SendMessage your report before stopping".
+5. **Verify before disbelieving.** After compaction, "I have never seen this" is not "this did not happen": `scripts/recall.py <term>` searches this session and its sub-agents before you call anything invented.
+6. **Ask first** for anything irreversible, outward-facing, or pushed to the default branch. Routine, reversible steps proceed.
 
-# Start dev
-npm run dev
-```
+## The spine
 
-## Agents
+Work lives in GitHub Issues; the issue is the spec (`docs/system/issue-flow.md`). `/explore` → `/blueprint` → `to-tickets` → `/build` (one sub-issue: `work-issue` + TDD with isolated sub-agents) → `/qa --issue N` → `/commit` (`Closes #N` on the commit in `direct` mode, on the PR in `pr` mode) → `/session-winddown`. A `BLOCKED SECURITY` verdict blocks `/commit` (hook-enforced through the verdict file the orchestrator writes from the `/qa` marker). **Size in context windows, not hours:** under half a window → inline, name it in the commit · one window → one ticket · more → parent issue + sub-issues, one window each.
 
-Specialists in `.claude/agents/` (descriptions auto-loaded from frontmatter).
+## Workflow
 
-**Command bindings:**
-- `/build` → `tdd-test-writer` → `tdd-implementer` → `tdd-refactorer` → `qa-reviewer`
-- `/qa` → `qa-reviewer`
+- Integration mode: `pr` <!-- pr | direct — set by /setup. pr = branch per issue + PR carrying "Closes #N"; direct = commit to the default branch -->
+- Agent signature on issues and comments: `> *Posted by the assistant.*` <!-- "" to disable -->
+- Areas (labels): <!-- CUSTOMIZE: area:core, area:ops … -->
 
-Full index: `.claude/agents/README.md`
+## Delegation & model policy
 
-## Commands
+Opus by role, not "to be safe": plan and judge on Opus, implement on Sonnet, retrieve on Haiku. A role not listed runs on Sonnet. Agent frontmatter must match these tables (`tests/harness/test_model_tier_table.py`). Web research never runs on the main thread.
 
-- `/setup [docs path]` - One-time project initialization from template
-- `/explore [topic]` - Discover and define features → PRD
-- **Step 5.5 (post-PRD, pre-blueprint):** After `/explore` produces a PRD, always run the `prd-consistency-sim` agent (cold read) before `/blueprint`. It surfaces spec gaps and ambiguous assumptions in a single sub-agent call — far cheaper than discovering them mid-build.
-- `/blueprint FEAT-XXX` - Technical grounding + implementation plan
-- `/build FEAT-XXX` - TDD implementation with isolated subagents + QA
-- `/qa [target]` - QA review (file, directory, feature, or sweep)
-- `/commit` - Git workflow (checks QA gate first)
-- `/handover` - Session recovery
-- `/retro` - Extract learnings → skills
-- `/logs` - Query observability database
-- `/debug [issue]` - Systematic bug investigation
-- `/create-specialist [lib]` - Create domain-expert sub-agent
-- `/update-docs` - Update documentation index
-- `/sync [target]` - Sync template hooks/commands to downstream projects
-- `/prime [mode]` - Load project context
+| Role | Model | Effort |
+|---|---|---|
+| Main thread (orchestrator) | as set | as set |
+| Planning, design, review, judgement (challenger, first-principles-thinker, tech-product-lead, qa-reviewer, prd-consistency-sim) | opus | high |
+| Implementation and default delegation (tdd-test-writer, tdd-implementer, tdd-refactorer, librarian, drafter, agile-coach, prompt-specialist, persona-creator) | sonnet | medium |
+| Research (researcher) | sonnet | low |
+| Pure volume: retrieval, lookups, bulk rewrites | haiku | low |
 
-## Key Files
+| When you need… | Call | Model |
+|---|---|---|
+| external sources, library docs, prior art — memo returned, filed on the issue or as a wiki page (`docs/templates/research-memo.md`) | researcher | sonnet, effort low |
+| a proposal checked before the human sees it, or any refute pass | challenger | opus |
+| a problem reasoned from fundamentals, or a choice between options | first-principles-thinker | opus |
+| a feature broken down and sequenced, or a roadmap proposed | tech-product-lead | opus |
+| a cold read of a spec for gaps and silent assumptions | prd-consistency-sim | opus |
+| QA on a build, or any security- or prod-relevant change | qa-reviewer | opus |
+| a docs or wiki audit, cross-reference repair, surgical doc edits | librarian | sonnet |
+| a document over one screen, or anything in the owner's voice | drafter (`MODE: internal` or `MODE: external-voice`) | sonnet |
+| a process retro at wind-down | agile-coach | sonnet |
+| a prompt generated or tightened | prompt-specialist | sonnet |
+| a new persistent agent persona or library specialist | persona-creator | sonnet |
+| how Claude Code itself behaves (hooks, frontmatter, settings) | claude-code-guide (built in) | as set |
+| anything else | general-purpose | sonnet |
 
-- `PROJECT.md` - Project context and roadmap
-- `docs/features/` - Feature documentation (README, prd, plan per feature)
-- `docs/qa/` - QA review reports
-- `stacks/` - Deployment scaffolding (copy to root when using a stack)
-- `.claude/skills/` - Learned patterns
-- `.claude/agents/tdd-*.md` - TDD subagents (test-writer, implementer, refactorer)
-- `.claude/agents/qa-reviewer.md` - Security and quality reviewer
-- `.claude/logs/agent.db` - Session tracking
-- `.github/tests/` - Scaffold validation tests (extend or delete)
-- `test/` - Your project tests (unit/, integration/, e2e/)
+## Agent memory
 
-## Principles
+Each agent keeps methods — never findings, verdicts or drafts — in `.claude/agent-memory/<name>/MEMORY.md`: one line per entry, `- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url>`, hard cap 150 lines (`scripts/validate_agent_memory.py`, run by `/commit`). The TDD trio self-curates (`memory: project`). Every other agent reads its file via a line at the top of its prompt and ends its report with `## Proposed memory entries`; the orchestrator writes the accepted ones. Agents that ingest outside material (web, pasted text) never get the `memory:` flag. Mechanism: `docs/system/memory-systems.md`.
 
-1. **Reduce** - Minimize context, load on-demand
-2. **Offload** - Use sub-agents for specialized work
-3. **Isolate** - Contain side effects, fail gracefully
+## Knowledge and decisions
 
-## Development Standards (This Project)
+- **The wiki is the context brain.** Reach for `docs/` before reasoning from memory; a fact you cannot cite to a page is a fact to go and check. A durable fact established in conversation lands on its page in that conversation. Routing: `docs/guides/knowledge-architecture.md`.
+- **Log the decision in the turn it is made**, one line in `docs/decisions.md`, with the rejected option — code preserves what was built, never what was tried.
+- **A wiki claim you observe to be false is fixed in that turn** — not noted, not queued, and not answered with a proposal for a new lint.
+- No feature folders. Specs live on issues; what outlives the feature moves to the wiki at close-out.
 
-- **TDD with isolation**: `/build` runs RED-GREEN-REFACTOR with context-isolated subagents
-- **QA gate**: Security issues from `/build` or `/qa` block `/commit` until resolved
-- **Outcomes over outputs**: Features solve user problems, not just ship code
-- **Spike before commit**: Use `spikes/` for uncertain approaches, extract learnings to `docs/`
+## Security
 
-## Context Rules
-
-- **Web research**: Always use the Researcher agent (`subagent_type="researcher"`) for web searches. This preserves context in the main thread.
-- **TDD subagents**: Test writer sees only PRD, implementer sees only tests, refactorer sees tests + implementation. This isolation prevents bias.
-- **QA context**: The qa-reviewer reads handover.md, NOT the builder conversation. Clean context enables honest review.
-
-## Model Defaults
-
-Three tiers govern which model runs each agent. The goal: expensive models where judgment is irreplaceable, cheap models for retrieval.
-
-| Tier | Model | When to use | Example agents |
-|------|-------|-------------|----------------|
-| Opus | `opus` | Orchestrator + high-stakes review: any agent whose output directly gates whether work ships | `challenger`, `qa-reviewer` |
-| Sonnet | `sonnet` | Workhorse — ~95% of agents: planning, writing, coding, research synthesis | `librarian`, `specialist-creator`, `tech-product-lead`, `tdd-*`, `agile-coach` |
-| Haiku | `haiku` | Scout / retrieval: fast lookups, symbol resolution, grep-and-return tasks with no judgment required | narrow retrieval specialists only |
-
-**Override at the call site** with `model: <tier>` in agent frontmatter when a small project wants cheaper review (e.g. set `challenger` to `sonnet` for low-stakes internal tooling).
-
-## Agent Learning Loop
-
-The harness supports an evidence-gated learning loop so per-feature retros compound into lasting CLAUDE.md improvements.
-
-**Flow:** Agile Coach proposes → human approves → Librarian applies.
-
-1. **Agile Coach** (read-only) cross-reads agent memory files and `git log` after a feature ships, identifies patterns with ≥2 converging sources or objective evidence, and emits a structured proposal.
-2. **Human reviews** the proposal and approves, rejects, or edits individual items.
-3. **Librarian** applies approved items via `Edit` only — never `Write`. It reads the target file first, makes surgical line changes, then runs `git diff --stat` to confirm <10% line-count delta.
-
-**Coach scope boundary** — proposals may target:
-- `docs/system/`, `docs/guides/` (process documentation)
-- `CLAUDE.md § Hard-won rules` (this file)
-- `memory/agents/*.md` (agent memory files)
-- Agent prompt files in `.claude/agents/`
-
-**Out of scope for Coach proposals:** `src/` code, database schema, test fixtures, CI configuration.
+- No credentials in code, logs or shell commands — the compaction salvage always persists recent commands, and the opt-in observability hook persists Bash and its output. **Never expand a secret into a printed position**, presence checks included: `[ -n "$TOKEN" ] && echo set`, never `${TOKEN:+yes}`.
+- Read before write; Edit over Write; `git diff` after multi-section edits. Prefer deletion when adding and deleting both solve it.
+- Deregister a hook in `settings.json` before deleting its file. A rule that failed twice in prose becomes a hook or a test.
+- Every external action is observable; every change names its undo before it runs.
 
 ## Hard-won rules
 
-Rules extracted from feature retros via the Agile Coach → human approval → Librarian pipeline.
+1. **A test not in a CI lane does not exist.** Add the file to the workflow in the same commit; a local green in no lane enforces nothing.
+2. **Confidentiality tooling must not leak what it protects.** Pattern lists, waivers and `.gitignore` comments are content too; the leak gate scans them, case-insensitively, filenames included.
+3. **Optional runtimes never break the primary test command.** `npm test` degrades to a notice without Python; CI always runs the full suite.
+4. **The memory read line goes at the top of the agent file.** Placed at the bottom, it was skipped every time.
+5. **Find what exists before building.** An instruction that lives where nothing loads it never runs; a capability nobody points at gets rebuilt.
 
-1. **Porting from a private repo: adversarial public-readiness pass required.** Acceptance criteria verify functional correctness; they do not catch confidential leakage (real names, private repo identifiers) or security properties of ported scripts (e.g. a `--dry-run` flag that still writes). Before any private-to-public port ships: (1) run a blocking grep gate for private identifiers — zero hits required; (2) audit every ported script's side-effect contract independently of its claimed flags; (3) treat the bar as "genuinely public-ready," not "passes the ACs." _(from this template's own development retros.)_
+## Where things live
 
-2. **Optional runtimes must never break the primary test command.** When adding tests in a non-primary language to a polyglot template (e.g. Python pytest in a Node.js template), the primary test runner (`npm test`) MUST degrade gracefully when the secondary runtime is absent — exit 0 with a notice, never a hard failure. Use a bridge script that detects runtime availability before delegating. CI runs the full suite; local cloners without the optional runtime are unaffected. _(from this template's own development retros.)_
+`.claude/agents/` sub-agent contracts (roster is harness-injected; `TEMPLATE.md` is the shape) · `.claude/skills/` every workflow, invoked as `/<name>` · `.claude/rules/` path-scoped conventions (testing, agents, skills, wiki, hooks) · `.claude/hooks/` enforcement (`.claude/hooks/README.md`) · `docs/system/` how the harness and the system work · `docs/guides/` practitioner how-tos · `tests/harness/` tests of the harness itself · `scripts/` validators and gates.
 
-3. **Sync manifests must be flag-derived, not hand-maintained.** When a pipeline propagates a subset of files to downstream targets, a hand-maintained list silently drifts when files are added. Instead: mark canonical files with a `template-owned: true` (or equivalent) frontmatter flag; enforce bidirectionally — every flagged file must appear in the manifest, and every manifest entry must resolve to an existing file. The flag travels with the file and survives renames; the validator is CI-gated. One-directional checks are insufficient. _(from this template's own development retros.)_
+## Quick start
 
-4. **Run the "does this already exist?" competitive check before building a differentiation thesis, not after.** A named competitor that already ships the capability can invalidate the thesis; discovering it mid-build is expensive. Check first, reword the claim before it ships. _(from a downstream project retro.)_
-
-5. **Spike the single load-bearing technical unknown in parallel with planning, never only after it.** Identify the one mechanism the story cannot survive without and validate it early — an entire plan can rest on an unverified mechanism. _(from a downstream project retro.)_
-
-6. **Don't re-litigate settled decisions — read the decision log and principles doc first.** A settled decision is settled unless new evidence trips its revisit clause; recurring re-openings cost repeated rounds. _(from a downstream project retro.)_
-
-7. **Name load-bearing constraints and first-class tensions up front.** State the hard constraints and the core design tensions (e.g. "watchability vs. credibility") at the start of a design round, so they aren't discovered late as detours. _(from a downstream project retro.)_
-
-8. **Every feature folder gets a `README.md` index from the start; mark drafts and separate them from canonical outputs.** A flat folder of many undated, unmarked files becomes unnavigable — a reviewer (or future session) can't tell canonical from draft from superseded. Convention: (a) each `docs/features/FEAT-XXX/` has a `README.md` mapping every file to a one-line purpose + status + where it was promoted; (b) discussion drafts carry a `DRAFT-` prefix and a `STATUS:` banner; (c) canonical outputs live at their promoted location (root/`docs/`) — the feature folder is the *working record*, not the source of truth; (d) keep the index current as files land (the Librarian / `/update-docs` owns this). _(from a downstream project retro.)_
-
-9. **Confidentiality tooling must not leak what it protects.** Any file whose job is to enforce or document a confidentiality boundary (gate pattern lists, waiver files, rule provenance notes, comments in gate scripts) must itself be audited for the category of content it guards before first publish — enforcement artifacts are exactly where leaks hide, because they're the last thing anyone treats as "content." _(v2.0.0 release retro, 2026-07-19.)_
-
-10. **Leak-detection gates must scan filenames and run case-insensitively from day one.** Both are default-off in naive grep gates and both are real leak vectors (a private name in a filename; a capitalized token slipping past a lowercase pattern). _(v2.0.0 release retro, 2026-07-19.)_
+```bash
+npm test                                   # harness tests (pytest when available)
+gh issue list --label ready-for-agent      # the frontier
+/setup                                     # first run: adapt the template, bootstrap GitHub
+/prime                                     # every session: load context
+```

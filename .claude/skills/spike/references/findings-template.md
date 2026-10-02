@@ -1,34 +1,19 @@
-# Spike Findings: [Topic]
+# Spike findings: <topic>
 
-**Goal:** [What we're validating - one clear question]
-**Duration:** [Time-boxed limit, e.g., "4 hours"]
-**Status:** In Progress | Complete | Abandoned
+**Question:** <one narrow, testable question>
+**Box:** <hours>   **Status:** in progress | validated | partial | failed
+**Proof:** <the result that validates, and the result that means stop>
 
 ## Discoveries
 
-### [Date] - [Finding Title]
-- **What we learned:** [Specific discovery]
-- **Why it matters:** [Implications for implementation]
-- **Next step:** [Action to take based on this]
-
-### [Date] - [Another Finding]
-...
+- <date> <finding>: <what we learned>; why it matters; next step.
 
 ## Gotchas
-- [Issue encountered and how we solved/worked around it]
-- [Unexpected constraint or limitation discovered]
 
-## Recommendations
+- <unexpected constraint and the workaround>
 
-**Should we proceed?**
-- [ ] Yes - approach validated
-- [ ] Yes, with modifications: [specify what needs to change]
-- [ ] No - use alternative: [specify alternative approach]
-- [ ] Need more investigation: [specify narrower follow-up question]
+## Verdict (post this as a comment on the parent issue)
 
-**Confidence level:** [Low | Medium | High]
-
-## Next Steps
-1. [Immediate action based on findings]
-2. [Follow-up if needed]
-3. [Documentation to update]
+- [ ] Proceed: approach validated
+- [ ] Proceed with conditions: <what must change>
+- [ ] Pivot to: <alternative>

@@ -4,7 +4,7 @@ Rules for the qa-reviewer to validate test pyramid level placement, detect anti-
 
 ## Pyramid Level Rules
 
-### Unit Tests (`test/unit/`)
+### Unit Tests (`tests/unit/`)
 
 **Should contain:**
 - Logic and data transformations
@@ -24,16 +24,16 @@ Rules for the qa-reviewer to validate test pyramid level placement, detect anti-
 **Grep patterns for misplacement:**
 ```bash
 # Unit tests that look like component tests
-grep -r "render(" test/unit/ --include="*.test.tsx" --include="*.test.ts"
-grep -r "screen\." test/unit/ --include="*.test.tsx" --include="*.test.ts"
-grep -r "fireEvent\." test/unit/ --include="*.test.tsx" --include="*.test.ts"
+grep -r "render(" tests/unit/ --include="*.test.tsx" --include="*.test.ts"
+grep -r "screen\." tests/unit/ --include="*.test.tsx" --include="*.test.ts"
+grep -r "fireEvent\." tests/unit/ --include="*.test.tsx" --include="*.test.ts"
 
 # Unit tests that look like integration tests
-grep -r "createTestDb\|testDatabase\|\.query(" test/unit/ --include="*.test.ts"
-grep -r "request(app)" test/unit/ --include="*.test.ts"
+grep -r "createTestDb\|testDatabase\|\.query(" tests/unit/ --include="*.test.ts"
+grep -r "request(app)" tests/unit/ --include="*.test.ts"
 ```
 
-### Component Tests (`test/component/`)
+### Component Tests (`tests/component/`)
 
 **Should contain:**
 - Component rendering output
@@ -51,13 +51,13 @@ grep -r "request(app)" test/unit/ --include="*.test.ts"
 **Grep patterns for misplacement:**
 ```bash
 # Component tests with no rendering (probably a unit test)
-grep -rL "render\|mount\|shallow" test/component/ --include="*.test.tsx" --include="*.test.ts"
+grep -rL "render\|mount\|shallow" tests/component/ --include="*.test.tsx" --include="*.test.ts"
 
 # Component tests with DB access (probably integration)
-grep -r "createTestDb\|\.query(" test/component/ --include="*.test.tsx"
+grep -r "createTestDb\|\.query(" tests/component/ --include="*.test.tsx"
 ```
 
-### Integration Tests (`test/integration/`)
+### Integration Tests (`tests/integration/`)
 
 **Should contain:**
 - API handler → database round-trips
@@ -75,13 +75,13 @@ grep -r "createTestDb\|\.query(" test/component/ --include="*.test.tsx"
 **Grep patterns for misplacement:**
 ```bash
 # Integration tests that look like unit tests (no DB/API/service interaction)
-grep -rL "request\|fetch\|query\|connect\|createTest" test/integration/ --include="*.test.ts"
+grep -rL "request\|fetch\|query\|connect\|createTest" tests/integration/ --include="*.test.ts"
 
 # Integration tests that look like E2E (browser automation)
-grep -r "page\.\|browser\.\|playwright" test/integration/ --include="*.test.ts"
+grep -r "page\.\|browser\.\|playwright" tests/integration/ --include="*.test.ts"
 ```
 
-### E2E Tests (`test/e2e/`)
+### E2E Tests (`tests/e2e/`)
 
 **Should contain:**
 - Complete user flows across pages
@@ -99,7 +99,7 @@ grep -r "page\.\|browser\.\|playwright" test/integration/ --include="*.test.ts"
 **Grep patterns for misplacement:**
 ```bash
 # E2E tests with no page navigation (probably integration)
-grep -rL "page\.\|goto\|navigate\|browser" test/e2e/ --include="*.test.ts"
+grep -rL "page\.\|goto\|navigate\|browser" tests/e2e/ --include="*.test.ts"
 ```
 
 ## Anti-Pattern Detection
@@ -111,10 +111,10 @@ Tests that verify HOW code works rather than WHAT it does.
 **Detection patterns:**
 ```bash
 # Testing internal method calls
-grep -r "\.mock\.\(calls\|instances\)" test/ --include="*.test.ts" --include="*.test.tsx" | head -20
+grep -r "\.mock\.\(calls\|instances\)" tests/ --include="*.test.ts" --include="*.test.tsx" | head -20
 
 # Testing private methods directly
-grep -r "\._\|\.#\|private" test/ --include="*.test.ts" | head -20
+grep -r "\._\|\.#\|private" tests/ --include="*.test.ts" | head -20
 
 # Overly specific mock setups (>5 mocks in one test)
 # Manual review: check test files with many jest.mock() calls
@@ -129,7 +129,7 @@ Tests where mocks outnumber real objects, obscuring what's actually tested.
 **Detection patterns:**
 ```bash
 # Files with many mock declarations
-grep -c "jest\.mock\|vi\.mock\|mock\.\|Mock(" test/ -r --include="*.test.ts" --include="*.test.tsx" | sort -t: -k2 -rn | head -10
+grep -c "jest\.mock\|vi\.mock\|mock\.\|Mock(" tests/ -r --include="*.test.ts" --include="*.test.tsx" | sort -t: -k2 -rn | head -10
 
 # Mocking the module under test (always wrong)
 # Manual review: compare import paths in jest.mock() vs describe() subject
@@ -144,10 +144,10 @@ Using snapshots as a substitute for meaningful assertions.
 **Detection patterns:**
 ```bash
 # Snapshot assertions
-grep -r "toMatchSnapshot\|toMatchInlineSnapshot" test/ --include="*.test.ts" --include="*.test.tsx"
+grep -r "toMatchSnapshot\|toMatchInlineSnapshot" tests/ --include="*.test.ts" --include="*.test.tsx"
 
 # Large snapshot files
-find test/ -name "*.snap" -size +10k
+find tests/ -name "*.snap" -size +10k
 ```
 
 **Rule:** Snapshots are acceptable for serializable output (API responses, config). Never use snapshots for component rendering — write explicit assertions instead.
@@ -157,23 +157,22 @@ find test/ -name "*.snap" -size +10k
 ### Grep Pattern
 
 ```bash
-# Find all AC references in tests
-grep -r "AC-FEAT-XXX-" test/ --include="*.test.ts" --include="*.test.tsx" | sort
-
-# Find all ACs defined in PRD
-grep -r "AC-FEAT-XXX-" docs/features/FEAT-XXX/prd.md | sort
+# AC ids referenced in tests
+grep -rhoE "AC-[0-9]+" tests/ | sort -u
 ```
+
+The ACs live in the issue body (`gh issue view N --json body`), numbered `AC-1`, `AC-2`, ...
 
 ### Validation Process
 
-1. Extract AC IDs from PRD: `AC-FEAT-XXX-001`, `AC-FEAT-XXX-002`, etc.
-2. Extract AC IDs from test files
-3. Compare: every PRD AC should have at least one corresponding test
-4. Flag missing ACs as "Untested acceptance criterion"
+1. Extract the AC list from the issue.
+2. Extract AC ids from the test files.
+3. Compare: every AC has at least one test, or a stated reason (covered by a backstop test).
+4. Flag missing ACs as "Untested acceptance criterion".
 
 ### E2E Coverage Note
 
-If PRD has user-flow ACs but no E2E tests exist:
+If the issue has user-flow ACs but no E2E tests exist:
 - Check if browser MCP is configured
 - If MCP available: flag as "E2E tests should be written"
 - If MCP not available: flag as "E2E automated coverage: pending MCP setup" (Tier 1, not blocking)

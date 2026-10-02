@@ -17,10 +17,15 @@ Thumbs.db
 .claude/session-state.json
 .claude/settings.local.json
 
-# Environment (user implementation)
+# Environment and key material (user implementation)
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+.dev.vars
+*.pem
+*.key
+*.p12
+*.pfx
 
 # Dependencies (stack-agnostic)
 node_modules/
@@ -48,19 +53,29 @@ temp/
 *.tmp
 *.bak
 
-# Local archive of superseded assets (personal content, never committed)
+# Local archive of superseded assets (never committed)
 .claude/_archive/
 
 # Spikes (temporary exploratory code)
 spikes/
 
-# Demo outputs (personal content)
+# Local scratch outputs
 demos/
-workspace
-docs/features/z-alba
+workspace/
 
-# Agent memory retros — gitignored by default so per-agent retros stay local.
-# Remove the line below (and keep the two exceptions) to opt into tracking retros in git.
-memory/agents/*.md
-!memory/agents/README.md
-!memory/agents/TEMPLATE.md
+# Harness runtime state (never committed)
+.claude/salvage/
+.claude/qa/
+.claude/agent-memory-local/
+.claude/logs/*.db
+.claude/logs/*.db-*
+.claude/logs/*.log
+
+# Common secret-file names (the deny hook refuses to read them; never track them either)
+secrets.json
+credentials.json
+.credentials.json
+
+# Maintainer-private leak-gate inputs (ship the .example only)
+.github/pii-patterns.txt
+.github/release-waivers.txt

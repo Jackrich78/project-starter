@@ -1,48 +1,74 @@
-# .github/pii-patterns.example.txt
+# .github/pii-patterns.example.txt - template for your PRIVATE leak patterns.
 #
-# Starting point for .github/pii-patterns.txt, which is maintainer-private
-# and excluded from the public snapshot (see docs/guides/two-remote-sync.md).
-# Copy this file to .github/pii-patterns.txt and replace the placeholder
-# patterns below with your own real tokens. That file never ships publicly.
+# Setup: copy this file to .github/pii-patterns.txt, replace every <placeholder>
+# with a real value you must never publish, and NEVER commit the copy (it is
+# gitignored; committing it would leak exactly what it lists).
 #
-# Format: one POSIX extended regex (grep -E syntax) per line, consumed by
-# scripts/public_release_gate.sh. Blank lines and lines starting with `#`
-# are ignored. Every match found in the filtered export tree is a blocking
-# hit unless waived in .github/release-waivers.txt (format:
-# `path:pattern # reason`).
+# Format: one POSIX extended regex (grep -E) per line. The gate
+# (scripts/leak_gate.sh) ignores blank lines and whole-line '#' comments, runs
+# every pattern case-insensitively, and matches file contents, file and
+# directory names, and the XML inside .docx/.pptx/.xlsx/.zip files.
+# Do not put trailing comments on a pattern line: they would become part of the
+# regex. Put notes on their own '#' line above it.
+# A pattern that must start with '#' is written [#]like-this.
 #
-# This is a blacklist, not an allowlist — false positives (e.g. known
-# placeholder emails like user@example.com) are expected and get waived
-# individually, not filtered out here. See CLAUDE.md Hard-won rule #1.
+# Placeholders below match nothing real until you fill them in.
 
-# --- Government/national ID number formats (example: replace with yours) ---
-# 8 digits + control letter
-\b[0-9]{8}[A-HJ-NP-TV-Z]\b
+# Owner identity
+\b<owner-first-name>\b
+\b<owner-first-name>[ ._-]?<owner-surname>\b
+# waive public clone URLs only
+<gh-handle>
+# any repo under the handle except the template
+<gh-handle>/[A-Za-z0-9._-]+
+<owner-email-local-part>@
+human:<owner-id>
 
-# --- Brand / personal name tokens ---
-# Add each real brand, venture, or personal name that must not leak.
-YOUR_BRAND
-YOUR_NAME
+# Household / network
+\b<partner-name>\b
+\b(<friend-1>|<friend-2>|<contact-1>)\b
 
-# --- Email / domain addresses ---
-# Add each real personal or venture email domain as its own token.
-# Deliberately not a generic any-email regex — that only ever matches
-# documentation placeholders and trains rubber-stamp waivers.
-your-domain\.com
+# Codename / product
+\b<codename-part-1>(&|-and-|-)<codename-part-2>\b
+<product-slug>
+agent-logs/<product-slug>
+\bJA_[A-Z_]+\b
+<task-tracker-prefix>-[0-9N]+
 
-# --- Address hints ---
-# Add any street/city fragments that would identify a real location.
-\bYOUR_CITY\b
+# Infra
+<prod-hostname>(\.local)?
+\b<prod-ssh-alias>(-[a-z0-9]+)?\b
+<bridge-checkout-dir>|<tmux-session>|<prod-container-prefix>-[a-z]+-[0-9]
+\b(<db-name>|<db-user>)\b
+<working-branch>
+<launchd-label-prefix>\.
+# local home paths: macOS/Linux, Claude Code project slugs, Linux homes
+/Users/[A-Za-z0-9._-]+/
+-Users-[A-Za-z0-9._-]+-
+/home/[a-z0-9._-]+/
 
-# --- Secrets ---
-# 16+ key chars avoids matching prose like "risk-taking" / "task-icon".
-\bsk-[A-Za-z0-9]{16,}
-api_key[[:space:]]*=
-BEGIN [A-Za-z ]*PRIVATE KEY
+# Private repos / ventures / employers / clients / places
+\b(<private-repo-1>|<private-repo-2>|<archive-repo>|<engagement-repo>)\b
+\b(<venture>|<engagement-brand-1>|<engagement-brand-2>|<employer-1>|<client-1>)\b
+\b(<home-city>|<relocation-city>|<region>)\b
+<personal-demo-host>\.pages\.dev
 
-# --- Private project codenames ---
-# Add any internal/unreleased project codenames that must not leak.
-YOUR_CODENAME
+# Comms and run ids
+[Tt]elegram [0-9]{3,6}\b
+[#]<private-slack-channel>
+[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+session:[0-9a-f-]{8,}
+commit:[0-9a-f]{7,40}
 
-# --- Absolute local paths (leaks local machine username) ---
-/Users/[a-z]+/
+# Third-party names
+<third-party-review-company>
+<council-persona-1>|<council-persona-2>
+
+# Secrets
+\bgh[pousr]_[A-Za-z0-9]{20,}
+github_pat_[A-Za-z0-9_]{20,}
+xox[abp]-[0-9A-Za-z-]{20,}
+[0-9]{8,10}:AA[A-Za-z0-9_-]{30,}
+eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}
+hc-ping\.com/[0-9a-fA-F-]{36}
+[A-Za-z_]*(api_?key|authkey|secret|password|token)["']?[[:space:]]*[:=][[:space:]]*["']?[^[:space:]"']{8,}

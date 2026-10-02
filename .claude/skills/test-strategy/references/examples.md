@@ -7,15 +7,15 @@ Concrete examples for each test approach level showing annotation, directory, pa
 **Scenario:** User validation service that checks email format and uniqueness.
 
 **Annotation:** `@test-approach: tdd`
-**Directory:** `test/unit/FEAT-XXX/`
+**Directory:** `tests/unit/<area>/`
 **Build routing:** RED-GREEN-REFACTOR subagents
 
 ```typescript
 // @test-approach: tdd
-// test/unit/FEAT-018/user-validation.test.ts
+// tests/unit/<area>/user-validation.test.ts
 
-describe('FEAT-018: User Validation', () => {
-  describe('AC-FEAT-018-001: Email format validation', () => {
+describe('User Validation', () => {
+  describe('AC-1: Email format validation', () => {
     it('should reject email without @ symbol', () => {
       // Arrange
       const email = 'notanemail';
@@ -34,7 +34,7 @@ describe('FEAT-018: User Validation', () => {
     });
   });
 
-  describe('AC-FEAT-018-002: Email uniqueness', () => {
+  describe('AC-2: Email uniqueness', () => {
     it('should reject duplicate email', async () => {
       // Arrange
       const store = createMockStore({ users: [{ email: 'taken@example.com' }] });
@@ -61,18 +61,18 @@ describe('FEAT-018: User Validation', () => {
 **Scenario:** Login form with validation and submission feedback.
 
 **Annotation:** `@test-approach: component-test`
-**Directory:** `test/component/FEAT-XXX/`
+**Directory:** `tests/component/<area>/`
 **Build routing:** Inline 6-step red-green
 
 ```typescript
 // @test-approach: component-test
-// test/component/FEAT-018/LoginForm.test.tsx
+// tests/component/<area>/LoginForm.test.tsx
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { LoginForm } from '@/components/LoginForm';
 
-describe('FEAT-018: Login Form', () => {
-  describe('AC-FEAT-018-003: Form validation feedback', () => {
+describe('Login Form', () => {
+  describe('AC-3: Form validation feedback', () => {
     it('should show error when email field is empty on submit', () => {
       // Render
       render(<LoginForm onSubmit={jest.fn()} />);
@@ -114,18 +114,18 @@ describe('FEAT-018: Login Form', () => {
 **Scenario:** User creation API that persists to database and returns confirmation.
 
 **Annotation:** `@test-approach: integration`
-**Directory:** `test/integration/FEAT-XXX/`
+**Directory:** `tests/integration/<area>/`
 **Build routing:** Inline red-green (same pattern as component-test)
 
 ```typescript
 // @test-approach: integration
-// test/integration/FEAT-018/user-api.test.ts
+// tests/integration/<area>/user-api.test.ts
 
 import request from 'supertest';
 import { app } from '@/app';
 import { createTestDb, cleanupTestDb } from '@/test-utils/db';
 
-describe('FEAT-018: User API Integration', () => {
+describe('User API Integration', () => {
   let db: TestDatabase;
 
   beforeAll(async () => {
@@ -136,7 +136,7 @@ describe('FEAT-018: User API Integration', () => {
     await cleanupTestDb(db);
   });
 
-  describe('AC-FEAT-018-004: User creation persists to DB', () => {
+  describe('AC-4: User creation persists to DB', () => {
     it('should create user and return 201 with user data', async () => {
       // Execute
       const response = await request(app)
@@ -156,7 +156,7 @@ describe('FEAT-018: User API Integration', () => {
     });
   });
 
-  describe('AC-FEAT-018-005: Duplicate email returns 409', () => {
+  describe('AC-5: Duplicate email returns 409', () => {
     it('should reject duplicate email with 409 Conflict', async () => {
       // Setup: create first user
       await request(app)
@@ -187,17 +187,17 @@ describe('FEAT-018: User API Integration', () => {
 **Scenario:** Complete signup-to-dashboard flow.
 
 **Annotation:** `@test-approach: e2e`
-**Directory:** `test/e2e/`
+**Directory:** `tests/e2e/`
 **Build routing:** Inline + browser MCP if available
 
 The example below shows a Playwright-style pattern, but other browser tools (Stagehand, Vercel AI Browser) are equally valid. The key is testing the full user flow, not the specific tool.
 
 ```typescript
 // @test-approach: e2e
-// test/e2e/signup-flow.test.ts
+// tests/e2e/signup-flow.test.ts
 
-describe('FEAT-018: Signup to Dashboard Flow', () => {
-  describe('AC-FEAT-018-006: New user can sign up and reach dashboard', () => {
+describe('Signup to Dashboard Flow', () => {
+  describe('AC-6: New user can sign up and reach dashboard', () => {
     it('should complete signup and redirect to dashboard', async () => {
       // Step 1: Navigate to signup
       await page.goto('/signup');
@@ -219,7 +219,7 @@ describe('FEAT-018: Signup to Dashboard Flow', () => {
     });
   });
 
-  describe('AC-FEAT-018-007: Signup with existing email shows error', () => {
+  describe('AC-7: Signup with existing email shows error', () => {
     it('should show duplicate email error without leaving page', async () => {
       await page.goto('/signup');
       await page.fill('[name="email"]', 'existing@example.com');

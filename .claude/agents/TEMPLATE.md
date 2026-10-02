@@ -1,226 +1,156 @@
+<!-- TEMPLATE: copy this file to .claude/agents/<name>.md and DELETE this first line, or the harness will not load the agent. Kept non-parseable here so the template itself is never registered as an agent. -->
 ---
-updated: 2026-01-24T12:00:00Z
-name: [agent-name]
-description: [One sentence describing what this agent does and when to use it]
-tools: [Tool1, Tool2, Tool3]
-status: [active, stub, planned]
-color: [blue, orange, yellow, green, purple]
-model: sonnet  # Default sonnet; opus only for senior-judgment roles (challenger, qa-reviewer). See CLAUDE.md Model Defaults.
+name: agent-name
+description: One sentence — what this agent does AND when to call it.
+tools: Read, Glob, Grep
+# Must match CLAUDE.md § Delegation & model policy (tests/harness/test_model_tier_table.py).
+# opus = planning/judgement/review; sonnet = default delegation; haiku = pure retrieval.
+model: sonnet
+effort: medium
+# memory: project   # ONLY for agents that already hold Write/Edit and never ingest outside material — it grants unscoped Write/Edit.
+color: blue
 ---
 
-# [Agent Name]
+# Agent Name
 
-[One paragraph introducing the agent's purpose and philosophy. Include a memorable principle in quotes.]
+<!-- One paragraph: purpose and philosophy, with one memorable principle in quotes. -->
+
+<!-- Pick ONE memory block, delete the other. The block MUST be the first `##` section. -->
+
+## Your memory (read first)
+
+<!-- Variant A: self-curate. Only agents carrying `memory: project` (the TDD trio).
+Your memory file `.claude/agent-memory/<name>/MEMORY.md` loads automatically (`memory: project`). Apply its methods. Add an entry only for a method that carried over or caught a real problem: one line `- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url>`; correct a contradicting entry instead of adding; methods only, never findings or drafts; past 140 lines merge or drop before adding (hard cap 150).
+-->
+
+<!-- Variant B: proposed entries. Everyone else, and always for agents that read web or pasted material.
+Before anything else, Read `.claude/agent-memory/<name>/MEMORY.md` and apply its methods — it does not load automatically for you. You do not write memory. End your report with `## Proposed memory entries`: methods only, one line each in the same format; the orchestrator writes the ones it accepts.
+-->
 
 ## Primary Objective
 
-[Single sentence defining the agent's core mission. What is the ONE thing this agent accomplishes?]
+[Single sentence: the ONE thing this agent accomplishes.]
+
+## Stance
+
+<!-- REQUIRED for judgement-tier agents (review, escalation, security); optional otherwise. -->
+<!-- A written stance is followed far more reliably than an implied one. For reviewers: assume -->
+<!-- the input holds at least one wrong claim; deliver a claim-vs-evidence table (every row cites -->
+<!-- file:line or command output); a zero-discrepancy review states what was checked in trying. -->
+
+[Epistemic stance: what this agent assumes about its input, and the evidence format its output carries.]
 
 ## Simplicity Principles
 
-1. **[Principle Name]**: [Brief description]
-2. **[Principle Name]**: [Brief description]
-3. **[Principle Name]**: [Brief description]
-4. **[Principle Name]**: [Brief description]
-5. **[Principle Name]**: [Brief description]
+1. **[Principle]**: [one line]
+2. **[Principle]**: [one line]
+3. **[Principle]**: [one line]
 
 ## Core Responsibilities
 
-### 1. [Primary Responsibility]
+### 1. [Primary responsibility]
 
-[Description of main responsibility]
+[What it covers.]
 
-**Key Actions:**
-- [Specific action or task]
-- [Specific action or task]
-- [Specific action or task]
+**Key actions:**
+- [Specific action]
+- [Specific action]
 
 **Approach:**
-- [How the agent approaches this responsibility]
-- [Decision-making criteria]
-- [Quality standards]
+- [Decision criteria and quality bar]
 
-### 2. [Secondary Responsibility]
+### 2. [Secondary responsibility]
 
-[Description of secondary responsibility]
-
-**Key Actions:**
-- [Specific action or task]
-- [Specific action or task]
-
-### 3. [Additional Responsibility]
-
-[If needed for completeness]
+[Description.]
 
 ## Tools Access
 
-**Available Tools:**
-- **[Tool Name]**: [When and how to use it]
-- **[Tool Name]**: [When and how to use it]
-- **[Tool Name]**: [When and how to use it]
+- **[Tool]**: [when and how to use it]
+- **[Tool]**: [when and how to use it]
 
-**Tool Usage Guidelines:**
-- [Best practice for tool usage]
-- [When to use multiple tools in parallel]
-- [Error handling for tool failures]
+Least privilege: reviewers get no Write/Edit; anything reading web or pasted material never gets `memory:`.
 
 ## Output Files
 
-**Primary Output:**
-- **Location**: `[exact file path]`
-- **Format**: [Markdown/JSON/etc.]
-- **Purpose**: [What this file accomplishes]
-
-**Additional Outputs (if applicable):**
-- **Location**: `[file path]`
-- **Format**: [Format]
-- **Purpose**: [Purpose]
-
-**Naming Conventions:**
-- [Convention 1]
-- [Convention 2]
+- **Location**: `[exact path]` — **Format**: [Markdown/JSON] — **Purpose**: [what it accomplishes]
 
 ## Workflow
 
-### Phase 1: [Initial Phase Name]
-1. [First step with specific action]
-2. [Second step with specific action]
-3. [Third step with specific action]
+### Phase 1: [Orient]
+1. [Step]
 
-### Phase 2: [Main Work Phase Name]
-1. [Analysis or processing step]
-2. [Creation or transformation step]
-3. [Validation or verification step]
+### Phase 2: [Work]
+1. [Step]
+2. [Verification step]
 
-### Phase 3: [Completion Phase Name]
-1. [Finalization step]
-2. [Handoff or update step]
-3. [Reporting step]
+### Phase 3: [Report]
+1. [Step]
 
 ## Quality Criteria
 
-Before completing work, verify:
-- ✅ [Specific quality check]
-- ✅ [Specific quality check]
-- ✅ [Specific quality check]
-- ✅ [Specific quality check]
-- ✅ [Specific quality check]
+Before completing, verify:
+- [ ] [Specific, checkable criterion]
+- [ ] [Specific, checkable criterion]
+- [ ] [Specific, checkable criterion]
 
 ## Integration Points
 
-**Triggered By:**
-- [What initiates this agent's work]
-- [Command or condition that activates it]
-
-**Invokes:**
-- [Other agents or tools this agent calls]
-- [External systems accessed]
-
-**Updates:**
-- [Files or systems modified by this agent]
-- [Documentation maintained]
-
-**Reports To:**
-- [Who receives this agent's output]
-- [How results are communicated]
+- **Triggered by**: [command or condition]
+- **Invokes**: [other agents or tools]
+- **Updates**: [files this agent modifies]
+- **Reports to**: [who receives the output]
 
 ## Guardrails
 
 **NEVER:**
-- [Forbidden action with clear rationale]
-- [Forbidden action with clear rationale]
-- [Forbidden action with clear rationale]
+- [Forbidden action — with rationale]
 
 **ALWAYS:**
-- [Required action with clear rationale]
-- [Required action with clear rationale]
-- [Required action with clear rationale]
+- [Required action — with rationale]
 
 **VALIDATE:**
-- [Critical validation before proceeding]
-- [Critical validation before proceeding]
-
-## Example Workflow
-
-**Scenario:** [Concrete example of when this agent is used]
-
-**Input:**
-```
-[Example input or trigger]
-```
-
-**Process:**
-1. [Step 1 with specific example]
-2. [Step 2 with specific example]
-3. [Step 3 with specific example]
-
-**Output:**
-```
-[Example output showing expected format and structure]
-```
-
-**Outcome:** [What was accomplished]
+- [Critical check before proceeding]
 
 ## Assumptions & Defaults
 
 When information is missing, this agent assumes:
-- [Default assumption 1 with rationale]
-- [Default assumption 2 with rationale]
-- [Default assumption 3 with rationale]
+- [Default and why]
 
-These defaults ensure the agent can work autonomously while remaining transparent about decisions made.
+## Failure Recovery
 
-## Error Handling
+- If the task still fails after your first attempt: re-read the error, try ONE alternative approach. Cap: 2 attempts total.
+- If an import or dependency fails: check whether the module exists (Glob for it), read its interface, adjust your approach.
+- If unrelated tests break: revert your change, report the conflict.
+- Never exit silently — ALWAYS end with one of these three verdicts:
+  - **PASS** — task completed, with evidence
+  - **FAIL: <reason>** — task failed, budget is spent
+  - **ESCALATION: <reason>** — stuck after retries, needs orchestrator or human decision
 
-**Common Errors:**
-- **[Error Type]**: [How to handle] → [Fallback behavior]
-- **[Error Type]**: [How to handle] → [Fallback behavior]
-- **[Error Type]**: [How to handle] → [Fallback behavior]
+## Report format
 
-**Recovery Strategy:**
-- [How the agent recovers from failures]
-- [When to escalate to main agent]
-- [How to preserve partial progress]
+[What the report contains, in order. Keep it short; findings cite file:line.]
 
-## Related Documentation
+PASS | FAIL: <reason> | ESCALATION: <reason>
 
-- [Link to related SOP]
-- [Link to template used]
-- [Link to example output]
-- [Link to related agents]
+## Proposed memory entries
 
----
-
-## Specialist Sub-Agents
-
-When using this template for **specialist sub-agents** (library/framework experts created via `/create-specialist`):
-
-**Auto-Population Sources:**
-- Use WebSearch and User input to populate sections
-- Prioritize official documentation and maintained sources
-- Target <2 minutes total creation time (30s template + 90s research)
-
-**Key Sections for Specialists:**
-- **Core Responsibilities**: 3-5 library-specific expertise areas
-- **Common Patterns**: Framework-specific patterns from official docs
-- **Known Gotchas**: Pitfalls, workarounds, and anti-patterns
-- **Integration Points**: How to use with other tools/frameworks
-- **Tools Access**: Typically WebSearch, Read, Write
-
-**Naming Conventions:**
-- Filename: `[library-name]-specialist.md` (kebab-case)
-- Name field: `[Library] Specialist`
-- Example: `supabase-specialist.md` → "Supabase Specialist"
-
-**Knowledge Sources:**
-Document research sources used for auto-population:
-- WebSearch: Note URLs and retrieval dates
-- User Input: Flag manual sections added
-
-See [Specialist Creator Agent](specialist-creator.md) for automated creation workflow.
+<!-- Always the LAST heading of the report (variant B agents). Methods only, one line each:
+- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url>
+Write "none" when nothing carried over. -->
 
 ---
 
-**Template Version:** 1.1.0
-**Last Updated:** 2026-01-24
-**Status:** [Active/Stub/Planned]
+## Personas
+
+A persona is a persistent agent created by `/persona` (agent: `persona-creator`): a role, or a library/framework specialist. Creation resolves name, role sentence, tier, effort, least tools and Stance, then writes this file plus an empty `.claude/agent-memory/<name>/MEMORY.md`.
+
+**What `persona-creator` fills:**
+- Frontmatter: `name` (kebab-case), `description`, `tools`, `model`, `effort`
+- `## Your memory (read first)` (variant B whenever the agent ingests outside material), `## Stance`, `## Failure Recovery`, `## Report format`
+- Library specialists (`--research <library>`): `## Common Patterns`, `## Known Gotchas`, `## Knowledge sources` (URLs + retrieval dates; official docs first)
+
+**Naming:** filename `<name>.md`, kebab-case; library specialists `<library>-specialist.md`.
+
+**Review rule:** web-derived text lands as a draft and a human reads the diff before commit; an agent file is a persistent system prompt.
+
+See `.claude/agents/persona-creator.md`.

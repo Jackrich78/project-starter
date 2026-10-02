@@ -1,323 +1,35 @@
----
-updated: 2026-06-19T00:00:00Z
----
+# Sub-agents
 
-# Sub-Agent Index
+One file per agent; the harness injects the roster from each file's `name` and `description` at session start, so this page holds no inventory (a hand-maintained list drifts within weeks). To see what exists: `ls .claude/agents/`. Which agent to call for what: CLAUDE.md § Delegation & model policy. The shape of a new agent: `TEMPLATE.md`; create one with `/persona`.
 
-Lists all sub-agents available in this project.
+## Design principles
 
-## Overview
+1. **Single responsibility** — one agent, one job; a reviewer that can write is not a reviewer.
+2. **Stateless** — an agent starts cold with the brief it is given; durable learning goes to its memory file as methods, never findings.
+3. **Least privilege** — tools are the minimum the job needs; `memory:` only where it cannot become a stored-injection path.
+4. **Explicit stance** — judgement-tier agents assume the input holds a wrong claim and return claim-vs-evidence tables.
+5. **Self-healing, never silent** — two attempts, revert on regression, always `PASS` / `FAIL: <reason>` / `ESCALATION: <reason>`.
+6. **Role decides the model** — Opus to plan and judge, Sonnet to build and draft, Haiku for volume; `tests/harness/test_model_tier_table.py` keeps frontmatter honest.
 
-This directory contains specialized sub-agents that provide focused expertise. Each agent has a single responsibility and well-defined integration points.
-
-## Learning Loop Agents
-
-### [Agile Coach](agile-coach.md)
-**Status:** Active | **Color:** Gold | **Model:** Sonnet
-**Description:** Deterministic, read-only meta-optimizer. Reads completed build artifacts (commits, handover, QA reports, agent memory files) and proposes hard-won rule additions, prompt tightenings, and memory pruning. Falls back gracefully when `agent.db` is absent by tagging findings `[no-observability]`. Every claim is cited verbatim.
-**Triggers:** Manual invocation after a feature ships: run before `/retro` or when the Agile Coach loop is needed
-**Outputs:** A `## Pruning Manifest` block with `[PRUNE]` / `[KEEP]` entries + rule proposals for human review; no files written directly
-**Tools:** Read, Glob, Grep, Bash
-**Key Features:**
-- **Citation-priority tiers**: agent.db event → commit:SHA → file.md:LINE → qa:report#section
-- **Evidence gate**: single-source claims without corroboration emit `INSUFFICIENT_EVIDENCE`
-- **Observability-absent fallback**: downgrades to commit/file citation tiers if `agent.db` is absent; never halts
-
-### [PRD Consistency Simulator](prd-consistency-sim.md)
-**Status:** Active | **Color:** Yellow | **Model:** Sonnet
-**Description:** Cold-context read-only implementer simulation. Reads a PRD exactly once and reports what it would build along with every assumption it would make where the spec is silent or ambiguous. Surfaces spec gaps before the build agent sees them.
-**Triggers:** Always run after `/explore` produces a PRD and before `/blueprint` begins (Step 5.5 in the explore workflow)
-**Outputs:** Report capped at 10 assumptions + 3 risk flags; no files written
-**Tools:** Read, Glob
-**Key Features:**
-- **Cold context**: reads only the PRD + repo structure — no prior conversation or implementation plan
-- **Assumption framing**: every finding is phrased as "I would assume X because Y but Z is undefined"
-- **Read-only**: no Write, no Edit, no Bash — cannot modify any file
-
-## Core Agents
-
-### [Researcher](researcher.md)
-**Status:** Active | **Color:** Orange
-**Description:** Deep research specialist that investigates technical approaches using WebSearch to answer open questions from PRDs
-**Triggers:** Invoked by `/explore` and `/blueprint` commands when research needed
-**Outputs:** `docs/features/FEAT-XXX_[slug]/research-[topic]-[timestamp].md` (REQUIRED: must be in feature folder, single file per invocation)
-**Tools:** Read, WebSearch, Task, Glob, Write
-**Validation:** Enforces feature folder placement, offers skeleton feature creation if context missing
-
-### [Challenger](challenger.md)
-**Status:** Active | **Color:** Red
-**Description:** Senior engineer that critically reviews proposals, iterating with agents on minor issues and escalating real decisions to the human
-**Triggers:** Invoked by `/blueprint` command after architecture creation
-**Outputs:** None (conversational feedback)
-**Tools:** Read, Glob, Grep
-**Key Features:**
-- **Two-tier escalation**: Fixes minor issues via agent iteration, escalates trade-offs to human
-- **Inline feedback**: No documents—feedback flows through conversation
-- **Focused critique**: Max 3 issues per review
-
-### [Specialist Creator](specialist-creator.md)
-**Status:** Active | **Color:** Purple
-**Description:** Creates comprehensive specialist sub-agents with research auto-population for libraries, frameworks, and technical domains
-**Triggers:** `/create-specialist [library-name]` command
-**Outputs:** `.claude/agents/[library-name]-specialist.md`
-**Tools:** Read, Write, WebSearch
-
-### [Prompt Specialist](prompt-specialist.md)
-**Status:** Active | **Color:** Purple
-**Description:** Multi-provider prompt engineer that generates and refines high-performance prompts for specific use cases
-**Triggers:** Direct user request "generate/refine prompt for..."
-**Outputs:** Optimized prompts (markdown)
-**Tools:** Read, Write, WebSearch, Glob, Grep
-
-### [N8N Specialist](n8n-specialist.md)
-**Status:** Active | **Color:** Green
-**Description:** Domain expert for N8N workflow implementation - transforms architecture specs into production-ready workflow JSON
-**Triggers:** Direct invocation for N8N workflow design
-**Outputs:** N8N workflow JSON
-**Tools:** WebSearch, Read, Write
-
-### [First Principles Thinker](first-principles-thinker.md)
-**Status:** Active | **Color:** Purple
-**Description:** Reasoning specialist that breaks down complex problems into fundamental truths and builds solutions from the ground up, avoiding analogy and convention traps
-**Triggers:** Direct invocation for deep reasoning on complex or ambiguous problems
-**Outputs:** Structured analysis with fundamental truths, assumptions challenged, and rebuilt conclusions
-**Tools:** Read, WebSearch
-
-### [Product-Engineering Lead Specialist](tech-product-lead.md)
-**Status:** Active | **Color:** Blue
-**Description:** Hybrid product strategist and tech lead who combines product thinking (Marty Cagan, Lean Startup) with technical architecture expertise (WBS, CPM, ADRs) to break down features, manage dependencies, and guide implementation ordering
-**Triggers:** Direct invocation for feature breakdown, technical planning, PRD review, or strategy advice
-**Outputs:** PRD improvements, implementation plans with WBS and dependencies, ADRs, feasibility assessments, critical path analysis
-**Tools:** Read, Write, Glob, Grep
-**Key Features:**
-- **Product thinking**: MoSCoW prioritization, MVP scoping, success metrics, outcomes over output
-- **Technical breakdown**: Work Breakdown Structure (WBS), dependency mapping, Critical Path Method (CPM)
-- **Architecture decisions**: ADRs for significant decisions, technical feasibility assessment
-- **Implementation planning**: Task sequencing, risk management, technical debt allocation (10-20%)
-- **Hybrid leadership**: Combines Google's servant leadership with Amazon's data-driven decision-making
-
-### [Librarian](librarian.md)
-**Status:** Active | **Color:** Teal | **Model:** Sonnet
-**Description:** Documentation consistency specialist who maintains the web of documents, enforces template compliance, updates cross-references, and validates completeness across 7+ document types. Edit-only — no Write tool; applies Agile Coach proposals surgically.
-**Triggers:** Direct invocation for documentation audits, or to apply Agile Coach proposals after human approval
-**Outputs:** Surgical edits to existing documents; post-edit `git diff --stat` verification required
-**Tools:** Read, Edit, Glob, Grep
-**Key Features:**
-- **Edit-only contract**: no Write tool; never creates or overwrites a file in full (eliminates silent-truncation risk)
-- **Read-before-Edit**: must read a file before editing any section of it
-- **Delta guard**: >10% line-count delta in `git diff --stat` is flagged as suspect
-- **Template validation**: ensures all docs follow their templates (prd-template.md, plan-template.md, TEMPLATE.md)
-- **Cross-reference maintenance**: updates all references when files rename/move, verifies link integrity
-
-## TDD Agents
-
-Context-isolated agents for Test-Driven Development. Each phase runs in a clean 200k context window.
-
-### [TDD Test Writer](tdd-test-writer.md)
-**Status:** Active | **Color:** Red
-**Description:** Writes failing tests for TDD RED phase. Converts test stubs to real failing tests with clean context isolation from implementation.
-**Triggers:** Invoked by tdd-red-green-refactor skill during `/build`
-**Outputs:** Updated test files with real assertions
-**Tools:** Read, Glob, Grep, Write, Edit, Bash
-**Key Features:**
-- **Context isolation**: Sees only PRD requirements, NOT implementation plans
-- **Gate enforcement**: Returns only after verifying test FAILS
-- **Behavior focus**: Tests verify behavior, not implementation details
-
-### [TDD Implementer](tdd-implementer.md)
-**Status:** Active | **Color:** Green
-**Description:** Implements minimal code to pass failing tests in TDD GREEN phase. Sees only the test—no PRD, plan, or prior discussion.
-**Triggers:** Invoked by tdd-red-green-refactor skill after RED phase
-**Outputs:** Implementation files with minimal code to pass tests
-**Tools:** Read, Glob, Grep, Write, Edit, Bash
-**Key Features:**
-- **Context isolation**: Sees ONLY the failing test
-- **Minimal implementation**: Writes simplest code that passes
-- **Gate enforcement**: Returns only after test PASSES
-
-### [TDD Refactorer](tdd-refactorer.md)
-**Status:** Active | **Color:** Blue
-**Description:** Improves code quality in TDD REFACTOR phase while keeping all tests passing. Sees test + implementation.
-**Triggers:** Invoked by tdd-red-green-refactor skill after all tests pass
-**Outputs:** Improved implementation files (or "No refactoring needed")
-**Tools:** Read, Glob, Grep, Write, Edit, Bash
-**Key Features:**
-- **One change at a time**: Makes incremental improvements
-- **Gate enforcement**: Tests must STAY GREEN after each change
-- **Knows when to stop**: Reports "No refactoring needed" if code is clean
-
-## QA Agents
-
-### [QA Reviewer](qa-reviewer.md)
-**Status:** Active | **Color:** Red
-**Description:** Security and quality reviewer with clean context. Runs Semgrep SAST (when available) then LLM analysis using sandwich method. Reads handover for context, performs OWASP security checks, validates TDD compliance, and escalates issues with two-tier model.
-**Triggers:** Invoked by `/build` (automatic) or `/qa` (manual)
-**Outputs:** `docs/qa/[scope]-YYYYMMDD.md` (via orchestrator)
-**Tools:** Read, Glob, Grep, Bash (NO Write—review only)
-**Key Features:**
-- **SAST integration**: Semgrep static analysis with graceful degradation (sandwich method)
-- **Context isolation**: Reads handover, NOT builder conversation
-- **OWASP checklist**: Systematic security review with confidence scoring (≥80%)
-- **Finding attribution**: Every finding tagged `[SAST]` or `[LLM]` with source
-- **Two-tier escalation**: Tier 1 in report, Tier 2 escalates to human via AskUserQuestion
-- **TDD validation**: Verifies test coverage and quality (10-item checklist including semantic validation)
-- **Semantic validation**: AC coverage (#8), pyramid level placement (#9), anti-pattern detection (#10)
-
-## Specialist Sub-Agents
-
-**Dynamic domain experts** created via `/create-specialist` command.
-
-### How to Create Specialists
-
-```bash
-/create-specialist Supabase           # Library-specific
-/create-specialist PydanticAI narrow  # Explicit narrow scope
-/create-specialist Database broad     # Category-wide
-```
-
-### Naming Convention
-
-- **Filename:** `[library-name]-specialist.md` (kebab-case)
-- **Examples:**
-  - Supabase → `supabase-specialist.md`
-  - PydanticAI → `pydantic-ai-specialist.md`
-  - Next.js → `nextjs-specialist.md`
-
-### How Specialists Are Used
-
-Specialists are invoked as **subordinates** by other agents:
+## How work flows through them
 
 ```
-Task(
-  subagent_type="general-purpose",
-  description="Get [Library] expertise",
-  prompt="You are the [Library] Specialist. [question]
-  @.claude/agents/[library]-specialist.md"
-)
+/explore  ──► grilling (inline) · researcher (sonnet) · prd-consistency-sim (opus, cold read) · challenger (opus, conditional)
+/blueprint ─► codebase-design (skill) · researcher · prd-consistency-sim · challenger
+to-tickets ─► challenger fact-check (10/10)
+/build  ───► work-issue ──► tdd-test-writer (RED) ──► tdd-implementer (GREEN) ──► tdd-refactorer
+/qa --issue ► qa-reviewer (opus, clean context; Security · Standards · Spec ladders) ──► <!-- QA-VERDICT --> on the issue
+/commit  ──► hook-enforced gate on BLOCKED SECURITY
+winddown ──► agile-coach (sonnet, read-only retro) ──► human approves ──► librarian (Edit-only) applies
+non-code ──► researcher · drafter · first-principles-thinker · challenger against the ticket's Proof: line
 ```
 
-## Agent Templates
+Hand-offs are files on disk and GitHub Issues, never live messages between agents; the orchestrator runs the gate between steps (`docs/guides/agent-harness-patterns.md`).
 
-### [TEMPLATE.md](TEMPLATE.md)
-**Purpose:** Structural scaffold for all sub-agent definitions
-**Sections:**
-- YAML frontmatter (name, description, tools, status, color)
-- Primary Objective
-- Simplicity Principles
-- Core Responsibilities
-- Tools Access
-- Output Files
-- Workflow
-- Quality Criteria
-- Integration Points
-- Guardrails
+## Contract checks
 
-## Agent Design Principles
+- `python3 scripts/adoption_check.py` — memory block first, Failure Recovery, ESCALATION, model and effort pins, Stance on Opus agents.
+- `python3 scripts/validate_agent_memory.py --check-roster` — every agent has a memory file and vice versa; entries are one-line methods under the 150-line cap.
+- `npm test` — tier table, memory-flag allowlist, first-heading rule.
 
-1. **Single Responsibility:** Each agent has ONE clear purpose
-2. **Stateless Design:** Agents don't maintain session state
-3. **Template Compliance:** All agents follow TEMPLATE.md structure
-4. **Tool Minimalism:** Only essential tools in frontmatter
-5. **Quality Gates:** Validation before completion
-6. **Graceful Degradation:** Work without optional dependencies
-
-## Workflow Orchestration
-
-```
-User Request
-    ↓
-/explore [topic]
-    ↓
-Main Agent + Researcher → PRD
-    ↓
-/blueprint FEAT-XXX
-    ↓
-Main Agent + Researcher → Plan
-    ↓
-Challenger (inline) ──┬── Tier 1: Auto-fix → Continue
-                      └── Tier 2: Ask user → Continue
-    ↓
-Test Stubs Created
-    ↓
-/build FEAT-XXX
-    ↓
-┌─────────────────────────────────────┐
-│ TDD ORCHESTRATION (isolated)        │
-│                                     │
-│ For each test stub:                 │
-│   🔴 tdd-test-writer → FAILS        │
-│   🟢 tdd-implementer → PASSES       │
-│                                     │
-│ After all pass:                     │
-│   🔵 tdd-refactorer → CLEAN         │
-└─────────────────────────────────────┘
-    ↓
-Handover Generated
-    ↓
-┌─────────────────────────────────────┐
-│ QA REVIEW                           │
-│ → qa-reviewer (clean context)       │
-│ → Creates docs/qa/FEAT-XXX-*.md     │
-│                                     │
-│ APPROVED → /commit                  │
-│ NEEDS_FIXES → iterate or /debug     │
-│ BLOCKED → escalate to human         │
-└─────────────────────────────────────┘
-    ↓
-/commit (with QA gate)
-
-Bug Discovered (Production or Development):
-    ↓
-/debug [issue-description]
-    ↓
-┌─────────────────────────────────────┐
-│ DEBUG WORKFLOW                      │
-│ → Phase 0: Classify & load context  │
-│ → Phase 1: Investigate & diagnose   │
-│ → Phase 2: Root cause analysis      │
-│ → Phase 3: Solution design          │
-│ → Phase 4: Implement with test      │
-│ → Phase 5: Validate fix             │
-│ → Phase 6: Document & prepare       │
-│                                     │
-│ Coordinates with:                   │
-│ → researcher (unknown tech)         │
-│ → challenger (complex fixes)        │
-│ → qa-reviewer (security validation) │
-│ → test-strategy (test routing)      │
-└─────────────────────────────────────┘
-    ↓
-Debug Report + Regression Test
-    ↓
-/commit
-```
-
-## Tool Access by Agent
-
-| Agent | Read | Write | Edit | Glob | Grep | Bash | WebSearch | Task |
-|-------|------|-------|------|------|------|------|-----------|------|
-| Researcher | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ |
-| Challenger | ✅ | - | - | ✅ | ✅ | - | - | - |
-| First Principles Thinker | ✅ | - | - | - | - | - | ✅ | - |
-| Specialist Creator | ✅ | ✅ | - | - | - | - | ✅ | - |
-| Prompt Specialist | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | ✅ |
-| N8N Specialist | ✅ | ✅ | - | - | - | - | ✅ | - |
-| Product-Engineering Lead | ✅ | ✅ | - | ✅ | ✅ | - | - | - |
-| Librarian | ✅ | - | ✅ | ✅ | ✅ | - | - | - |
-| **Agile Coach** | ✅ | - | - | ✅ | ✅ | ✅ | - | - |
-| **PRD Consistency Sim** | ✅ | - | - | ✅ | - | - | - | - |
-| **TDD Test Writer** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - |
-| **TDD Implementer** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - |
-| **TDD Refactorer** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - |
-| **QA Reviewer** | ✅ | - | - | ✅ | ✅ | ✅ | - | - |
-
-## Related Documentation
-
-- [CLAUDE.md](../../CLAUDE.md) - Main project instructions
-- [PROJECT.md](../../PROJECT.md) - Project context and roadmap
-- [Slash Commands](../commands/) - Workflow command definitions
-- [Test Strategy Skill](../skills/test-strategy/SKILL.md) - Decision tree for test pyramid levels
-
----
-
-**Note:** This index should be updated when adding/removing sub-agents.
+Full rules: `.claude/rules/agents.md` (loads automatically when you edit a file here).

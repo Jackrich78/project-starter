@@ -1,206 +1,180 @@
-"""Schema validator for memory/agents/{name}.md files.
+"""Schema validator for `.claude/agent-memory/<agent>/MEMORY.md` files.
 
-Enforces the canonical schema (see memory/agents/TEMPLATE.md):
+Layout: one subdirectory per agent under the memory dir, each holding a
+`MEMORY.md` (glob `<memory-dir>/*/MEMORY.md`).
 
-- Exactly 3 H2 sections allowed: `## Patterns`, `## Incidents`, `## Task Outcomes`.
-- No other top-level (H1/H2) headings beyond the title H1 and these three H2s.
-- Each H2 may be empty (passes) or contain one or more entries.
-- Each entry MUST:
-    - Start with `- [YYYY-MM-DD] `
-    - End with a citation matching one of four patterns:
-        agent.db:event_id=N
-        commit:SHA       (>=7 hex chars)
-        file.md:LINE     (relative path + line number)
-        qa:report#section
-- File size <=100 lines (excess triggers pruning, not validator failure — but warned).
+Entry format: `- YYYY-MM-DD · <method> · source: <src>` where `<src>` is one of:
+    file:line     a path with a line number, e.g. `scripts/x.py:35`
+    commit:SHA    `commit:` followed by 7-40 hex chars
+    http(s)://... a URL
+    session:<id>  `session:` followed by an id
 
-Exit code:
-- 0 if every file passes (or warnings only)
-- 1 if any file fails schema
-- 2 if the memory directory is not found or agent filter yields no match
+Allowed besides entries: blank lines, `#` headings, HTML comments (single or
+multi-line). Any other line (a prose paragraph, a non-entry bullet) is an
+error: memory holds methods as one-line entries, nothing else.
+
+LINE_CAP = 150 is a HARD error. Every error names `path:line`.
+
+--check-roster also requires every `.claude/agents/*.md` (except TEMPLATE.md
+and README.md) to have a memory dir with a MEMORY.md, and every memory dir to
+have an agent file.
+
+Exit codes:
+    0  every file passed
+    1  at least one file failed
+    2  usage error (missing dir, or --agent matches no memory file)
 
 CLI:
-    python scripts/validate_agent_memory.py
-    python scripts/validate_agent_memory.py --agent tdd-test-writer
-    python scripts/validate_agent_memory.py --memory-dir /tmp/test-memory   # for tests
+    python3 scripts/validate_agent_memory.py
+    python3 scripts/validate_agent_memory.py --agent tdd-test-writer
+    python3 scripts/validate_agent_memory.py --memory-dir /tmp/mem
+    python3 scripts/validate_agent_memory.py --check-roster [--agents-dir DIR]
 """
 
 from __future__ import annotations
 
 import argparse
+import datetime
 import re
 import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-MEMORY_AGENTS_DIR = REPO_ROOT / "memory" / "agents"
+DEFAULT_MEMORY_DIR = REPO_ROOT / ".claude" / "agent-memory"
+DEFAULT_AGENTS_DIR = REPO_ROOT / ".claude" / "agents"
+NON_AGENT_FILES = {"TEMPLATE.md", "README.md"}
 
-ALLOWED_SECTIONS = ("Patterns", "Incidents", "Task Outcomes")
-LINE_CAP_WARNING = 100
+LINE_CAP = 150
 
-ENTRY_DATE_RE = re.compile(r"^\s*- \[(\d{4}-\d{2}-\d{2})\] ")
-# Citation patterns — accept any of the 4 formats.
-CITATION_RES = [
-    re.compile(r"agent\.db:event_id=\d+"),
-    re.compile(r"commit:[0-9a-f]{7,40}\b"),
-    re.compile(r"[\w\-./]+\.md:\d+"),
-    re.compile(r"qa:[\w\-./]+#\S+"),
+ENTRY_RE = re.compile(r"^- (\d{4}-\d{2}-\d{2}) · .+ · source: (.+)$")
+
+SOURCE_RES = [
+    re.compile(r"^[\w\-./]+:\d+(?:-\d+)?$"),
+    re.compile(r"^commit:[0-9a-f]{7,40}$"),
+    re.compile(r"^https?://\S+$"),
+    re.compile(r"^session:\S+$"),
 ]
 
 
+def _is_valid_source(source: str) -> bool:
+    return any(rx.match(source.strip()) for rx in SOURCE_RES)
+
+
+def _is_real_date(value: str) -> bool:
+    try:
+        datetime.date.fromisoformat(value)
+    except ValueError:
+        return False
+    return True
+
+
 def validate_one(path: Path) -> list[str]:
-    """Validate one memory file. Returns list of error strings (empty = pass)."""
+    """Validate one memory file. Returns error strings (empty = pass)."""
     errors: list[str] = []
-    if not path.exists():
-        return [f"{path.name}: file not found"]
+    lines = path.read_text(encoding="utf-8").splitlines()
 
-    text = path.read_text(encoding="utf-8")
-    lines = text.splitlines()
-
-    if len(lines) > LINE_CAP_WARNING:
+    if len(lines) > LINE_CAP:
         errors.append(
-            f"{path.name}: WARN — file is {len(lines)} lines (cap {LINE_CAP_WARNING}); "
-            f"run scripts/prune_agent_memory.py"
+            f"{path}:{LINE_CAP + 1}: file is {len(lines)} lines, "
+            f"over the {LINE_CAP}-line cap"
         )
 
-    # Find H1 and H2 headings (ignore lines inside HTML comments / fenced blocks).
     in_comment = False
-    in_code = False
-    h1_count = 0
-    h2_sections: list[tuple[str, int]] = []  # (heading text, line number)
     for idx, line in enumerate(lines, 1):
-        stripped = line.rstrip()
-        if "<!--" in stripped and "-->" not in stripped:
-            in_comment = True
-            continue
-        if "-->" in stripped:
-            in_comment = False
-            continue
+        stripped = line.strip()
+
         if in_comment:
-            continue
-        if stripped.startswith("```"):
-            in_code = not in_code
-            continue
-        if in_code:
-            continue
-        if stripped.startswith("# "):
-            h1_count += 1
-        elif stripped.startswith("## "):
-            heading = stripped[3:].strip()
-            h2_sections.append((heading, idx))
-
-    if h1_count != 1:
-        errors.append(f"{path.name}: must have exactly 1 H1 title (found {h1_count})")
-
-    seen_allowed: set[str] = set()
-    for heading, line_n in h2_sections:
-        if heading not in ALLOWED_SECTIONS:
-            errors.append(
-                f"{path.name}:{line_n}: forbidden H2 '{heading}' "
-                f"(allowed: {', '.join(ALLOWED_SECTIONS)})"
-            )
-        elif heading in seen_allowed:
-            errors.append(f"{path.name}:{line_n}: duplicate H2 '{heading}'")
-        else:
-            seen_allowed.add(heading)
-
-    # Validate entries inside the 3 sections.
-    section_ranges: list[tuple[str, int, int]] = []
-    for i, (heading, line_n) in enumerate(h2_sections):
-        end_line = h2_sections[i + 1][1] - 1 if i + 1 < len(h2_sections) else len(lines)
-        section_ranges.append((heading, line_n, end_line))
-
-    in_comment = False
-    in_code = False
-    for heading, start, end in section_ranges:
-        if heading not in ALLOWED_SECTIONS:
-            continue
-        for idx in range(start, end):
-            if idx >= len(lines):
-                break
-            line = lines[idx]
-            stripped = line.strip()
-            # Track comment / code state.
-            if "<!--" in line and "-->" not in line:
-                in_comment = True
-                continue
-            if "-->" in line:
+            if "-->" in stripped:
                 in_comment = False
-                continue
-            if line.lstrip().startswith("```"):
-                in_code = not in_code
-                continue
-            if in_comment or in_code:
-                continue
-            if not stripped:
-                continue
-            # Section heading line itself — skip.
-            if stripped.startswith("## "):
-                continue
-            # Entry line — must start with `- [YYYY-MM-DD]`.
-            if stripped.startswith("- "):
-                if not ENTRY_DATE_RE.match(line):
-                    errors.append(
-                        f"{path.name}:{idx + 1}: entry must start with `- [YYYY-MM-DD] ` — got: {stripped[:60]!r}"
-                    )
-                    continue
-                # Collect the entry body (this line + any indented continuation lines).
-                body_lines = [line]
-                j = idx + 1
-                while j < end:
-                    nxt = lines[j]
-                    if not nxt.strip():
-                        break
-                    if nxt.lstrip().startswith("- ") or nxt.lstrip().startswith("## "):
-                        break
-                    body_lines.append(nxt)
-                    j += 1
-                body = "\n".join(body_lines)
-                if not any(rx.search(body) for rx in CITATION_RES):
-                    errors.append(
-                        f"{path.name}:{idx + 1}: entry missing citation "
-                        f"(need one of: agent.db:event_id=N, commit:SHA, file.md:LINE, qa:report#section)"
-                    )
-            # Anything else inside a valid section is fine (prose / continuation handled above).
+            continue
+        if stripped.startswith("<!--"):
+            if "-->" not in stripped:
+                in_comment = True
+            continue
+        if not stripped or stripped.startswith("#"):
+            continue
+
+        if not stripped.startswith("- "):
+            errors.append(
+                f"{path}:{idx}: not an entry (prose is not allowed) — got: {stripped[:80]!r}"
+            )
+            continue
+
+        m = ENTRY_RE.match(stripped)
+        if not m:
+            if "source:" not in stripped:
+                errors.append(
+                    f"{path}:{idx}: entry missing ' · source: <src>' — got: {stripped[:80]!r}"
+                )
+            else:
+                errors.append(
+                    f"{path}:{idx}: entry does not match "
+                    f"'- YYYY-MM-DD · <method> · source: <src>' — got: {stripped[:80]!r}"
+                )
+            continue
+
+        if not _is_real_date(m.group(1)):
+            errors.append(f"{path}:{idx}: invalid date {m.group(1)!r}")
+        if not _is_valid_source(m.group(2)):
+            errors.append(
+                f"{path}:{idx}: unknown source kind {m.group(2)!r} "
+                f"(need file:line, commit:SHA, http(s):// URL, or session:<id>)"
+            )
 
     return errors
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--agent", help="Validate one agent by name (e.g. tdd-test-writer)")
-    parser.add_argument("--memory-dir", type=Path, default=MEMORY_AGENTS_DIR)
-    args = parser.parse_args()
+def check_roster(agents_dir: Path, memory_dir: Path) -> list[str]:
+    """Agents and memory dirs must pair up one-to-one."""
+    errors: list[str] = []
+    agents = {
+        f.stem for f in agents_dir.glob("*.md") if f.name not in NON_AGENT_FILES
+    }
+    mems = {d.name for d in memory_dir.iterdir() if d.is_dir()}
+    for name in sorted(agents - mems):
+        errors.append(f"{memory_dir / name}: missing memory dir for agent '{name}'")
+    for name in sorted(mems - agents):
+        errors.append(f"{memory_dir / name}: memory dir has no agent file '{name}.md'")
+    for name in sorted(agents & mems):
+        if not (memory_dir / name / "MEMORY.md").is_file():
+            errors.append(f"{memory_dir / name}: missing MEMORY.md")
+    return errors
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    parser.add_argument("--agent", help="validate one agent by directory name")
+    parser.add_argument("--memory-dir", type=Path, default=DEFAULT_MEMORY_DIR)
+    parser.add_argument("--agents-dir", type=Path, default=DEFAULT_AGENTS_DIR)
+    parser.add_argument("--check-roster", action="store_true",
+                        help="require agent files and memory dirs to match 1:1")
+    args = parser.parse_args(argv)
 
     mem_dir = args.memory_dir
     if not mem_dir.is_dir():
         print(f"error: memory dir not found: {mem_dir}", file=sys.stderr)
         return 2
+    if args.check_roster and not args.agents_dir.is_dir():
+        print(f"error: agents dir not found: {args.agents_dir}", file=sys.stderr)
+        return 2
 
-    files = sorted(f for f in mem_dir.glob("*.md") if f.name not in ("README.md", "TEMPLATE.md"))
+    files = sorted(mem_dir.glob("*/MEMORY.md"))
     if args.agent:
-        files = [f for f in files if f.stem == args.agent]
+        files = [f for f in files if f.parent.name == args.agent]
         if not files:
-            print(f"error: no memory file for agent '{args.agent}' in {mem_dir}", file=sys.stderr)
+            print(f"error: no MEMORY.md for agent '{args.agent}' in {mem_dir}", file=sys.stderr)
             return 2
 
-    if not files:
-        print("OK — 0 memory file(s) validated, no errors")
-        return 0
-
-    all_errors: list[str] = []
+    errors: list[str] = []
     for f in files:
-        all_errors.extend(validate_one(f))
+        errors.extend(validate_one(f))
+    if args.check_roster:
+        errors.extend(check_roster(args.agents_dir, mem_dir))
 
-    if all_errors:
-        warnings_only = all(" WARN " in e for e in all_errors)
-        for err in all_errors:
+    if errors:
+        for err in errors:
             print(err)
-        if warnings_only:
-            print(f"\n{len(all_errors)} warning(s) across {len(files)} file(s) — no schema errors")
-            return 0
-        errors = [e for e in all_errors if " WARN " not in e]
-        print(f"\n{len(errors)} error(s) across {len(files)} file(s)", file=sys.stderr)
+        print(f"\n{len(errors)} error(s) across {len(files)} memory file(s)", file=sys.stderr)
         return 1
 
     print(f"OK — {len(files)} memory file(s) validated, no errors")

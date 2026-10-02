@@ -1,21 +1,11 @@
 {
   "name": "project-starter",
-  "version": "2.0.0",
+  "version": "3.0.0-dev",
   "private": true,
   "type": "module",
+  "description": "Claude Code agent-harness template: orchestrator + sub-agents, GitHub Issues as spec, linted wiki, per-agent memory.",
   "scripts": {
-    "test": "cd .github/tests && npm test && cd ../.. && node scripts/run_pytest_optional.mjs",
-    "test:py": "python3 -m pytest test/unit/FEAT-035/ -v",
-    "setup:browser": "npx playwright install chromium"
-  },
-  "dependencies": {
-    "docx": "^9.5.3",
-    "lucide-static": "^0.575.0",
-    "playwright": "^1.58.0",
-    "pptxgenjs": "^4.0.1",
-    "sharp": "^0.34.5"
-  },
-  "devDependencies": {
-    "@mermaid-js/mermaid-cli": "^11.12.0"
+    "test": "node scripts/run_pytest_optional.mjs",
+    "test:py": "python3 -m pytest tests/harness -q"
   }
 }

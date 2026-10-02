@@ -1,6 +1,13 @@
-# Claude Code: Lesser-Known Behaviors Explained
+---
+type: guide
+title: Claude Code lesser-known behaviours
+description: Loading and enforcement behaviours of Claude Code that surprise people - CLAUDE.md loading, @imports, what sub-agents see, rules versus hooks - each with its source.
+tags: [claude-code, memory, hooks, sub-agents]
+---
 
-> Validated against official documentation (February 2026). Sources linked per section.
+# Claude Code: lesser-known behaviours
+
+> Re-read 2026-10-02 against the topics in `docs/reference/claude-code.md` (memory, sub-agents, hooks). Claims whose wording we could not re-confirm there are marked *(unverified)* and keep their original source; ask `claude-code-guide` before relying on them. Official pages are the authority.
 
 ---
 
@@ -20,7 +27,7 @@ CLAUDE.md files in child directories are **not** loaded at startup. They load au
 
 The memory system only recognizes `CLAUDE.md`, `CLAUDE.local.md`, and `.claude/rules/*.md`. README files are not mentioned anywhere in the memory documentation as auto-loaded files. (Note: this is inferred from absence — the docs don't explicitly state "READMEs are excluded," they simply never list them as recognized memory files.)
 
-**Source**: [memory.md](https://code.claude.com/docs/en/memory.md) — *"CLAUDE.md files in child directories load on demand when Claude reads files in those directories."*
+**Source**: [memory.md](https://code.claude.com/docs/en/memory) — *"CLAUDE.md files in child directories load on demand when Claude reads files in those directories."*
 
 ---
 
@@ -42,7 +49,7 @@ CLAUDE.md files can reference other files, but **only `@path` syntax triggers au
 - **Path resolution**: Relative paths resolve from the file containing the import, not the working directory.
 - **Code blocks are safe**: Imports inside markdown code spans and code blocks are not evaluated.
 
-**Source**: [memory.md](https://code.claude.com/docs/en/memory.md) — *"CLAUDE.md files can import additional files using `@path/to/import` syntax."*
+**Source**: [memory.md](https://code.claude.com/docs/en/memory) — *"CLAUDE.md files can import additional files using `@path/to/import` syntax."*
 
 ---
 
@@ -71,9 +78,10 @@ The docs state subagents don't get "the full Claude Code system prompt." While s
 If your sub-agent needs project conventions, you must either:
 - Include the relevant instructions directly in the agent's markdown body
 - Preload specific skills via the `skills:` frontmatter field
+- Give it a `memory:` file *(only where it cannot become a stored-injection path; see `docs/system/memory-systems.md`)*
 - Have the agent read the files it needs during execution
 
-**Source**: [sub-agents.md](https://code.claude.com/docs/en/sub-agents.md) — *"Subagents receive only this system prompt (plus basic environment details), not the full Claude Code system prompt."*
+**Source**: [sub-agents.md](https://code.claude.com/docs/en/sub-agents) — *"Subagents receive only this system prompt (plus basic environment details), not the full Claude Code system prompt."*
 
 ---
 
@@ -83,7 +91,7 @@ These are fundamentally different mechanisms that complement each other.
 
 ### Rules (`.claude/rules/*.md`)
 
-- **When loaded**: All rule files load **at session start**, same priority as `.claude/CLAUDE.md`
+- **When loaded**: rules without `paths:` load at session start, same priority as `.claude/CLAUDE.md`; rules with `paths:` are scoped to matching files (this repo's `agents/README.md` relies on that: "loads automatically when you edit a file here"). *(exact trigger unverified; see the memory page)*
 - **Nature**: Advisory instructions Claude reads and tries to follow
 - **Enforcement**: None — Claude interprets them and uses judgment
 - **Path scoping**: Rules can target specific files using `paths:` frontmatter with glob patterns
@@ -100,15 +108,15 @@ paths:
 
 Rules without a `paths:` field apply unconditionally to all files.
 
-**Source**: [memory.md](https://code.claude.com/docs/en/memory.md)
+**Source**: [memory.md](https://code.claude.com/docs/en/memory)
 
 ### Hooks (`.claude/settings.json`)
 
-- **When triggered**: At specific lifecycle points. The docs define **18 hook events** including: SessionStart, UserPromptSubmit, PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, Notification, SubagentStart, SubagentStop, Stop, TeammateIdle, TaskCompleted, ConfigChange, WorktreeCreate, WorktreeRemove, PreCompact, SessionEnd, and more.
-- **Nature**: Deterministic automation that executes shell commands or LLM evaluations
-- **Enforcement**: Hard — Claude cannot bypass a hook
-- **Blocking**: Only some hooks can block actions. PreToolUse and PermissionRequest can block tool calls; most other hooks (PostToolUse, Notification, etc.) cannot.
-- **Input modification**: PreToolUse hooks can modify tool inputs via `updatedInput` before execution
+- **When triggered**: at lifecycle points, including SessionStart, UserPromptSubmit, PreToolUse, PostToolUse, PostToolUseFailure, SubagentStart, SubagentStop, Stop, PreCompact and SessionEnd (the reference page lists the current set; the count changes, so we do not state one).
+- **Nature**: deterministic automation; hook types are `command`, `prompt` and `agent`.
+- **Input**: a command hook receives the event as JSON on stdin, not as environment variables.
+- **Enforcement**: hard — the model cannot talk its way past one. Exit code 2 blocks where the event supports blocking (PreToolUse blocks the tool call).
+- **Output**: stdout reaches the model only as `hookSpecificOutput.additionalContext` (a bare JSON blob is discarded). *Which events can block, and `updatedInput` rewriting of tool input, are unverified here: check the hooks page.*
 
 ```json
 {
@@ -117,14 +125,16 @@ Rules without a `paths:` field apply unconditionally to all files.
       "matcher": "Bash",
       "hooks": [{
         "type": "command",
-        "command": "echo $TOOL_INPUT | grep -q 'rm -rf' && exit 2 || exit 0"
+        "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre_tool_use.py\""
       }]
     }]
   }
 }
 ```
 
-**Source**: [hooks.md](https://code.claude.com/docs/en/hooks.md), [hooks-guide.md](https://code.claude.com/docs/en/hooks-guide.md)
+A working example is this repo's own `.claude/hooks/pre_tool_use.py` (`docs/system/hooks.md`).
+
+**Source**: [hooks](https://code.claude.com/docs/en/hooks), [hooks-guide](https://code.claude.com/docs/en/hooks-guide)
 
 ### When to use which
 
@@ -151,7 +161,7 @@ Rules without a `paths:` field apply unconditionally to all files.
 | `CLAUDE.md` (child dirs) | On-demand (when files in that dir are accessed) | Scoped to that subtree |
 | `CLAUDE.local.md` | Same as CLAUDE.md | Gitignored, personal overrides |
 | `.claude/CLAUDE.md` | Session start | Project-wide |
-| `.claude/rules/*.md` | Session start | All files, or path-scoped |
+| `.claude/rules/*.md` | Session start if unscoped; `paths:` rules scoped to matching files | All files, or path-scoped |
 | `.claude/agents/*.md` | When agent is spawned | Agent's own context only |
 | `@`-imported files | When parent CLAUDE.md loads | Follows parent's timing |
 | README files | Not part of memory system | Must be explicitly read or `@`-imported |

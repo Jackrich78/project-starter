@@ -1,5 +1,6 @@
 ---
 name: ci-validation
+type: skill
 description: Validates GitHub Actions workflow files locally before committing. Use when creating or modifying .github/workflows/*.yml files, before git commits including workflow changes, or when CI/CD configurations are updated. Prevents pushing syntax errors and config issues that would only be caught in GitHub Actions.
 ---
 
@@ -82,14 +83,14 @@ on:
 
 ## Pre-Commit Checklist
 
-- [ ] `actionlint .github/workflows/*.yml` passes
+- [ ] `actionlint .github/workflows/*.yml` passes (CI runs it too, via the pinned `raven-actions/actionlint` step in `validate.yml`; a local run catches it before push)
 - [ ] All workflow `run:` commands execute locally
-- [ ] CI tests pass (`.github/tests/` if exists)
+- [ ] CI tests pass (the repo's workflow tests, if any)
 - [ ] Environment variables documented
 - [ ] No hardcoded secrets
 - [ ] Triggers match intent
 
-## Example (from FEAT-010)
+## Example
 
 ```bash
 # 1. Validate

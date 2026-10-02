@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-10-02
+
+Third iteration of the harness: an assistant harness that can also build code. Ported as mechanisms, never content, from the maintainer's private harness after a pre-write privacy and security audit.
+
+### Changed
+
+- **CLAUDE.md** is a 100-line operating contract (orchestrator contract, issue-based spine, two CI-parsed model tables, memory and decision rules, five hard-won rules). Path-scoped conventions moved to `.claude/rules/{testing,agents,skills,wiki,hooks}.md`.
+- **Work lives in GitHub Issues.** The issue is the spec; a parent `feature` issue carries the design note, acceptance criteria, outcome test, validation and reversal; sub-issues are the plan. `docs/system/issue-flow.md` is the one home for states, labels, pickup protocol and the close-out comment. Integration mode `pr` (default) or `direct`, set in CLAUDE.md `## Workflow`.
+- **Skills only.** Every workflow is `.claude/skills/<name>/SKILL.md`, invoked as `/<name>`; `.claude/commands/` is gone. Commands shrank from 300–700 lines each to skills under 150.
+- **Agents** rewritten to one contract: memory block first, Stance on judgement agents, Failure Recovery with PASS / FAIL / ESCALATION, report ending in proposed memory entries. Opus by role (plan, judge), Sonnet to build and draft, Haiku for volume; `tests/harness/test_model_tier_table.py` fails on drift. `specialist-creator` became `persona-creator`; `drafter` added; `n8n-specialist` removed.
+- **Per-agent memory** at `.claude/agent-memory/<agent>/MEMORY.md`: one-line methods, 150-line cap, validator run by `/commit`; `memory: project` only on the TDD trio. Replaces `memory/agents/`.
+- **Wiki over `docs/`**: frontmatter `type` on every page, reserved `index.md`/`log.md`, 300-line cap, decay tiers, `scripts/wiki_lint.py` in CI, semantic `wiki-lint` skill. Decision log moved to `docs/decisions.md` (one line per decision, rejected option mandatory).
+- **Security baseline**: `settings.json` rewritten with a read-only allow list and `defaultMode: default`; `pre_tool_use.py` blocks the exfiltration, credential-read, secret-expansion and destructive forms a security audit found bypassable, plus a QA gate that blocks commit/push on `BLOCKED SECURITY`; observability is opt-in and redacted; `scripts/leak_gate.sh` scans content, filenames, OOXML and `.gitignore` text case-insensitively; `scripts/coupling_lint.sh` catches private-product leftovers.
+- **Security audit round 3** (independent clean-session audit before release): the deny hook now resolves wrapper prefixes, catches shells and interpreters fed from stdin/here-strings/heredocs, `php`/`lua`/`osascript`, shell functions and brace groups, `xargs` readers fed by directory listings, exec-capable `git config` keys, abbreviated push flags, history-rewriting git verbs, `rm -rf .git`, shell writes to hook/settings/leak-gate files, reads of Claude Code home state and the transcript directory, recursive grep over home, `npm` config flags that execute, `gh --jq env`, and the empty-argument tokenizer split. Edits of harness files through the Edit tool return `permissionDecision: ask`. `settings.json`: `npm test *` became `npm test -- *`; new deny entries for npm config flags, `git config remote.*|alias.*|core.*`, and `~/.claude` state files. `send_event.redact` covers key names with prefixes/suffixes, `-p`/`-u`/`--token` CLI forms, `Authorization: Basic|Token`, cookies, URL tokens and a dozen more vendor prefixes; `pre_compact` redacts before truncating and writes the salvage `0600`; `scripts/recall.py` redacts every printed line. `leak_gate.sh --history` also scans author, committer, message and added-file-name lines, binary diffs and merges; waiver output no longer prints pattern text; an invalid pattern fails the gate. Workflows pin every action by commit SHA, drop `persist-credentials`, pin pip ranges and run pytest directly. `to-tickets` is no longer model-invocable; `agile-coach` loses Bash; `/commit` accepts issue-comment verdicts only from owner/member/collaborator; `/setup` stages by path behind the leak gate; `setup_labels.py` targets this checkout's origin. NOTICE records the Apache-2.0 skill-creator and the two further Pocock adaptations.
+- **Session continuity**: zero-LLM compaction salvage and re-prime, session priming with a staleness banner, a sub-agent claim-check reminder, `scripts/recall.py`.
+- **Harness self-maintenance**: `docs/reference/claude-code.md` (official doc pointers with a `last_checked` stamp and a 90-day test), a rule to consult `claude-code-guide` before harness changes, `/harness-health`, a monthly zero-token GitHub Actions check.
+
+### Added
+
+- Skills adapted from Matt Pocock's skills (MIT, see `NOTICE`): grilling, codebase-design, writing-for-agents, prototype, triage, to-tickets, work-issue. Also: session-winddown, recover-session, git-housekeeping, evaluate, architecture-review, audit-claude-md, harness-health, persona, handover (issue comment), logs.
+- `/setup` as a 7-step idempotent bootstrap: fills CLAUDE.md/PROJECT.md, wires GitHub (repo, labels, issue templates), turns the roadmap into stub `feature` issues, founding commit and smoke checklist.
+- `docs/guides/first-session.md`: a scripted ten-minute first task; cold-clone smoke job in CI.
+- Harness tests under `tests/harness/` (deny-hook corpus, settings wiring, hook runtime, leak gate, tier table, memory, size caps, dead paths, README counts, reference stamp).
+
+### Removed
+
+- `stacks/` (Cloudflare), `docs/features/`, `docs/qa/`, PRD/plan/readme/qa templates, `memory/agents/`, the private middle-tier sync pipeline (`/sync`, `sync-downstream.sh`, manifest, `public-exclude.txt`, two-remote guides), `.github/tests/`, `test/`, eleven vendored document skills (docx, pdf, pptx, excalidraw, mcp-builder, slack, diagram, icon, md-to-doc, brand-guidelines, youtube), `auto-harness-readiness`, `context-priming`, `decision-fork-panel`, `template-sync`, the always-on event store, markdownlint in CI.
+
 ## [2.0.1] - 2026-07-19
 
 ### Added

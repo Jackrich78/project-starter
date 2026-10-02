@@ -1,70 +1,38 @@
 # Contributing to Project Starter
 
-Thanks for your interest in contributing! This template uses its own workflow commands for development.
+The template develops itself with its own harness. Work is tracked in this repo's GitHub Issues; `docs/system/issue-flow.md` explains the labels and states.
 
-## Getting Started
-
-1. Fork the repository
-2. Clone your fork:
-   ```bash
-   git clone https://github.com/jackrich78/project-starter.git
-   cd project-starter
-   ```
-3. Create a branch for your changes:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-## Development Workflow
-
-This template is designed for AI-assisted development with Claude Code. Use the built-in commands:
+## Getting started
 
 ```bash
-/explore [topic]    # Discover and plan a new feature
-/blueprint FEAT-XXX  # Create implementation plan
-/build FEAT-XXX     # Implement with TDD
-/commit             # Git workflow with conventional commits
+git clone https://github.com/jackrich78/project-starter.git && cd project-starter
+npm test                       # harness tests (pytest + pyyaml when available)
+claude .                       # then /prime
 ```
 
-### For Template Improvements
+Requirements: Claude Code, `gh` ≥ 2.96 (sub-issues), Node 18+, Python 3.9+ (optional locally, always in CI).
 
-1. **New agents** - Add to `.claude/agents/` following `TEMPLATE.md`
-2. **New commands** - Add to `.claude/commands/`
-3. **Documentation** - Update relevant files in `docs/`
+## Proposing a change
 
-## Code Style
+1. Look for an open issue first (`gh issue list --label ready-for-agent`); raise one with the ticket template if none fits. A design that touches CLAUDE.md, hooks or agents gets a `feature` parent issue with a design note before any code.
+2. Branch `issue-N-<slug>` (`gh issue develop N --checkout`), build with `/build #N`, review with `/qa --issue N`, commit with `/commit` (it refuses on a `BLOCKED SECURITY` verdict and runs the validators).
+3. Open a PR whose body carries `Closes #N`. CI runs `validate.yml`: actionlint, hook syntax, CLAUDE.md audit, wiki lint, leak gate, coupling lint, the harness tests and a cold-clone smoke job. All must be green.
 
-This template is stack-agnostic. When contributing:
+## What a change must keep true
 
-- Follow existing patterns in the codebase
-- Keep markdown files under 500 lines where possible
-- Use conventional commits (see below)
+- **CLAUDE.md stays under 150 lines** (warn at 120). Detail goes to `.claude/rules/` or `docs/`.
+- **Skills ≤ 150 lines, agents ≤ 300**, every skill with `name` = folder and a trigger-phrased `description` (`.claude/rules/skills.md`).
+- **Agent frontmatter matches the CLAUDE.md model tables**; `memory:` only on the TDD trio (`.claude/rules/agents.md`).
+- **Every wiki page has frontmatter with a `type`** and is listed in `docs/index.md` (`.claude/rules/wiki.md`).
+- **A hook pattern change ships a corpus case** in `tests/harness/test_hooks.py`, seen red once (`.claude/rules/hooks.md`).
+- **Decisions are logged** in `docs/decisions.md` in the same change, with the rejected option.
+- **Nothing private, ever.** No real names, hosts, handles, client or product references, no secrets. Run `bash scripts/leak_gate.sh` and `bash scripts/coupling_lint.sh` before pushing; CI runs both.
+- **Before changing anything the harness mechanism depends on** (agent frontmatter, hooks, settings, skill frontmatter), ask the built-in `claude-code-guide` and cite its answer in the commit body (`docs/reference/claude-code.md`).
 
-## Commit Messages
+## Attribution
 
-Use [Conventional Commits](https://www.conventionalcommits.org/):
+Seven skills are adapted from Matt Pocock's skills (MIT); see `NOTICE`. Keep the attribution line in any derived skill.
 
-```
-feat: add new /status command
-fix: correct file path in researcher agent
-docs: update architecture documentation
-chore: update .gitignore patterns
-```
+## Licence
 
-## Pull Request Process
-
-1. Ensure your changes work with the template workflow
-2. Update documentation if adding new features
-3. Keep PRs focused on a single change
-4. Fill out the PR template with a clear description
-
-## Questions?
-
-Open an issue for:
-- Bug reports
-- Feature requests
-- Questions about contributing
-
----
-
-Thank you for helping improve Project Starter!
+MIT. By contributing you agree your contribution is licensed the same way.

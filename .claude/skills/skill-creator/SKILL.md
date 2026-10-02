@@ -1,7 +1,10 @@
 ---
 name: skill-creator
+type: skill
 description: Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from scratch, edit, or optimize an existing skill, run evals to test a skill, benchmark skill performance with variance analysis, or optimize a skill's description for better triggering accuracy.
 ---
+
+# SPLIT-DEFERRED vendored Anthropic skill (Apache-2.0, see LICENSE.txt and NOTICE). Modified from anthropics/skills: this line and the `type: skill` key were added; split only upstream
 
 # Skill Creator
 

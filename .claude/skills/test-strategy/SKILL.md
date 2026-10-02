@@ -1,212 +1,38 @@
 ---
 name: test-strategy
-description: Guides test approach decisions across all pyramid levels. Use when deciding test approach during /blueprint, writing tests in tdd-test-writer, validating in qa-reviewer, or understanding testing philosophy.
+description: "Decide the test approach and pyramid level for a piece of behaviour. Use when annotating test stubs in /blueprint, routing them in /build, writing tests, or judging whether a test sits at the right level: \"what kind of test is this\", \"unit or integration\", \"do we need e2e\"."
+type: skill
 ---
 
 # Test Strategy
 
-Decide the right test approach for each piece of functionality, route test stubs to the correct directory, and ensure tests verify behavior at the appropriate pyramid level.
+## Context
 
-## When to Use
+Pick the cheapest level that proves the behaviour, route each stub to its directory, and keep tests at the right pyramid level. Operational test rules (seen red, discriminating assertion, boundary stubs, CI lane): `docs/system/testing-rules.md`.
 
-- During `/blueprint` to annotate test stubs with the correct approach
-- During `/build` to route stubs to the right execution flow
-- In `tdd-test-writer` to understand what belongs in unit tests
-- In `qa-reviewer` to validate pyramid level placement
-- When deciding between TDD subagents vs inline testing
+## Pattern
 
-## Decision Tree
+1. **Walk the tree in order** for each behaviour; first YES wins, default is `tdd`:
+   - complete user flow across pages: `e2e` -> `tests/e2e/`
+   - API-to-DB round-trip, middleware chain, multi-service flow: `integration` -> `tests/integration/<area>/`
+   - UI component rendering or interaction: `component-test` -> `tests/component/<area>/`
+   - logic, pure function, utility, handler, hook: `tdd` -> `tests/unit/<area>/`
+   - exploratory prototype or spike: manual only, no stub
+2. **Annotate** the stub's first line: `// @test-approach: tdd | component-test | integration | e2e`. It sets directory and build routing: `tdd` goes to the TDD sub-agents (`tdd-red-green-refactor`); `component-test` and `integration` run inline red-green (read stub, write real test, see it fail, implement, see it pass, review); `e2e` runs inline with a browser tool if available, else write the steps as a manual checklist and let `qa-reviewer` flag "E2E automated coverage: pending".
+3. **Name tests by acceptance criterion**: `describe('AC-3: <criterion>')`, where the AC numbers come from the issue body. This makes coverage greppable: `grep -rhoE "AC-[0-9]+" tests/ | sort -u`.
+4. **Apply the backstop rule.** Write a few outcome-level tests that pin the behaviour end to end, plus per-branch unit tests where branching logic lives. Do not write one test per acceptance-criterion line; an exhaustive list of near-duplicates buys no extra confidence and breaks on every refactor.
+5. **Watch the boundaries.** Integration is not a unit test with extra setup, and not an e2e without a browser. Mock at the boundary the code crosses, not at its own internals.
 
-For each piece of functionality, ask these questions in order:
+Read `references/examples.md` for a full example per level and `references/validation-criteria.md` for pyramid rules, anti-patterns and AC coverage checks.
 
-```
-Is this a complete user flow across pages?
-  YES → e2e          → test/e2e/
+## Example
 
-Is this an API-to-DB round-trip, middleware chain, or multi-service flow?
-  YES → integration   → test/integration/FEAT-XXX/
+Behaviour: "creating a user returns 201 and persists." Tree: API-to-DB round-trip, so `integration`, file `tests/integration/<area>/user-api.test.ts`, first line `// @test-approach: integration`, `describe('AC-2: User creation API')`. Also a unit test for the email-format branch (`tdd`), not a unit test per AC bullet.
 
-Is this a UI component with rendering or user interaction?
-  YES → component-test → test/component/FEAT-XXX/
+## Anti-patterns
 
-Is this backend logic, a pure function, utility, API handler, or hook?
-  YES → tdd           → test/unit/FEAT-XXX/
-
-Is this an exploratory prototype or spike?
-  YES → manual testing only (no annotation, no stub)
-```
-
-**Default:** If unclear, use `tdd` (unit tests with TDD subagents).
-
-## Annotation Convention
-
-Every test stub gets a comment on the first line declaring its approach:
-
-```typescript
-// @test-approach: tdd | component-test | integration | e2e
-```
-
-The annotation determines both directory placement and build routing.
-
-### Full Routing Map
-
-```
-Annotation              Directory                  /build Routing
-─────────────────────   ───────────────────────    ──────────────────────────────
-@test-approach: tdd     test/unit/FEAT-XXX/        RED-GREEN-REFACTOR subagents
-@test-approach: component-test  test/component/FEAT-XXX/   Inline red-green (6-step)
-@test-approach: integration     test/integration/FEAT-XXX/ Inline red-green (6-step)
-@test-approach: e2e     test/e2e/                  Inline + MCP if available
-(no annotation)         test/unit/FEAT-XXX/        Default: TDD subagents
-```
-
-## Directory Placement Rules
-
-| Level | Directory | Contains |
-|-------|-----------|----------|
-| Unit | `test/unit/FEAT-XXX/` | Logic, data transformations, services, hooks, utilities |
-| Component | `test/component/FEAT-XXX/` | UI rendering, user interaction, component state, accessibility |
-| Integration | `test/integration/FEAT-XXX/` | API-to-DB flows, middleware chains, multi-service communication |
-| E2E | `test/e2e/` | Complete user flows across pages, critical happy paths, auth flows |
-
-## Component Testing: 6-Step Inline Workflow
-
-Component tests run inline in the `/build` orchestrator (no subagent isolation needed). The test-code feedback loop is tight enough that isolation adds overhead without benefit.
-
-**Steps:**
-
-1. **Read** the component test stub and its acceptance criterion
-2. **Write** the real test (render-interact-assert pattern)
-3. **Run** the test — verify it FAILS (missing component)
-4. **Implement** the minimal component to pass the test
-5. **Run** the test — verify it PASSES
-6. **Review** — check the component meets the AC, refactor if needed
-
-**Pattern:**
-```typescript
-// @test-approach: component-test
-// test/component/FEAT-XXX/LoginForm.test.tsx
-
-describe('AC-FEAT-XXX-001: Login form validation', () => {
-  it('should show error when email is empty', () => {
-    // Render
-    render(<LoginForm />);
-
-    // Interact
-    fireEvent.click(screen.getByRole('button', { name: /submit/i }));
-
-    // Assert
-    expect(screen.getByText(/email is required/i)).toBeInTheDocument();
-  });
-});
-```
-
-## Integration Testing Guidance
-
-**When to use integration tests:**
-- API handler → database round-trips
-- Middleware chains (auth → validation → handler)
-- Multi-service communication
-- External API integration (with mocks at boundary)
-
-**Integration tests are NOT:**
-- Unit tests with extra setup (that's a unit test)
-- E2E tests run without a browser (that's a misplaced E2E)
-
-**Pattern:**
-```typescript
-// @test-approach: integration
-// test/integration/FEAT-XXX/user-api.test.ts
-
-describe('AC-FEAT-XXX-003: User creation API', () => {
-  it('should persist user and return 201', async () => {
-    // Setup
-    const db = await createTestDb();
-
-    // Execute
-    const response = await request(app).post('/api/users').send({ name: 'Test' });
-
-    // Verify
-    expect(response.status).toBe(201);
-    const user = await db.query('SELECT * FROM users WHERE name = $1', ['Test']);
-    expect(user.rows).toHaveLength(1);
-
-    // Teardown
-    await db.cleanup();
-  });
-});
-```
-
-## E2E Testing with Browser MCP
-
-E2E tests cover critical user flows across pages. The approach is **tool-agnostic** — multiple browser automation tools are valid:
-
-| Tool | Notes |
-|------|-------|
-| Playwright MCP | Most mature, no credentials needed |
-| Stagehand | AI-native, natural language + code |
-| Vercel AI Browser | Vision-based, zero-maintenance |
-
-**If browser MCP available:**
-1. Use MCP tools for automated E2E execution
-2. Tag findings with tool name in test output
-
-**If browser MCP NOT available:**
-1. Write E2E test stubs with documented steps
-2. Generate manual test checklist from stubs
-3. Note: "Requires browser MCP — see FEAT-020"
-4. qa-reviewer flags as "E2E automated coverage: pending MCP setup"
-
-**Pattern:**
-```typescript
-// @test-approach: e2e
-// test/e2e/login-flow.test.ts
-
-describe('AC-FEAT-XXX-005: Complete login flow', () => {
-  it('should login and redirect to dashboard', async () => {
-    // Step 1: Navigate to login page
-    await page.goto('/login');
-
-    // Step 2: Fill credentials
-    await page.fill('[name="email"]', 'user@example.com');
-    await page.fill('[name="password"]', 'valid-password');
-
-    // Step 3: Submit
-    await page.click('button[type="submit"]');
-
-    // Step 4: Verify redirect
-    await expect(page).toHaveURL('/dashboard');
-    await expect(page.getByText('Welcome')).toBeVisible();
-  });
-});
-```
-
-See FEAT-020 for browser MCP installation and configuration.
-
-## Traceability
-
-All test descriptions follow the AC traceability pattern:
-
-```typescript
-describe('AC-FEAT-XXX-###: [Criterion Name]', () => {
-  // Tests for this acceptance criterion
-});
-```
-
-This enables:
-- Grep for coverage: `grep -r "AC-FEAT-XXX" test/`
-- qa-reviewer validation: compare test ACs against PRD ACs
-- Tracing failures back to requirements
-
-## References
-
-- [Validation Criteria](references/validation-criteria.md) — Pyramid level rules, anti-patterns, AC coverage patterns
-- [Examples](references/examples.md) — Full examples for each approach level
-
-## See Also
-
-- [TDD Skill](../tdd-red-green-refactor/SKILL.md) — Orchestrates TDD subagents (unit tests only)
-- [/blueprint Command](../../commands/blueprint.md) — Creates annotated test stubs
-- [/build Command](../../commands/build.md) — Routes stubs by annotation
-- [QA Reviewer](../../agents/qa-reviewer.md) — Validates pyramid placement
-- [TDD Test Writer](../../agents/tdd-test-writer.md) — RED phase (unit tests only)
+- Defaulting everything to e2e: slow, flaky, and it localises nothing.
+- One test per AC line instead of backstop plus branch tests.
+- Mocking the module under test, so the test mirrors the implementation.
+- Skipping the annotation: the stub falls to the default and routes wrongly.
+- Asserting on private state or mock call counts rather than observable outcomes.
