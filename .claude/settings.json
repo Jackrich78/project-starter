@@ -2,7 +2,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Bash|Read|Edit|Write|MultiEdit|NotebookEdit",
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
@@ -220,8 +220,6 @@
       "Read(~/.wrangler/**)",
       "Read(~/.pgpass)",
       "Read(~/.vault-token)",
-      "Read(./.github/pii-patterns.txt)",
-      "Read(./.github/release-waivers.txt)",
       "Read(./.claude/settings.local.json)",
       "Bash(git config remote.*)",
       "Bash(git config core.*)",

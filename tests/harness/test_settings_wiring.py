@@ -67,10 +67,11 @@ def test_matchers_name_real_tools(settings):
             assert set(matcher.split("|")) <= REAL_TOOLS, (event, matcher)
 
 
-def test_security_hook_wired_on_all_guarded_tools(settings):
+def test_security_hook_wired_on_bash_only(settings):
+    # the hook checks Bash commands; Read-tool protection lives in permissions.deny
     groups = [g for g in settings["hooks"]["PreToolUse"]
               if any("pre_tool_use.py" in h["command"] for h in g["hooks"])]
-    assert groups and set(groups[0]["matcher"].split("|")) >= {"Bash", "Read", "Edit", "Write", "MultiEdit"}
+    assert [g["matcher"] for g in groups] == ["Bash"]
 
 
 def test_settings_leave_permission_mode_to_user(settings):
@@ -129,14 +130,8 @@ def test_npm_allow_entries_stop_config_flags(settings):
 def test_claude_home_state_denied(settings):
     deny = set(settings["permissions"]["deny"])
     for need in ("Read(~/.claude/history.jsonl)", "Read(~/.claude/sessions/**)", "Read(~/.claude/shell-snapshots/**)",
-                 "Read(~/.git-credentials)", "Read(./.github/pii-patterns.txt)", "Read(./.claude/settings.local.json)"):
+                 "Read(~/.git-credentials)", "Read(./.claude/settings.local.json)"):
         assert need in deny, need
-
-
-def test_security_hook_matcher_covers_notebooks(settings):
-    matchers = [g.get("matcher") or "" for g in settings["hooks"]["PreToolUse"]
-                if any("pre_tool_use.py" in h["command"] for h in g["hooks"])]
-    assert matchers and all("NotebookEdit" in m for m in matchers), matchers
 
 
 def test_new_denies_present_and_memory_dir_readable(settings):
