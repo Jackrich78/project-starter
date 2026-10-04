@@ -1,8 +1,8 @@
 ---
 name: retro
-description: "Turn what happened into durable process changes; runs inside /session-winddown, or after a feature closes. Use on \"retro\", \"what did we learn\", \"that was wrong, remember it\", \"always do X next time\". Modes: learn, feedback. Proposals need human approval before anything is edited."
+description: "Turn what happened into durable process changes; runs inside /session-winddown, or after a feature closes. Use on \"retro\", \"what did we learn\", \"that was wrong, remember it\", \"always do X next time\". Modes: learn, feedback, harness. Proposals need human approval before anything is edited."
 type: skill
-argument-hint: "[learn|feedback]"
+argument-hint: "[learn|feedback|harness]"
 ---
 
 # Retro
@@ -35,6 +35,9 @@ A correction the human gave this session. Route it to the nearest file that is l
 State the cause of the mistake ("what assumption was wrong"), not just the fix. A rule that failed twice in prose becomes a hook or test.
 
 Always: if the auto-memory index (`MEMORY.md` under `~/.claude/projects/<project>/memory/`) exceeds 200 lines, merge or drop entries until under.
+
+### harness
+Friction analysis of the harness itself after a real session. You write the hypotheses from what you remember (raw transcripts are Read-denied); one read-only sub-agent reads the durable traces: `git log`, issue and PR comments (read, never quoted), `.claude/logs/security.log`. Confirm or refute each hypothesis with a harness `file:line`. Generic wording only: no project, product or person names, no non-harness paths. Output a table, `event · count · harness cause (file:line) · inside a gate? · fix (delete > reword > add)`, then the top 3 fixes by human stops removed, what worked, what is not verified, and one line stating nothing confidential was copied. Approved fixes go to the template repo, not the adopter.
 
 ## Example
 
