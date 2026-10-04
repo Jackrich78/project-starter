@@ -22,7 +22,7 @@ The main thread is the scarce resource. Delegate when work is:
 - **better judged cold** (review, fact-check, QA: the author should not be the reviewer);
 - **web research** (never on the main thread).
 
-Do inline what is under half a context window and needs your live reasoning. The routing table is CLAUDE.md § Delegation & model policy; `claude-code-guide` answers how Claude Code itself behaves.
+Do inline what is under ~200k tokens and needs your live reasoning. The routing table is CLAUDE.md § Delegation & model policy; `claude-code-guide` answers how Claude Code itself behaves.
 
 ## Brief a sub-agent so its claim can be true
 
@@ -46,7 +46,7 @@ Then treat the result as a claim. State its independence tier: **Tier 1** prompt
 
 ## `/clear` discipline
 
-One window, one task. `/clear` between unrelated tasks, and when a ticket is done; a ticket that needs a handover before it closes was mis-sized. `/clear` is not re-primed (`docs/system/hooks.md`), so start the next task by naming it, or run `/prime`. `/compact` is for continuing the *same* task; the salvage hook restores paths, commands and your recent words afterwards. Anything worth keeping beyond the window goes on the issue, in the wiki or in `docs/decisions.md` before you clear.
+One ticket, one task. `/clear` between unrelated tasks, and when a ticket is done; a ticket that needs a handover before it closes was mis-sized. `/clear` is not re-primed (`docs/system/hooks.md`), so start the next task by naming it, or run `/prime`. `/compact` is for continuing the *same* task; the salvage hook restores paths, commands and your recent words afterwards. Anything worth keeping beyond the window goes on the issue, in the wiki or in `docs/decisions.md` before you clear.
 
 ## Four layers of rules: where does a new rule go?
 

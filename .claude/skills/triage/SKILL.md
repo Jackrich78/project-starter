@@ -50,7 +50,7 @@ Questions are specific and answerable, never "please provide more info". The ans
 
 ### New item
 
-Fits one window: write it from `.github/ISSUE_TEMPLATE/ticket.md` and create it `needs-triage`. Bigger: not a triage job; run `grilling`, `/explore`, `/blueprint`, then `to-tickets`.
+Fits one ticket (issue-flow.md § Sizing): write it from `.github/ISSUE_TEMPLATE/ticket.md` and create it `needs-triage`. Bigger: not a triage job; run `grilling`, `/explore`, `/blueprint`, then `to-tickets`.
 
 ## Example
 

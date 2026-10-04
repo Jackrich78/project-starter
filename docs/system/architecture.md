@@ -31,7 +31,7 @@ Rule of thumb: a rule that failed twice in prose becomes a hook or a test. Knowl
 
 ## Why the Issue is the spec
 
-Specs live on GitHub Issues (`issue-flow.md`), not in feature folders in git. A spec where the work is tracked is read by teammates and agents alike; a README per feature was a second home for the same facts that only its author navigated. What outlives a feature moves to the wiki at close-out (the `Learned:` line), and the rejected options go to `docs/decisions.md`: code preserves what was built, never what was tried. Sizing is in context windows, not hours, because the window is what an agent actually runs out of.
+Specs live on GitHub Issues (`issue-flow.md`), not in feature folders in git. A spec where the work is tracked is read by teammates and agents alike; a README per feature was a second home for the same facts that only its author navigated. What outlives a feature moves to the wiki at close-out (the `Learned:` line), and the rejected options go to `docs/decisions.md`: code preserves what was built, never what was tried. Sizing is in main-thread tokens, not hours (`issue-flow.md` § Sizing), because the context is what an agent actually runs out of.
 
 ## Why memory is methods-only and tracked
 

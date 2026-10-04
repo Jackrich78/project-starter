@@ -1,6 +1,6 @@
 ---
 name: to-tickets
-description: "Break an approved plan or parent issue into sub-issues, one fresh context window each; the spine step after /blueprint approval and before /build. Use on \"break this into tickets\", \"turn this plan into issues\", \"slice this feature\", \"to-tickets #N\". Shows a numbered breakdown the human can veto, then publishes."
+description: "Break an approved plan or parent issue into sub-issues, each sized per issue-flow.md § Sizing; the spine step after /blueprint approval and before /build. Use on \"break this into tickets\", \"turn this plan into issues\", \"slice this feature\", \"to-tickets #N\". Shows a numbered breakdown the human can veto, then publishes."
 type: skill
 context: fork
 argument-hint: "<parent #N>"
@@ -20,7 +20,7 @@ A feature has a parent issue with an approved design note and an approved `/blue
 
 1. **Gather.** Read the parent body and comments (or the plan in conversation). Read `docs/decisions.md` for the area.
 2. **Prefactor first.** Look for a change that makes the real change easy; if one exists it is ticket 1 and unblocks the rest.
-3. **Draft 3-6 vertical slices.** Each is a narrow path through every layer it touches, demoable alone, sized to one context window, with blocking edges named. Each body follows `ticket.md` and carries a `Tests:` line (AC ids -> test paths) or, for non-code work, a `Proof:` line. Wide mechanical refactors go expand, migrate, contract instead.
+3. **Draft 3-6 vertical slices.** Each is a narrow path through every layer it touches, demoable alone, sized per issue-flow.md § Sizing (at most 5 ACs), with blocking edges named. Each body follows `ticket.md` and carries a `Tests:` line (AC ids -> test paths) or, for non-code work, a `Proof:` line. Wide mechanical refactors go expand, migrate, contract instead.
 4. **Alert the human.** Show a numbered breakdown (title, what it delivers end to end, what blocks it) before writing to GitHub. It is a vetoable alert, not a gate: say so, and proceed unless they reply with a change.
 5. **Fact-check gate.** Every AC traces to a line in the parent body (no source = invented requirement or promoted open question: stop). Every file:line or "N hits" claim is grepped in this turn, never from an earlier read. Quoted spec clauses are diffed against the current spec. Then a `challenger` sample over up to 10 tickets must score 10/10; fix and re-check below that. Passing is the `Verified:` record (issue-flow.md § Verify gate).
 6. **Publish blockers first,** in dependency order, so later tickets cite real numbers:

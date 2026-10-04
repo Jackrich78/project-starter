@@ -15,7 +15,7 @@ The issue is the spec and the state. This page is the one home for the facts bel
 |---|---|
 | Spec for one slice | the **ticket body** (`.github/ISSUE_TEMPLATE/ticket.md`) |
 | Spec for a feature | the **parent issue** (label `feature`, `.github/ISSUE_TEMPLATE/feature.md`): design note, ACs, outcome test, Validation, Reversal |
-| Plan | the **sub-issues** of the parent, one context window each |
+| Plan | the **sub-issues** of the parent, each sized per § Sizing |
 | Rejected option | `docs/decisions.md`, `REJECTED <option>`, ending with the issue link |
 | What an issue taught | the close-out comment's `Learned:` line |
 
@@ -23,15 +23,15 @@ Create a sub-issue with `gh issue create --parent <P>`; never hand-link in the b
 
 ## Sizing
 
-Unit: one fresh context window of the model you run, not hours.
+Unit: main-thread tokens (sub-agent work excluded), not hours.
 
 | Size | Artifact |
 |---|---|
-| Under half a window | inline; name it in the commit (`Refs #N` if an issue exists) |
-| One window | one ticket, no parent |
-| More | parent + sub-issues, one window each |
+| Under 200k | inline; name it in the commit (`Refs #N` if an issue exists) |
+| 200-500k, at most 5 ACs | one ticket, no parent |
+| More | parent + sub-issues, each in the 200-500k band |
 
-**Tripwire:** a ticket whose build needs a handover before it closes was mis-sized. Split the remainder into a sub-issue (`gh issue create --parent N`) rather than carrying it.
+The bands assume a 1M-token context. **Tripwire:** a ticket whose build needs a handover before it closes was mis-sized. Split the remainder into a sub-issue (`gh issue create --parent N`) rather than carrying it.
 
 ## States
 

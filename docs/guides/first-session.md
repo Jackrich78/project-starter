@@ -48,7 +48,7 @@ On the issue, four lines: `Shipped:` (SHA) · `Proof:` (fenced output, including
 | Step | CLAUDE.md spine |
 |---|---|
 | `/prime`, ticket | Work lives in GitHub Issues; the issue is the spec |
-| `/build` | Orchestrator delegates; TDD with isolated sub-agents; size in context windows |
+| `/build` | Orchestrator delegates; TDD with isolated sub-agents; size in main-thread tokens |
 | `/qa` | Sub-agent output is a claim; independent review on Opus |
 | `/commit` | Ask first for irreversible steps; the security verdict gates it |
 | Close-out | Learned facts go to the wiki or decision log in the turn they are made |

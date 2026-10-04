@@ -24,7 +24,7 @@ A Claude Code harness: an orchestrator main thread that delegates to sub-agents,
 
 ## The spine
 
-Work lives in GitHub Issues; the issue is the spec (`docs/system/issue-flow.md`). `/explore` → `/blueprint` → `to-tickets` → `/build` (one sub-issue: `work-issue` + TDD with isolated sub-agents) → `/qa --issue N` → `/commit` (`Closes #N` on the commit in `direct` mode, on the PR in `pr` mode) → `/session-winddown`. A `BLOCKED SECURITY` verdict blocks `/commit` (step 0 reads the QA verdict comment on the issue). **Size in context windows, not hours:** under half a window → inline, name it in the commit · one window → one ticket · more → parent issue + sub-issues, one window each.
+Work lives in GitHub Issues; the issue is the spec (`docs/system/issue-flow.md`). `/explore` → `/blueprint` → `to-tickets` → `/build` (one sub-issue: `work-issue` + TDD with isolated sub-agents) → `/qa --issue N` → `/commit` (`Closes #N` on the commit in `direct` mode, on the PR in `pr` mode) → `/session-winddown`. A `BLOCKED SECURITY` verdict blocks `/commit` (step 0 reads the QA verdict comment on the issue). **Size in main-thread tokens, not hours:** `issue-flow.md` § Sizing.
 
 ## Workflow
 

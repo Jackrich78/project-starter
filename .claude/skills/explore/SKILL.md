@@ -19,7 +19,7 @@ Something is not yet specified: an idea, a stub parent (`#N`), a question, a for
 2. **Classify the ask:** feature, decision, question, or knowledge. A question may end at step 7 route 0.
 3. **Product discovery.** Problem (trigger, who, cost of not solving), value and how it is measured, v1 in and out, the user flow. Branching decisions: run `grilling`. Facts go to sub-agents or the repo; only decisions go to the human. When the topic was already discussed in this session, open each round with recommended answers cited from what was said (confirming is one line, re-dictating is five).
 4. **Technical discovery.** Constraints, existing patterns to reuse, integrations. **Close code-readable open questions by reading the file:** an OQ that names a file as its answer source is not open. Dispatch `researcher` (sonnet) only for questions the repo cannot answer; a facts-only brief, answers posted back as text. Touching an external system: capture one real payload now, not a synthesized fixture. One load-bearing unknown remaining: run the `spike` skill (or `prototype` for a UI/state question) before committing to a shape.
-5. **Size** per issue-flow.md § Sizing. Under half a window: inline. One window: one ticket. More: parent.
+5. **Size** per issue-flow.md § Sizing.
 6. **Route**, then ask "what does the next reader need, and does any code change?"
 
    | Route | Artifact |
@@ -42,7 +42,7 @@ Dispatch `tech-product-lead` with PROJECT.md vision: propose at most 8 features 
 
 ## Example
 
-`/explore #12` where #12 is a stub "export reports". Grill three branching decisions (format, scope, who), read `src/export/` to close two OQs, one spike on streaming large files. Sized: three windows, so route (b). Design note approved, body written once with AC-001 to AC-006, `prd-consistency-sim` flags one silent default (timezone), patched in one line. Report: "#12 ready for /blueprint; decision line added".
+`/explore #12` where #12 is a stub "export reports". Grill three branching decisions (format, scope, who), read `src/export/` to close two OQs, one spike on streaming large files. Sized: over 500k tokens, so route (b). Design note approved, body written once with AC-001 to AC-006, `prd-consistency-sim` flags one silent default (timezone), patched in one line. Report: "#12 ready for /blueprint; decision line added".
 
 ## Anti-patterns
 
