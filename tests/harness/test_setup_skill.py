@@ -3,8 +3,7 @@
 Covers: the skill's markers are achievable (no "first line", no "0 to update"),
 every skill directory is tracked (an ignore rule hid `.claude/skills/build/` in
 v3.0.0), area labels have one home (the `Areas (labels)` line in CLAUDE.md),
-the session primer notices the current-priorities placeholder, the leak gate's
-`--report` prints a header, and the coupling lint no longer trips on product names.
+and the session primer notices the current-priorities placeholder.
 """
 from __future__ import annotations
 
@@ -19,8 +18,6 @@ ROOT = Path(__file__).resolve().parents[2]
 SKILL = ROOT / ".claude" / "skills" / "setup" / "SKILL.md"
 LABELS_PY = ROOT / "scripts" / "github" / "setup_labels.py"
 HOOKS = ROOT / ".claude" / "hooks"
-GATE = ROOT / "scripts" / "leak_gate.sh"
-LINT = ROOT / "scripts" / "coupling_lint.sh"
 
 sys.path.insert(0, str(ROOT / "scripts" / "github"))
 sys.path.insert(0, str(HOOKS))
@@ -81,11 +78,10 @@ def test_step5_stub_labels_and_scratch_path():
     assert "plan mode" in s5
 
 
-def test_step7_explains_patterns_file_and_reports():
+def test_step7_stages_by_path_without_a_leak_gate():
     s7 = _step(7)
-    assert "pii-patterns.txt" in s7
-    assert "leak-waivers.txt" in s7
-    assert "leak_gate.sh --report" in s7
+    assert "Stage by explicit path" in s7 and "never `git add -A`" in s7
+    assert "leak_gate" not in s7 and "pii-patterns" not in s7
 
 
 def test_smoke_checklist_and_antipatterns():
@@ -149,42 +145,3 @@ def test_shipped_priorities_file_is_the_detection_marker():
 
 
 # --- 2/3. hygiene scripts -------------------------------------------------------
-
-def _repo(tmp_path: Path) -> Path:
-    r = tmp_path / "repo"
-    r.mkdir()
-    env = ["git", "-c", "user.name=t", "-c", "user.email=t@example.com"]
-    subprocess.run([*env, "init", "-q"], cwd=r, check=True)
-    (r / "README.md").write_text("clean\n")
-    subprocess.run([*env, "add", "-A"], cwd=r, check=True)
-    subprocess.run([*env, "commit", "-qm", "init"], cwd=r, check=True, capture_output=True)
-    return r
-
-
-def test_leak_gate_sets_lc_all_c_before_any_pipeline():
-    src = GATE.read_text(encoding="utf-8")
-    assert "export LC_ALL=C" in src
-    assert src.index("export LC_ALL=C") < src.index("mask()")
-
-
-def test_leak_gate_report_header_counts_hits_and_patterns(tmp_path):
-    repo = _repo(tmp_path)
-    patterns = tmp_path / "patterns.txt"
-    patterns.write_text("johndoe\nacme\n")
-    (repo / "notes.md").write_text("johndoe and JOHNDOE\nacme café\n", encoding="utf-8")
-    r = subprocess.run(["bash", str(GATE), "--patterns", str(patterns), "--report", str(repo)],
-                       capture_output=True, text=True)
-    assert r.returncode == 1
-    # one hit per matching line, so the two tokens on line 1 count once
-    assert "2 hits across 2 patterns." in r.stdout
-    assert ".github/leak-waivers.txt" in r.stdout and "pii-patterns.txt" in r.stdout
-    assert "-- pattern #1 --" in r.stdout and "-- pattern #2 --" in r.stdout
-    assert "johndoe" not in r.stdout.lower()
-
-
-def test_coupling_lint_ignores_product_names_but_not_structure(tmp_path):
-    repo = _repo(tmp_path)
-    (repo / "a.md").write_text("we tried Notion and Telegram\n")
-    assert subprocess.run(["bash", str(LINT), str(repo)], capture_output=True).returncode == 0
-    (repo / "b.md").write_text("load it with " + "launch" + "ctl\n")   # built at runtime: this file is linted too
-    assert subprocess.run(["bash", str(LINT), str(repo)], capture_output=True).returncode == 1

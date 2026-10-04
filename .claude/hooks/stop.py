@@ -16,7 +16,7 @@ def _git(root, *args) -> str:
 
 
 def main() -> int:
-    from agent_db_path import project_root
+    from project_root import project_root
 
     sys.stdin.read()
     root = project_root()

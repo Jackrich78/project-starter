@@ -17,6 +17,48 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 MAX_BYTES = 6 * 1024
 KEEP = 10
 
+# Key names, with any snake/kebab prefix or suffix (SECRET_KEY, DB_PASS, MYSQL_PWD, CLIENT_SECRET_V2).
+_KEYS = (
+    r"\b(?:[a-z0-9]+[_-])*(?:api[_-]?key|auth[_-]?key|auth|secret|password|passwd|passphrase|pwd|pass|token"
+    r"|credentials?|private[_-]?key|access[_-]?key)(?:[_-][a-z0-9]+)*"
+)
+# Order matters: block/structured patterns first, generic key=value last.
+_PATTERNS = [
+    (re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY(?: BLOCK)?-----.*?(?:-----END [A-Z ]*PRIVATE KEY(?: BLOCK)?-----|\Z)", re.S),
+     "[REDACTED PRIVATE KEY]"),
+    (re.compile(r"eyJ[A-Za-z0-9_-]{5,}\.eyJ[A-Za-z0-9_-]{5,}(?:\.[A-Za-z0-9_-]*)?"), "[REDACTED JWT]"),
+    (re.compile(r"\bsk-(?:ant-|proj-)?[A-Za-z0-9_-]{20,}"), "[REDACTED API KEY]"),
+    (re.compile(r"\b(?:sk|rk|pk)_(?:live|test)_[A-Za-z0-9]{10,}"), "[REDACTED API KEY]"),
+    (re.compile(r"\bgh[pousr]_[A-Za-z0-9]{20,}"), "[REDACTED GH TOKEN]"),
+    (re.compile(r"\bgithub_pat_[A-Za-z0-9_]{20,}"), "[REDACTED GH TOKEN]"),
+    (re.compile(r"\b(?:glpat-|hf_|npm_|dop_v1_|pypi-|AGE-SECRET-KEY-)[A-Za-z0-9_-]{10,}"), "[REDACTED TOKEN]"),
+    (re.compile(r"\bxox[abpe]-[A-Za-z0-9-]{10,}|\bxapp-[A-Za-z0-9-]{10,}"), "[REDACTED SLACK TOKEN]"),
+    (re.compile(r"\b(?:AKIA|ASIA)[0-9A-Z]{16}\b"), "[REDACTED AWS KEY]"),
+    (re.compile(r"\bAIza[0-9A-Za-z_-]{30,}"), "[REDACTED GOOGLE KEY]"),
+    (re.compile(r"\bSG\.[A-Za-z0-9_-]{16,}\.[A-Za-z0-9_-]{16,}"), "[REDACTED SENDGRID KEY]"),
+    (re.compile(r"\b\d{8,10}:AA[A-Za-z0-9_-]{30,}"), "[REDACTED TELEGRAM TOKEN]"),
+    (re.compile(r"(?i)(aws_secret_access_key[\"']?\s*[:=]\s*[\"']?)[A-Za-z0-9/+=]{40}"), r"\1***"),
+    (re.compile(r"(?i)\b(Bearer\s+)[A-Za-z0-9._~+/=-]{8,}"), r"\1***"),
+    (re.compile(r"(?i)\b(Authorization:\s*(?:Basic|Token|Digest)?\s*)(?!Bearer)[A-Za-z0-9._~+/=-]{8,}"), r"\1***"),
+    (re.compile(r"(?i)\b([a-z][a-z0-9+.-]*://[^\s:/@]+:)[^\s@]+(@)"), r"\1***\2"),
+    (re.compile(r"(?i)\b([a-z][a-z0-9+.-]*://)[A-Za-z0-9_-]{16,}(@)"), r"\1***\2"),
+    (re.compile(r"(?i)([?&](?:key|api_?key|token|access_token|secret|password|sig|signature|auth)=)[^&\s\"']+"), r"\1***"),
+    (re.compile(r"(?i)(\s-u\s+[^\s:]+:)\S+"), r"\1***"),
+    (re.compile(r"(\s-p)[^\s-]\S*"), r"\1***"),
+    (re.compile(r"(?i)(\s--?(?:token|password|passwd|api[-_]?key|secret|auth|private[-_]?key)(?:=|\s+))[^\s-]\S*"), r"\1***"),
+    (re.compile(r"(?i)\b((?:session|sid|sessionid|csrftoken|xsrf-token|auth_token|jwt|remember_token)=)[^;\s\"']{6,}"), r"\1***"),
+    (re.compile(r"(?i)(" + _KEYS + r"\\?[\"']?\s*[:=]\s*\\?[\"']?)[^\s\"'\[\\]{3,}"), r"\1***"),
+]
+
+
+def redact(text: str) -> str:
+    """Pure: replace secret values with *** keeping the key/shape."""
+    if not isinstance(text, str):
+        return text
+    for pat, repl in _PATTERNS:
+        text = pat.sub(repl, text)
+    return text
+
 
 def _blocks(msg):
     c = (msg or {}).get("content")
@@ -69,8 +111,6 @@ def _dedupe(seq):
 
 
 def build(session_id, parsed) -> str:
-    from send_event import redact
-
     users, last_a, files, cmds, agents = parsed
     # redact the whole string first, then cut: a cut-off token would otherwise keep its real prefix
     one = lambda s, n: redact(" ".join(s.split()))[:n]
@@ -87,7 +127,7 @@ def build(session_id, parsed) -> str:
 
 
 def main() -> int:
-    from agent_db_path import project_root
+    from project_root import project_root
 
     data = json.loads(sys.stdin.read())
     tp = data.get("transcript_path")

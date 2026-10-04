@@ -31,4 +31,4 @@ A mechanical rename in a test must keep it within these:
 Return the report in your agent format, ending PASS, FAIL or ESCALATION.
 ```
 
-Gate after return: run the full suite, confirm green. Commit-sized changes only; a red suite you cannot restore means `git restore -- <the implementation paths you touched>` back to the pre-refactor commit (never `git checkout -- .`: it discards every edit in the tree and the security hook blocks it).
+Gate after return: run the full suite, confirm green. Commit-sized changes only; a red suite you cannot restore means `git restore -- <the implementation paths you touched>` back to the pre-refactor commit (never `git checkout -- .`: it discards every edit in the tree).

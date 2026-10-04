@@ -32,7 +32,7 @@ Put a `Tests:` line (AC id + test path) or, for non-code work, a `Proof:` line (
 
 ## 5. `/commit`
 - **See:** the QA gate checked, a conventional message ending `Closes #N` (in `pr` mode, a PR you merge).
-- **Proves:** a BLOCKED SECURITY verdict would have stopped here (hook-enforced).
+- **Proves:** a BLOCKED SECURITY verdict would have stopped here (`/commit` step 0).
 
 ## 6. Close-out comment
 On the issue, four lines: `Shipped:` (SHA) · `Proof:` (fenced output, including the RED run) · `Not covered:` · `Learned:`.

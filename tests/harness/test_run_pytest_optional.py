@@ -54,7 +54,7 @@ def _python_versions(workflow: str) -> list[str]:
 
 
 def test_ci_python_is_312():
-    for wf in ("validate.yml", "harness-health.yml"):
+    for wf in ("validate.yml",):
         versions = _python_versions(wf)
         assert versions, f"{wf}: no setup-python step"
         assert versions == ["3.12"] * len(versions), f"{wf}: python-version {versions}"

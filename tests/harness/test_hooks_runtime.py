@@ -1,7 +1,6 @@
 """Runtime tests for the non-security hooks (stdlib + pytest only)."""
 import json
 import os
-import sqlite3
 import subprocess
 import sys
 import time
@@ -11,16 +10,13 @@ import pytest
 
 HOOKS = Path(__file__).resolve().parents[2] / ".claude" / "hooks"
 sys.path.insert(0, str(HOOKS))
-from send_event import redact  # noqa: E402
+from pre_compact import redact  # noqa: E402
 
-ALL_HOOKS = [
-    "send_event.py", "pre_compact.py", "session_start_reprime.py", "session_prime.py",
-    "subagent_claim_check.py", "stop.py", "post_tool_use.py",
-]
+ALL_HOOKS = ["pre_compact.py", "session_start_reprime.py", "session_prime.py", "stop.py", "post_tool_use.py"]
 
 
 def run(hook, stdin, project, extra_env=None):
-    env = {k: v for k, v in os.environ.items() if k != "CLAUDE_HARNESS_OBSERVABILITY"}
+    env = dict(os.environ)
     env["CLAUDE_PROJECT_DIR"] = str(project)
     env.update(extra_env or {})
     return subprocess.run(
@@ -118,24 +114,7 @@ def test_redact_benign_round3(text):
     assert redact(text) == text
 
 
-def test_send_event_noop_without_env(tmp_path):
-    r = run("send_event.py", '{"hook_event_name":"Stop"}', tmp_path)
-    assert r.returncode == 0 and r.stdout == ""
-    assert not (tmp_path / ".claude" / "logs" / "agent.db").exists()
 
-
-def test_send_event_logs_redacted_when_enabled(tmp_path):
-    evt = {"hook_event_name": "PostToolUse", "session_id": "s1", "tool_name": "Bash",
-           "tool_input": {"command": "export API_KEY=abc123456789"},
-           "tool_response": {"stdout": "MY_TOKEN=zzzzzz987654"}}
-    r = run("send_event.py", json.dumps(evt), tmp_path, {"CLAUDE_HARNESS_OBSERVABILITY": "1"})
-    assert r.returncode == 0 and r.stdout == ""
-    rows = sqlite3.connect(tmp_path / ".claude" / "logs" / "agent.db").execute(
-        "SELECT session_id, event, tool_name, payload_json FROM events").fetchall()
-    assert len(rows) == 1
-    assert rows[0][:3] == ("s1", "PostToolUse", "Bash")
-    assert "abc123456789" not in rows[0][3] and "zzzzzz987654" not in rows[0][3]
-    assert "API_KEY=***" in rows[0][3]
 
 
 def _transcript(tmp_path):
@@ -215,17 +194,13 @@ def test_reprime_fresh_fallback_and_startup_ignored(tmp_path):
     assert r.stdout == ""
 
 
-def test_session_prime_priorities_and_health(tmp_path):
+def test_session_prime_priorities(tmp_path):
     (tmp_path / "docs" / "system").mkdir(parents=True)
-    (tmp_path / "docs" / "reference").mkdir(parents=True)
     (tmp_path / "docs" / "system" / "current-priorities.md").write_text(
-        "---\nupdated: 2020-01-01\n---\nShip it. API_KEY=abc123456789\n")
-    (tmp_path / "docs" / "reference" / "claude-code.md").write_text("# no frontmatter\n")
+        "---\nupdated: 2020-01-01\n---\nShip it.\n")
     r = run("session_prime.py", "{}", tmp_path)
     ctx = json.loads(r.stdout)["hookSpecificOutput"]["additionalContext"]
     assert "PRIORITIES MAY BE STALE (updated: 2020-01-01)" in ctx and "Ship it" in ctx
-    assert "abc123456789" not in ctx
-    assert "harness-health due (last checked never): run /harness-health" in ctx
 
 
 def test_post_tool_use_index_nudge(tmp_path):
@@ -247,14 +222,8 @@ def test_stop_dirty_tree(tmp_path):
     assert "uncommitted changes" in out and "REJECTED" in out
 
 
-def test_claim_check_routes_and_silent(tmp_path):
-    ev = {"tool_name": "Task", "tool_input": {"subagent_type": "general-purpose", "description": "critique plan"}}
-    assert "challenger" in run("subagent_claim_check.py", json.dumps(ev), tmp_path).stdout
-    assert run("subagent_claim_check.py", "{}", tmp_path).stdout == ""
-
-
 @pytest.mark.parametrize("hook", ALL_HOOKS)
 @pytest.mark.parametrize("stdin", ["{}", "garbage \x00 {{{", ""])
 def test_every_hook_fails_open_and_silent(hook, stdin, tmp_path):
-    r = run(hook, stdin, tmp_path, {"CLAUDE_HARNESS_OBSERVABILITY": "1"})
+    r = run(hook, stdin, tmp_path)
     assert r.returncode == 0 and r.stdout == ""

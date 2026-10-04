@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SessionStart hook: inject current priorities and a harness-health nudge."""
+"""SessionStart hook: inject current priorities."""
 from __future__ import annotations
 
 import json
@@ -11,7 +11,6 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 MAX_BYTES = 4096
 PRIORITIES_STALE_DAYS = 14
-HEALTH_STALE_DAYS = 30
 # The template ships current-priorities.md with this placeholder; /setup step 3 replaces it.
 PLACEHOLDER = "(issue links, one line each)"
 PLACEHOLDER_NOTICE = ("Current priorities: placeholder not yet filled (docs/system/current-priorities.md)"
@@ -43,8 +42,6 @@ def _age_days(value):
 
 def collect_parts(root) -> list[str]:
     """The context blocks for a project rooted at `root` (a Path), in injection order."""
-    from send_event import redact
-
     parts = []
     pri = root / "docs" / "system" / "current-priorities.md"
     if pri.is_file():
@@ -54,23 +51,16 @@ def collect_parts(root) -> list[str]:
         else:
             updated = fm.get("updated")
             age = _age_days(updated) if updated else None
-            body = redact(body).encode("utf-8")[:MAX_BYTES].decode("utf-8", "ignore").strip()
+            body = body.encode("utf-8")[:MAX_BYTES].decode("utf-8", "ignore").strip()
             head = "Current priorities (docs/system/current-priorities.md):"
             if age is None or age > PRIORITIES_STALE_DAYS:
                 head += f" PRIORITIES MAY BE STALE (updated: {updated or 'unknown'})"
             parts.append(head + "\n\n" + body)
-    ref = root / "docs" / "reference" / "claude-code.md"
-    if ref.is_file():
-        fm, _ = _frontmatter(ref.read_text(encoding="utf-8", errors="replace"))
-        checked = fm.get("last_checked")
-        age = _age_days(checked) if checked else None
-        if age is None or age > HEALTH_STALE_DAYS:
-            parts.append(f"harness-health due (last checked {checked or 'never'}): run /harness-health")
     return parts
 
 
 def main() -> int:
-    from agent_db_path import project_root
+    from project_root import project_root
 
     parts = collect_parts(project_root())
     if parts:

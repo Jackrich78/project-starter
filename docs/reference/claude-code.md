@@ -1,14 +1,12 @@
 ---
 type: reference
 title: Claude Code — official documentation pointers
-description: URL-only map of the official Claude Code docs the harness depends on, by topic. No content is copied here, so the page cannot go stale in substance; the stamp says when it was last checked against the docs.
-last_checked: 2026-10-02
+description: URL-only map of the official Claude Code docs the harness depends on, by topic. No content is copied here, so the page cannot go stale in substance.
 ---
 
 # Claude Code — official documentation pointers
 
-**Rule (CLAUDE.md § Governing documents):** before changing anything under `.claude/agents/`, `.claude/hooks/`, `.claude/settings*.json`, `.claude/rules/` or a skill's frontmatter, ask the built-in `claude-code-guide` agent whether the mechanism still works the way the change assumes, and cite its answer in the commit body. `/harness-health` re-checks this page's topics and bumps `last_checked`; `tests/harness/test_reference_stamp.py` fails when the stamp is older than 90 days.
-
+**Rule (CLAUDE.md § Governing documents):** before changing anything under `.claude/agents/`, `.claude/hooks/`, `.claude/settings*.json`, `.claude/rules/` or a skill's frontmatter, ask the built-in `claude-code-guide` agent whether the mechanism still works the way the change assumes, and cite its answer in the commit body.
 | Topic | What the harness relies on | Official page |
 |---|---|---|
 | Sub-agents | frontmatter: `name`, `description`, `model`, `effort`, `tools`, `disallowedTools`, `memory` (user/project/local), `maxTurns`, `isolation: worktree`, `background`, `hooks`, `skills` | https://code.claude.com/docs/en/sub-agents |

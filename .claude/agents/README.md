@@ -19,7 +19,7 @@ One file per agent; the harness injects the roster from each file's `name` and `
 to-tickets ─► challenger fact-check (10/10)
 /build  ───► work-issue ──► tdd-test-writer (RED) ──► tdd-implementer (GREEN) ──► tdd-refactorer
 /qa --issue ► qa-reviewer (opus, clean context; Security · Standards · Spec ladders) ──► <!-- QA-VERDICT --> on the issue
-/commit  ──► hook-enforced gate on BLOCKED SECURITY
+/commit  ──► gate on BLOCKED SECURITY (step 0 reads the issue comment)
 winddown ──► agile-coach (sonnet, read-only retro) ──► human approves ──► librarian (Edit-only) applies
 non-code ──► researcher · drafter · first-principles-thinker · challenger against the ticket's Proof: line
 ```
@@ -28,7 +28,6 @@ Hand-offs are files on disk and GitHub Issues, never live messages between agent
 
 ## Contract checks
 
-- `python3 scripts/adoption_check.py` — memory block first, Failure Recovery, ESCALATION, model and effort pins, Stance on Opus agents.
 - `python3 scripts/validate_agent_memory.py --check-roster` — every agent has a memory file and vice versa; entries are one-line methods under the 150-line cap.
 - `npm test` — tier table, memory-flag allowlist, first-heading rule.
 

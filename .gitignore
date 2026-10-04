@@ -10,7 +10,6 @@ Thumbs.db
 *~
 
 # Claude Code session-specific files
-.claude/logs/agent.db
 .claude/logs/transcripts/
 .claude/logs/sessions/*
 !.claude/logs/sessions/.gitkeep
@@ -65,17 +64,16 @@ workspace/
 
 # Harness runtime state (never committed)
 .claude/salvage/
-.claude/qa/
 .claude/agent-memory-local/
 .claude/logs/*.db
 .claude/logs/*.db-*
 .claude/logs/*.log
 
-# Common secret-file names (the deny hook refuses to read them; never track them either)
+# Common secret-file names (settings.json denies reading them; never track them either)
 secrets.json
 credentials.json
 .credentials.json
 
-# Maintainer-private leak-gate inputs (ship the .example only)
+# Maintainer-private files (never track)
 .github/pii-patterns.txt
 .github/release-waivers.txt

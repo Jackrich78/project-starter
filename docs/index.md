@@ -15,7 +15,6 @@ Progressive-disclosure index. Read a section's one-line descriptions before open
 - [`system/architecture.md`](system/architecture.md) — design rationale: orchestrator, sub-agents, hooks, gates.
 - [`system/memory-systems.md`](system/memory-systems.md) — which memory is which: auto-memory, per-agent memory, the wiki.
 - [`system/hooks.md`](system/hooks.md) — what each hook enforces, its fail mode, and how to test a pattern change.
-- [`system/observability.md`](system/observability.md) — the opt-in event store and what `/logs` reads.
 - [`system/testing-rules.md`](system/testing-rules.md) — test-fidelity rules the TDD agents and QA follow.
 - [`system/cicd.md`](system/cicd.md) — what CI runs and how to extend it.
 - [`system/current-priorities.md`](system/current-priorities.md) — injected at session start; keep it short and dated.
@@ -32,7 +31,7 @@ Progressive-disclosure index. Read a section's one-line descriptions before open
 
 ## Reference (`reference/`)
 
-- [`reference/claude-code.md`](reference/claude-code.md) — official Claude Code doc links by topic, with a `last_checked` stamp.
+- [`reference/claude-code.md`](reference/claude-code.md) — official Claude Code doc links by topic.
 
 ## Templates (`templates/`)
 

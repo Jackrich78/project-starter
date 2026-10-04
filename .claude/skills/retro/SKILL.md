@@ -1,9 +1,9 @@
 ---
 name: retro
-description: "Turn what happened into durable process changes. Use on \"retro\", \"what did we learn\", \"that was wrong, remember it\", \"always do X next time\", after a feature closes, or for a harness check-up. Modes: learn, feedback, harness. Proposals need human approval before anything is edited."
+description: "Turn what happened into durable process changes. Use on \"retro\", \"what did we learn\", \"that was wrong, remember it\", \"always do X next time\", after a feature closes. Modes: learn, feedback. Proposals need human approval before anything is edited."
 type: skill
 disable-model-invocation: true
-argument-hint: "[learn|feedback|harness]"
+argument-hint: "[learn|feedback]"
 ---
 
 # Retro
@@ -34,9 +34,6 @@ A correction the human gave this session. Route it to the nearest file that is l
 | An agent's method | proposed entry in `.claude/agent-memory/<agent>/MEMORY.md` (methods only) |
 
 State the cause of the mistake ("what assumption was wrong"), not just the fix. A rule that failed twice in prose becomes a hook or test.
-
-### harness
-Invoke the `harness-health` skill.
 
 Always: if the auto-memory index (`MEMORY.md` under `~/.claude/projects/<project>/memory/`) exceeds 200 lines, merge or drop entries until under.
 

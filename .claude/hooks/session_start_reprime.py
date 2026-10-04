@@ -18,7 +18,7 @@ def _sid(path) -> str:
 
 
 def main() -> int:
-    from agent_db_path import project_root
+    from project_root import project_root
 
     data = json.loads(sys.stdin.read())
     if not isinstance(data, dict) or data.get("source") not in ("compact", "resume"):

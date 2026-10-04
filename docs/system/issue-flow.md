@@ -90,7 +90,7 @@ Created by `scripts/github/setup_labels.py` (idempotent; `--dry-run` first). The
 
 ## Integration modes
 
-In `direct` mode the security hook permits a non-force push to the default branch only while CLAUDE.md `## Workflow` reads `direct`; force, URL and refspec pushes stay blocked in every mode.
+A push to the default branch happens only in `direct` mode (CLAUDE.md `## Workflow`); that is a plain rule, not hook-enforced. Force pushes are denied by `settings.json` and the hook in every mode.
 
 Mode is read from CLAUDE.md `## Workflow` (`Integration mode: pr | direct`).
 
@@ -102,7 +102,7 @@ Mode is read from CLAUDE.md `## Workflow` (`Integration mode: pr | direct`).
 | Review | `/code-review`; human merges `gh pr merge <PR> --squash --delete-branch` | `/code-review` on the diff |
 | Close-out | after merge | after push |
 
-The QA verdict marker lives on the issue in both modes; `/commit` reads it there and the hook reads the local mirror `.claude/qa/verdict-<branch>` that `/qa` writes alongside it.
+The QA verdict marker lives on the issue in both modes; `/commit` reads it there.
 
 ## Verify gate
 
@@ -132,7 +132,7 @@ Template: `docs/templates/closeout-comment.md`. Four lines: `Shipped:` (commit S
 
 `/qa --issue N` posts one comment whose first line is
 `<!-- QA-VERDICT: APPROVED|NEEDS_FIXES|BLOCKED|BLOCKED SECURITY -->`.
-`/commit` reads the latest marker on any `#N` it references: `NEEDS_FIXES` warns, `BLOCKED` stops, `BLOCKED SECURITY` refuses with no override. The hook enforces the last through `.claude/qa/verdict-<branch>`.
+`/commit` reads the latest marker on any `#N` it references: `NEEDS_FIXES` warns, `BLOCKED` stops, `BLOCKED SECURITY` refuses with no override. Only comments from an OWNER, MEMBER or COLLABORATOR count. This is prose-enforced by `/commit` step 0, not by a hook.
 
 ## Non-code work
 
@@ -155,4 +155,4 @@ Needs `gh` 2.96 or newer; `scripts/github/check_gh.sh` probes the version, auth,
 | List fields | `gh issue list --json parent,blockedBy,subIssuesSummary` |
 | Issue-linked branch | `gh issue develop N --checkout` |
 
-Older `gh`: upgrade. There is no in-session fallback (`gh api` is denied by `settings.json` and the hook blocks GraphQL mutations by design).
+Older `gh`: upgrade. There is no in-session fallback (`gh api` is never pre-approved, so it prompts).

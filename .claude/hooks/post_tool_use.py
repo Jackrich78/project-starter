@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 
 def main() -> int:
-    from agent_db_path import project_root
+    from project_root import project_root
 
     data = json.loads(sys.stdin.read())
     if not isinstance(data, dict) or data.get("tool_name") not in ("Edit", "Write", "MultiEdit"):

@@ -67,7 +67,7 @@ Thirteen capabilities turned out to be built but unreachable in a single day: a 
 
 | Prevention here |
 |---|
-| Hard-won rule 5 (CLAUDE.md); `grep -rl` before writing a test; skills are listed by `description`, the only trigger surface |
+| Hard-won rule 4 (CLAUDE.md); `grep -rl` before writing a test; skills are listed by `description`, the only trigger surface |
 
 ## 8. Sub-agents earn their keep by refusing
 

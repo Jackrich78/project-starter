@@ -95,7 +95,7 @@ Combine the ladders; the verdict is UPPERCASE and callers depend on it.
 
 | Verdict | When | Caller obligation |
 |---|---|---|
-| `BLOCKED SECURITY` | any Security **CRITICAL** | `/commit` refuses (hook-enforced); no override |
+| `BLOCKED SECURITY` | any Security **CRITICAL** | `/commit` refuses (step 0 reads the issue comment); no override |
 | `BLOCKED` | tests fail, build broken, or review impossible to complete safely | `/commit` refuses until fixed |
 | `NEEDS_FIXES` | none of the above, but any of: Security HIGH/MEDIUM · Standards HIGH · Spec BLOCKING · semgrep error | fix and re-run; human may override with explicit confirmation |
 | `APPROVED` | everything else (LOW and NOTE items listed only) | proceed to `/commit` |
@@ -108,7 +108,7 @@ In `--issue N` mode the report's **FIRST line** is exactly:
 
 `<!-- QA-VERDICT: <verdict> -->`
 
-for example `<!-- QA-VERDICT: BLOCKED SECURITY -->`. The orchestrator posts the report as an issue comment and writes `.claude/qa/verdict-<branch>`; the commit hook reads that file. You do not write it (you have no Write).
+for example `<!-- QA-VERDICT: BLOCKED SECURITY -->`. The orchestrator posts the report as an issue comment; `/commit` step 0 reads it there. You do not write it (you have no Write).
 
 ## Escalation
 

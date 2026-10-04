@@ -1,7 +1,7 @@
 ---
 type: domain-doc
 title: CI/CD
-description: What validate.yml and the monthly harness-health workflow run and why, the two-lane npm test degrade rule, the conftest guard, how to add project checks, and local workflow linting.
+description: What validate.yml runs and why, the two-lane npm test degrade rule, the conftest guard, how to add project checks, and local workflow linting.
 tags: [ci, github-actions, validation, testing]
 updated: 2026-10-03
 ---
@@ -26,29 +26,13 @@ Steps, in order; every one is blocking:
 | `git ls-files "*.py" \| xargs python3 -m py_compile` | every tracked `.py` must compile: a hook that does not compile fails every session; catches syntax only |
 | `python3 scripts/audit_claude_md.py --strict` | CLAUDE.md shape and size |
 | `python3 scripts/wiki_lint.py --all` | wiki frontmatter, size caps, links, reserved files |
-| `bash scripts/leak_gate.sh` | path rules only in CI; the private pattern file never ships |
-| `bash scripts/coupling_lint.sh` | no private-product leftovers in the template |
 | `python3 -m pytest tests/harness -q` | the harness suite, run directly (not via `npm test`, which degrades to a notice without pytest and CI must not) |
 | Project deps: `pip install 'uv>=0.11,<0.12' && uv sync --frozen` | `if: hashFiles('pyproject.toml') != ''`: skipped until the project has a `pyproject.toml` |
 | Project tests: `uv run --frozen pytest tests/unit tests/integration -q` | same guard; the project lane on the locked environment, the same command `npm test -- project` runs locally |
 
 ### Job `cold-clone`
 
-Simulates an adopter with no history, no `node_modules` and no Python deps: `git clone --depth 1` of the checked-out tree into `my-project`, then `npm test` and `node scripts/run_pytest_optional.mjs` (both must degrade to a NOTICE and exit 0 without pytest), `CLAUDE.md`, `PROJECT.md` and `.claude/skills/setup` present, `python3 scripts/adoption_check.py` exits 0, and `bash scripts/github/check_gh.sh --quiet` is allowed to fail (no `gh` auth in CI).
-
-## `harness-health.yml` (monthly cron, `workflow_dispatch`)
-
-Runs on the 1st of each month. Python 3.12, `pytest` and `pyyaml` installed, then every validator with `set +e`, each line's exit code captured into `report.md`:
-
-- `python3 scripts/audit_claude_md.py --strict`
-- `python3 scripts/adoption_check.py`
-- `python3 scripts/validate_agent_memory.py --check-roster`
-- `python3 scripts/wiki_lint.py --all`
-- `bash scripts/leak_gate.sh` (path rules only in CI)
-- `bash scripts/coupling_lint.sh --summary`
-- `python3 -m pytest tests/harness -q` (includes the `docs/reference/claude-code.md` `last_checked` age test, 90 days)
-
-Any non-zero exit opens one `chore` issue titled `Harness health <YYYY-MM>`, or comments on it if it is already open. Zero model tokens: a cron is used instead of `/loop` (needs a live session) or `CronCreate` (expires after 7 days). The one part that needs a model, re-checking the Claude Code docs, is a SessionStart nudge from `session_prime.py` after 30 days: it asks you to run `/harness-health` and ask `claude-code-guide`.
+Simulates an adopter with no history, no `node_modules` and no Python deps: `git clone --depth 1` of the checked-out tree into `my-project`, then `npm test` and `node scripts/run_pytest_optional.mjs` (both must degrade to a NOTICE and exit 0 without pytest), `CLAUDE.md`, `PROJECT.md` and `.claude/skills/setup` present, and `bash scripts/github/check_gh.sh --quiet` is allowed to fail (no `gh` auth in CI).
 
 ## The `npm test` degrade rule (two lanes)
 
@@ -76,8 +60,8 @@ For another stack, replace the two guarded project steps in `validate.yml` with 
 ## Validate workflows locally
 
 ```bash
-actionlint .github/workflows/validate.yml .github/workflows/harness-health.yml   # syntax and expression errors
-npm test                                                                       # both lanes, minus the installs
+actionlint .github/workflows/validate.yml   # syntax and expression errors
+npm test                                    # both lanes, minus the installs
 ```
 
 Pin third-party actions to a commit SHA, give every workflow a `permissions:` block, and never pipe an unpinned installer to a shell. The `ci-validation` skill carries the full pre-push checklist.

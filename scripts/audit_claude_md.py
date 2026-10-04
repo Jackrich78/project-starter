@@ -5,8 +5,7 @@
 
 Deterministic checks only, no LLM. Thresholds follow the official guidance that a
 CLAUDE.md should carry load-bearing rules only: warn above 120 lines, alert above
-150. `--strict` exits 1 on any alert, stale path or orphan rule (used by CI and
-`/harness-health`).
+150. `--strict` exits 1 on any alert, stale path or orphan rule (used by CI).
 """
 from __future__ import annotations
 

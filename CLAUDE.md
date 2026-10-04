@@ -17,14 +17,14 @@ A Claude Code harness: an orchestrator main thread that delegates to sub-agents,
 
 1. **Reduce · Offload · Isolate.** The main thread is the bottleneck: reads, greps, scoping and drafting go to sub-agents; pass pointers, not payloads; contain side effects.
 2. **Sub-agent output is a claim, not a fact — and the brief decides whether the claim *can* be true.** Give an agent the live state it reasons about, or label its output unverified. Verify on disk before acting; a one-turn ack means the work was not done.
-3. **State the independence tier with every multi-agent result.** Tier 1 prompt-only (agreement = framing coherence) · Tier 2 tool access (framing is yours, data is not) · Tier 3 independent inputs (agreement is evidence). The `subagent_claim_check` hook reminds you; you apply the tier.
+3. **State the independence tier with every multi-agent result.** Tier 1 prompt-only (agreement = framing coherence) · Tier 2 tool access (framing is yours, data is not) · Tier 3 independent inputs (agreement is evidence).
 4. **Spawn unnamed for one-shot work; name an agent only to continue it**, and end a named brief with "SendMessage your report before stopping".
-5. **Verify before disbelieving.** After compaction, "I have never seen this" is not "this did not happen": `scripts/recall.py <term>` searches this session and its sub-agents before you call anything invented.
+5. **Verify before disbelieving.** After compaction, "I have never seen this" is not "this did not happen": `/recover-session` finds the transcript before you call anything invented.
 6. **Ask first** for anything irreversible, outward-facing, or pushed to the default branch. Routine, reversible steps proceed.
 
 ## The spine
 
-Work lives in GitHub Issues; the issue is the spec (`docs/system/issue-flow.md`). `/explore` → `/blueprint` → `to-tickets` → `/build` (one sub-issue: `work-issue` + TDD with isolated sub-agents) → `/qa --issue N` → `/commit` (`Closes #N` on the commit in `direct` mode, on the PR in `pr` mode) → `/session-winddown`. A `BLOCKED SECURITY` verdict blocks `/commit` (hook-enforced through the verdict file the orchestrator writes from the `/qa` marker). **Size in context windows, not hours:** under half a window → inline, name it in the commit · one window → one ticket · more → parent issue + sub-issues, one window each.
+Work lives in GitHub Issues; the issue is the spec (`docs/system/issue-flow.md`). `/explore` → `/blueprint` → `to-tickets` → `/build` (one sub-issue: `work-issue` + TDD with isolated sub-agents) → `/qa --issue N` → `/commit` (`Closes #N` on the commit in `direct` mode, on the PR in `pr` mode) → `/session-winddown`. A `BLOCKED SECURITY` verdict blocks `/commit` (step 0 reads the QA verdict comment on the issue). **Size in context windows, not hours:** under half a window → inline, name it in the commit · one window → one ticket · more → parent issue + sub-issues, one window each.
 
 ## Workflow
 
@@ -73,7 +73,7 @@ Each agent keeps methods — never findings, verdicts or drafts — in `.claude/
 
 ## Security
 
-- No credentials in code, logs or shell commands — the compaction salvage always persists recent commands, and the opt-in observability hook persists Bash and its output. **Never expand a secret into a printed position**, presence checks included: `[ -n "$TOKEN" ] && echo set`, never `${TOKEN:+yes}`.
+- No credentials in code, logs or shell commands — the compaction salvage persists recent commands. **Never expand a secret into a printed position**, presence checks included: `[ -n "$TOKEN" ] && echo set`, never `${TOKEN:+yes}`.
 - Read before write; Edit over Write; `git diff` after multi-section edits. Prefer deletion when adding and deleting both solve it.
 - Deregister a hook in `settings.json` before deleting its file. A rule that failed twice in prose becomes a hook or a test.
 - Every external action is observable; every change names its undo before it runs.
@@ -81,10 +81,9 @@ Each agent keeps methods — never findings, verdicts or drafts — in `.claude/
 ## Hard-won rules
 
 1. **A test not in a CI lane does not exist.** Add the file to the workflow in the same commit; a local green in no lane enforces nothing.
-2. **Confidentiality tooling must not leak what it protects.** Pattern lists, waivers and `.gitignore` comments are content too; the leak gate scans them, case-insensitively, filenames included.
-3. **Optional runtimes never break the primary test command.** `npm test` degrades to a notice without Python; CI always runs the full suite.
-4. **The memory read line goes at the top of the agent file.** Placed at the bottom, it was skipped every time.
-5. **Find what exists before building.** An instruction that lives where nothing loads it never runs; a capability nobody points at gets rebuilt.
+2. **Optional runtimes never break the primary test command.** `npm test` degrades to a notice without Python; CI always runs the full suite.
+3. **The memory read line goes at the top of the agent file.** Placed at the bottom, it was skipped every time.
+4. **Find what exists before building.** An instruction that lives where nothing loads it never runs; a capability nobody points at gets rebuilt.
 
 ## Where things live
 

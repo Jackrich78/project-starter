@@ -42,7 +42,7 @@ Then treat the result as a claim. State its independence tier: **Tier 1** prompt
 - **Say what is wrong and what you want instead**, with the evidence ("that file does not exist: `ls` shows ..."). Corrections stick better with a reason.
 - **Scope phrases work**: "only change what I asked", "do not guess; ask", "step by step" for a subtle bug, "take the contrarian view" before committing to a direction.
 - **Two failed corrections on the same point: stop and restart** with a better prompt; a context full of dead ends degrades the next attempt.
-- **After compaction**, "I have never seen this" is not "this did not happen": search the session (`scripts/recall.py <term>`) before calling something invented.
+- **After compaction**, "I have never seen this" is not "this did not happen": find the session with `/recover-session` before calling something invented.
 
 ## `/clear` discipline
 

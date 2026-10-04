@@ -23,4 +23,4 @@ Include the claim-vs-evidence table and Tier 2 items as numbered options.
 Do not run gh write commands; you cannot write files.
 ```
 
-The orchestrator then posts the report (`gh issue comment {issue} --body-file`), writes `.claude/qa/verdict-<branch with / as __>` with the marker line, and handles all four verdicts (see the `qa` skill).
+The orchestrator then posts the report (`gh issue comment {issue} --body-file`) and handles all four verdicts (see the `qa` skill).

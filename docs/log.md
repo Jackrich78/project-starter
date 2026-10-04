@@ -4,6 +4,8 @@ Append-only, newest first. ISO date heading, then a bold verb (**Creation**, **U
 
 ## 2026-10-04
 
+- **Update** — v3.0.1 strip-back: `system/hooks.md` rewritten for the v2.0.1 guard plus five rules; leak gate, coupling lint, harness-health, recall and claim-check references removed across `system/`, `guides/` and `index.md`.
+- **Deprecation** — `system/observability.md` (observability removed, issue #1).
 - **Update** — `system/cicd.md` rewritten to match the workflows (two-lane `npm test`, project tests behind `pyproject.toml`, `cold-clone` job); `system/current-priorities.md` and `system/issue-flow.md` comments point at the single home for area labels; `reference/claude-code.md` notes that path-scoped rules do not load in sub-agents.
 
 ## 2026-10-02

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Single resolver for the observability DB path and the project root."""
+"""Single resolver for the project root, shared by the hooks."""
 from __future__ import annotations
 
 import os
@@ -24,6 +24,3 @@ def project_root() -> Path:
         pass
     return Path.cwd()
 
-
-def agent_db_path() -> Path:
-    return project_root() / ".claude" / "logs" / "agent.db"

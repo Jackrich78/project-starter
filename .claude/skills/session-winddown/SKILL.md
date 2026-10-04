@@ -24,7 +24,7 @@ For every changed surface: does the page that documents it still tell the truth 
 
 1. **`/commit` everything**, pushed; `git status --short` empty.
 2. **Close what shipped** per the Done rule in issue-flow. Ask what each issue's value was: if it was a question, the answer goes in the close-out `Learned:` line before closing. Needs a live check -> `ready-for-human`, not closed.
-2b. **If commits landed:** dispatch `agile-coach` with the harvest pasted into the brief (it has no Bash): `git log --oneline <base>..HEAD`, the `Learned:` and `Proof:` lines of issues closed this session, and the `sqlite3 -readonly` query results when observability was on. Its block becomes the handover's "Process retro". Write accepted memory entries.
+2b. **If commits landed:** dispatch `agile-coach` with the harvest pasted into the brief (it has no Bash): `git log --oneline <base>..HEAD`, the `Learned:` and `Proof:` lines of issues closed this session. Its block becomes the handover's "Process retro". Write accepted memory entries.
 3. **`triage`**, so the handover's next steps read a current queue.
 4. **`/handover`**, posted on the claimed or parent issue.
 5. **Only then clear.** Irreversible: disk artifacts are the whole memory.

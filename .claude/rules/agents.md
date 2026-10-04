@@ -6,7 +6,7 @@ paths:
 
 # Agent contracts
 
-Before changing an agent's frontmatter or tools, confirm the mechanism with `claude-code-guide` (`docs/reference/claude-code.md`). The shape is `.claude/agents/TEMPLATE.md`; `scripts/adoption_check.py` reports which agents miss a required block.
+Before changing an agent's frontmatter or tools, confirm the mechanism with `claude-code-guide` (`docs/reference/claude-code.md`). The shape is `.claude/agents/TEMPLATE.md`.
 
 **Frontmatter (required):** `name`, `description` (what it does *and when to call it*), `model` and `effort` matching the tables in CLAUDE.md § Delegation & model policy (`tests/harness/test_model_tier_table.py` fails on drift), `tools` (least privilege; reviewers get no Write/Edit). Optional: `color`, `maxTurns`. No `isolation: worktree` (decision 2026-10-02 in `docs/decisions.md`: worktrees are cut from the default branch, not HEAD).
 

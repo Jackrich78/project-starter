@@ -12,7 +12,7 @@ A Claude Code harness you clone into a project. An orchestrator main thread dele
 - **Per-agent memory:** methods (never findings) kept in `.claude/agent-memory/`, capped and validated.
 - **A linted wiki:** `docs/` with an index, a decision log and CI-enforced structure.
 - **Model policy with a CI test:** agent frontmatter must match the table in CLAUDE.md.
-- **Security hooks + leak gate:** a small deny hook (a guard against mistakes, not a security boundary), a settings deny list for secret stores and irreversible remote actions (your permission mode is left alone), a gate that scans for private identifiers.
+- **A small security hook:** a deny hook (a guard against mistakes, not a security boundary) and a settings deny list for secret stores and irreversible remote actions (your permission mode is left alone).
 
 ## What this is not
 
@@ -55,7 +55,7 @@ Claude Code; `gh` 2.96+ authenticated; Node 18+ for `npm test`; Python 3.9+ opti
 
 ## Security stance
 
-The project sets no permission mode, so yours governs; the allow list is read-only and the deny list covers secret stores and irreversible remote actions in every mode; observability is opt-in; `scripts/leak_gate.sh` blocks private identifiers before they ship. Details in `docs/system/`.
+The project sets no permission mode, so yours governs; the allow list is read-only and the deny list covers secret stores and irreversible remote actions in every mode. Details in `docs/system/`.
 
 ## Learn more
 

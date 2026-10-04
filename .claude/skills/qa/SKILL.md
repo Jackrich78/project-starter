@@ -33,8 +33,7 @@ Runs after `/build` and before `/commit`, or any time on a path or the whole tre
 You cannot write; the orchestrator does, in this order:
 
 1. Save the report to a temp file; post it: `gh issue comment N --body-file <file>` (agent signature from CLAUDE.md `## Workflow` goes after the marker line, never before it).
-2. Write the verdict file the commit hook reads: `.claude/qa/verdict-<branch with / replaced by __>` containing the marker line only.
-3. Act on the verdict, all four branches:
+2. Act on the verdict, all four branches:
    - `APPROVED`: proceed to `/commit`.
    - `NEEDS_FIXES`: fix Tier 1 items and re-run; the human may override with explicit confirmation.
    - `BLOCKED`: tests fail or review incomplete; stop.
@@ -42,7 +41,7 @@ You cannot write; the orchestrator does, in this order:
 
 ## Example
 
-`/qa --issue 31`. Fork reads the issue and the 40-line diff, Semgrep not installed (noted), tests 41/41. Spec ladder: AC-002 covered by `test_expiry.py::rejects_expired_token`, the negative half untested: Standards HIGH, so `NEEDS_FIXES`. Report line 1 is the marker; the orchestrator posts it, writes `.claude/qa/verdict-issue-31-expired-tokens`, fixes the test, re-runs.
+`/qa --issue 31`. Fork reads the issue and the 40-line diff, Semgrep not installed (noted), tests 41/41. Spec ladder: AC-002 covered by `test_expiry.py::rejects_expired_token`, the negative half untested: Standards HIGH, so `NEEDS_FIXES`. Report line 1 is the marker; the orchestrator posts it, fixes the test, re-runs.
 
 ## Anti-patterns
 

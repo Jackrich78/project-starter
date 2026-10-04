@@ -32,7 +32,7 @@ tags: [onboarding, setup]
 
 ## What you get
 
-An orchestrator main thread that delegates to sub-agents; GitHub Issues as the spec and the queue; per-agent memory; a linted wiki under `docs/`; a model policy enforced by a test; security hooks and a leak gate. CLAUDE.md is the operating contract and the first thing to read.
+An orchestrator main thread that delegates to sub-agents; GitHub Issues as the spec and the queue; per-agent memory; a linted wiki under `docs/`; a model policy enforced by a test; a small security hook. CLAUDE.md is the operating contract and the first thing to read.
 
 Principles are not set during `/setup`. When ready, run the `grilling` skill on PROJECT.md; the three template principles stand until then.
 

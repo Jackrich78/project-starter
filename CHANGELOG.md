@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+Planned as 3.0.1: back to the v2.0.1 balance. v3.0.0's enforcement layer cost more autonomy than it bought.
+
+### Changed
+
+- **Security hook** is v2.0.1's flat rule table again (156 lines, was 788), Bash-only, deny by JSON `permissionDecision`, plus five rules for risks seen in real sessions: `.env` reads, grep/rg of `.env` values, bare environment dumps, echo of secret-named variables, trailing force-push flags. Fixes v2's `rm -rf /private/tmp` and `| shasum` false positives; masks URL credentials and token-shaped runs in the block log. Capped at 170 lines by a test.
+- **`settings.json`** sets no `permissions.defaultMode` (the owner's mode governs); the deny list keeps secret stores, Claude Code private state and irreversible remote actions only.
+- **QA gate** is prose in `/commit` step 0, reading the verdict comment on the issue; no verdict file, no hook.
+- **Adoption fixes:** two-lane `npm test` (harness and project), `/setup` markers that can actually be met, `.claude/skills/build/` no longer gitignored, testing rules restated in the TDD briefs.
+
+### Removed
+
+- Leak gate (`scripts/leak_gate.sh`, waivers, pattern example), `scripts/coupling_lint.sh`, `scripts/adoption_check.py`, `scripts/recall.py`.
+- Monthly `harness-health` workflow, its skill, the reference stamp and the session-start nudge.
+- Opt-in observability: `send_event.py`, `agent.db`, `/logs`, `docs/system/observability.md` (issue #1).
+- The `subagent_claim_check` hook (the rule stays in CLAUDE.md).
+
 ## [3.0.0] - 2026-10-02
 
 Third iteration of the harness: an assistant harness that can also build code. Ported as mechanisms, never content, from the maintainer's private harness after a pre-write privacy and security audit.

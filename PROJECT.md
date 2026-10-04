@@ -39,7 +39,7 @@ v3.0.1 in progress (branch `fix/v3.0.1-adoption-feedback`): the first adoption's
 ```
 you ──/skill──> orchestrator (main thread) ──dispatch──> sub-agents (opus: judge · sonnet: build · haiku: fetch)
                      │                                        │
-                 hooks (deny · salvage · claim-check)      files on disk + GitHub Issues (the hand-off medium)
+                 hooks (deny · salvage)                    files on disk + GitHub Issues (the hand-off medium)
                      │
                  docs/ wiki (what outlives a feature) · docs/decisions.md (why)
 ```

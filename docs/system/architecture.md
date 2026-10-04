@@ -23,7 +23,7 @@ Sub-agent output is a *claim*. The brief decides whether the claim can be true: 
 
 | Layer | Mechanism | Used for | Why this layer |
 |---|---|---|---|
-| Enforcement | hooks, `permissions.deny`, CI | rules that must hold regardless of model reasoning (no exfil, no push to main, no secrets in logs) | deterministic; the model cannot talk its way past it |
+| Enforcement | hooks, `permissions.deny`, CI | rules that must hold regardless of model reasoning (no exfil, no secrets in logs) | deterministic; the model cannot talk its way past it |
 | Knowledge | skills, `.claude/rules/`, the wiki | how to do a workflow, conventions, facts | loaded on demand; costs nothing until relevant |
 | Isolation | sub-agents, `context: fork` | clean-context work: TDD phases, QA, research | prevents a shared context from biasing the check |
 
@@ -35,7 +35,7 @@ Specs live on GitHub Issues (`issue-flow.md`), not in feature folders in git. A 
 
 ## Why memory is methods-only and tracked
 
-Per-agent memory (`.claude/agent-memory/<name>/MEMORY.md`) holds *methods* that carried over, never findings, verdicts or drafts: findings go stale, methods compound. It is tracked in git so changes are reviewable in PRs and the leak gate can see them, and each file is one line per entry under a 150-line cap. The `memory:` frontmatter flag grants unscoped Write/Edit, so only the TDD trio has it; any agent that ingests outside material (web, pasted text) never gets it, because stored text that re-enters a prompt is a persistent injection path. Others propose entries in their report and the orchestrator writes the accepted ones. Mechanism: `memory-systems.md`.
+Per-agent memory (`.claude/agent-memory/<name>/MEMORY.md`) holds *methods* that carried over, never findings, verdicts or drafts: findings go stale, methods compound. It is tracked in git so changes are reviewable in PRs, and each file is one line per entry under a 150-line cap. The `memory:` frontmatter flag grants unscoped Write/Edit, so only the TDD trio has it; any agent that ingests outside material (web, pasted text) never gets it, because stored text that re-enters a prompt is a persistent injection path. Others propose entries in their report and the orchestrator writes the accepted ones. Mechanism: `memory-systems.md`.
 
 ## Why the model policy is by role, and tested
 
@@ -50,15 +50,14 @@ Each gate has an owner who is not the author of the thing gated.
 | Design note approved | parent issue, before sub-issues exist | human; `work-issue` stops at `needs-triage` |
 | Fact-check 10/10 | `to-tickets`, before `ready-for-agent` | `challenger` samples 10 claims against the repo; below 10/10 fix and resample |
 | RED before GREEN | `/build` | the orchestrator runs the tests between phases (`testing-rules.md`) |
-| QA verdict | `qa-reviewer`, clean context | verdict marker on the issue; `BLOCKED SECURITY` blocks commit/push (hook) |
-| Leak gate | CI and pre-publish | `scripts/leak_gate.sh`, case-insensitive, scans filenames and archives |
+| QA verdict | `qa-reviewer`, clean context | verdict marker on the issue; `BLOCKED SECURITY` makes `/commit` refuse (step 0) |
 
 ## Automation: what runs where
 
 | Need | Mechanism | Why |
 |---|---|---|
 | Rule that must always hold | hook (`hooks.md`) | no session, no tokens, deterministic |
-| Periodic deterministic check (harness health, stale docs) | GitHub Actions cron | zero tokens; runs without a session; survives laptop sleep |
+| Periodic deterministic check (stale docs) | GitHub Actions cron | zero tokens; runs without a session; survives laptop sleep |
 | React to something in a live session | `/loop` (dynamic, self-paced) | needs the session's context; stop it when done |
 | Reminder to look at something | SessionStart nudge | cheapest possible: a sentence at the right moment |
 
@@ -73,7 +72,7 @@ Design rules for anything that runs repeatedly:
 ## What the template deliberately does not do
 
 - **No feature folders.** The Issue is the spec; the wiki holds what lasts.
-- **No always-on telemetry.** The event store is opt-in, redacted and gitignored (`observability.md`); a silent store of tool output is a liability for strangers.
+- **No telemetry.** A silent store of tool output is a liability for strangers.
 - **No autonomous task loop.** Nothing picks up Issues unattended. A human says "next"; approving a design note grants standing permission for its sub-issues, and agents stop at `needs-info` and the live-check.
 - **Soft gates over hard gates.** Only security is a hard stop (deny hook, `BLOCKED SECURITY`). Process gates are verdicts and reminders the orchestrator must act on and the human can overrule, because a hard gate that is wrong blocks real work and teaches people to bypass it.
 - **No slash-command layer.** Skills carry every workflow; two files per workflow is two homes per fact.

@@ -7,8 +7,7 @@ tags: [agents, patterns, delegation, autonomy]
 
 # Agent harness patterns
 
-Principles for agent systems that are autonomous, token-efficient and self-healing. They are prompt-level patterns, not infrastructure: they work in any Claude Code project. Distilled from an audit of our own harness; each one fixed a real failure. Check adoption any time with `python3 scripts/adoption_check.py` (always fresh, no table to maintain).
-
+Principles for agent systems that are autonomous, token-efficient and self-healing. They are prompt-level patterns, not infrastructure: they work in any Claude Code project. Distilled from an audit of our own harness; each one fixed a real failure.
 ## 1. Structural sequencing over live messaging
 
 **Rule:** hand-offs are encoded in skills and prompt chains, not in live `SendMessage` links between running agents.

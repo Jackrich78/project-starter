@@ -52,12 +52,6 @@ jobs:
       - name: Wiki lint (structural)
         run: python3 scripts/wiki_lint.py --all
 
-      - name: Leak gate (path rules; private patterns never ship)
-        run: bash scripts/leak_gate.sh
-
-      - name: Coupling lint (no private-product leftovers)
-        run: bash scripts/coupling_lint.sh
-
       - name: Harness tests
         # pytest directly, not `npm test`, which degrades to a notice without pytest; CI must not
         run: python3 -m pytest tests/harness -q
@@ -91,5 +85,4 @@ jobs:
           npm test                                   # must degrade to a notice without pytest and exit 0
           node scripts/run_pytest_optional.mjs
           test -f CLAUDE.md && test -f PROJECT.md && test -d .claude/skills/setup
-          python3 scripts/adoption_check.py
           bash scripts/github/check_gh.sh --quiet || echo "gh checks fail without auth (expected in CI)"
