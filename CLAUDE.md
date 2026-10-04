@@ -20,7 +20,7 @@ A Claude Code harness: an orchestrator main thread that delegates to sub-agents,
 3. **State the independence tier with every multi-agent result.** Tier 1 prompt-only (agreement = framing coherence) · Tier 2 tool access (framing is yours, data is not) · Tier 3 independent inputs (agreement is evidence).
 4. **Spawn unnamed for one-shot work; name an agent only to continue it**, and end a named brief with "SendMessage your report before stopping".
 5. **Verify before disbelieving.** After compaction, "I have never seen this" is not "this did not happen": `/recover-session` finds the transcript before you call anything invented.
-6. **Ask first** for anything irreversible, outward-facing, or pushed to the default branch. Routine, reversible steps proceed.
+6. **Two human gates:** the human approves what to build (design note, then the ticket breakdown) and tests what was built (the PR); between them decide and report. **Ask first** for anything irreversible, pushed to the default branch, or outward-facing beyond the issue's own comments, branch and PR.
 
 ## The spine
 

@@ -11,14 +11,14 @@ States, labels, claim protocol, modes and the close-out shape live in [`docs/sys
 
 ## Context
 
-One `ready-for-agent` sub-issue per run, in one fresh context window. A standalone ticket or a feature's first sub-issue starts only on the human's word.
+One `ready-for-agent` ticket at a time, sized per issue-flow.md § Sizing; `ready-for-agent` is gate 1, so no fresh "next" is needed. Loop and stops: issue-flow.md § Agent pickup protocol.
 
 ## Pattern
 
 1. **Preflight.** `scripts/github/check_gh.sh` passes; `.claude/agents/{tdd-test-writer,tdd-implementer,tdd-refactorer,qa-reviewer}.md` and the four templates under `.claude/skills/tdd-red-green-refactor/templates/` exist; read the integration mode from CLAUDE.md `## Workflow`. Anything missing: stop and report which.
 2. **Pick and claim** through `work-issue` (named issue, else frontier). **Claim before any other write.** No parent issue behind a sub-issue, or nothing to claim: escalate to `/blueprint`, never improvise a plan.
 3. **`pr` mode:** create the branch with `gh issue develop N --checkout --name issue-N-<slug>` (issue-flow.md § Integration modes). `direct` mode: stay put.
-4. **Stubs.** Read the `Tests:` line (AC ids -> test paths). For each AC id create one failing stub at its path (`fail("RED stub: AC-00X")` in the project's runner), AC id in the test name. No `Tests:` line: stop, the ticket is not buildable (non-code work has a `Proof:` line: build that artifact, skip to step 6).
+4. **Stubs.** Read the `Tests:` line (AC ids -> test paths). For each AC id create one failing stub at its path (`fail("RED stub: AC-00X")` in the project's runner), AC id in the test name. No `Tests:` line: not ready, pickup step 8 (non-code work has a `Proof:` line: build that artifact, skip to step 6).
 5. **Run `tdd-red-green-refactor`** on the stubs. Gates it enforces: RED proven before GREEN; suite green after REFACTOR. Keep the RED output for the close-out `Proof:`.
 6. **`/simplify`** (native) on the changed code; rerun the suite. Then **`/security-review`** (native); fix findings, rerun the suite.
 7. **`/qa --issue N`.** The verdict is the first line of the report; you (not the fork) post it, per `qa` skill § Post-fork step.
@@ -27,7 +27,7 @@ One `ready-for-agent` sub-issue per run, in one fresh context window. A standalo
    - `BLOCKED` or `BLOCKED SECURITY`: stop. Surface to the human with numbered options; never self-approve.
 8. **`/commit`** (`Closes #N` or `Refs #N` per mode). `/commit` runs `/code-review --fix` (at most 2 passes) in `pr` mode. Then the `work-issue` finish steps: confirm `CLOSED`, post the close-out (`Proof:` includes the RED output), parent cascade if last sibling.
 
-Stop after one issue. Unblocked siblings wait for the next run.
+Then take the next ready ticket (issue-flow.md, Standing permission).
 
 ## Example
 
@@ -37,8 +37,8 @@ Stop after one issue. Unblocked siblings wait for the next run.
 
 - Implementing before RED is proven, or accepting a test that was never seen failing.
 - Showing the implementer the spec or plan; it sees failing tests only.
-- Building two issues in one run, or picking a parent issue.
+- Picking a parent issue, or stopping to ask between the gates.
 - Looping QA past 3 iterations, or treating `BLOCKED SECURITY` like `NEEDS_FIXES`.
-- Improvising scope when the ticket is thin: comment, `needs-info`, stop (work-issue step 8).
+- Improvising scope when the ticket is thin: comment, `needs-info`, next ticket (work-issue step 8).
 - Skipping `/simplify` and `/security-review` so opus QA spends its run on trivia.
 - Restating claim or close-out commands here instead of pointing at issue-flow.md.

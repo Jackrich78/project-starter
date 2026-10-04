@@ -31,7 +31,7 @@ Enter plan mode. Read `gh issue view N --comments`.
 
 8. **Codebase Validation Report** as an issue comment (`gh issue comment N --body-file <f>`), carrying the file-change map `to-tickets` cuts slices against.
 9. **Amend the body only if the spec changed**, by one-line-diff discipline (issue-flow.md § Agent pickup protocol, step 7): pull body to a file, keep `.orig`, change, assert `diff` shows only the intended lines, then `gh issue edit N --body-file`. A change to an approved requirement also gets a `docs/decisions.md` line.
-10. **Invoke `to-tickets`** on N. Hand it the validation depth and the pyramid. It shows the numbered breakdown as a vetoable alert, fact-checks, and publishes.
+10. **Invoke `to-tickets`** on N. Hand it the validation depth and the pyramid. It shows the numbered breakdown for the human's go (gate 1), fact-checks, and publishes.
 
 ## Example
 
@@ -46,4 +46,4 @@ Enter plan mode. Read `gh issue view N --comments`.
 - A silent body rewrite: amendments are one-line diffs, logged.
 - Cutting tickets yourself instead of invoking `to-tickets`.
 - Planning a wide mechanical refactor as one ticket (`to-tickets` sequences expand, migrate, contract).
-- Writing a plan file: the sub-issues are the plan.
+- Treating the plan-mode file as the plan: it is scratch; the sub-issues are the plan.

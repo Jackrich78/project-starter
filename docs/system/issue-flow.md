@@ -55,7 +55,7 @@ Rules behind the rows:
 - **In progress is the assignee, not a label.** The "Working:" comment says which session holds it, because `gh` acts as one account for humans and agents alike.
 - **In review** is only for work needing a human or a live surface before it counts (relaunch, deploy, manual check). Code review is not a state: it happens before `/commit` (see Integration modes).
 - **Blocked on another issue** is a native edge: `gh issue edit N --add-blocked-by M`, and release the claim (`--remove-assignee @me`). Blocked on information: `needs-info`.
-- **Needs-info returns to `needs-triage`** when answered; the answer is recorded in the thread, never only in chat.
+- **Needs-info returns to `ready-for-agent`** when answered (`needs-triage` if it was never ready); the answer is recorded in the thread, never only in chat.
 - **Done** needs every AC ticked with evidence, `Closes #N` in the closing commit (or PR body in `pr` mode), `state` = `CLOSED`, then the close-out comment. A bare `#N` never closes. Anything needing a live check goes to in review instead.
 - **Wontfix** splits three ways: already built (say where), rejected bug (reason), rejected enhancement (one `REJECTED` line in `docs/decisions.md`).
 - **Parent close-out cascade:** when the last sub-issue closes (`gh issue view P --json subIssuesSummary`, completed = total), the closing agent posts the parent's close-out answering the outcome test, closes the parent, and moves lasting facts to the wiki. **Abandon cascade:** closing a parent as not planned closes its open sub-issues the same way; the reason goes in `docs/decisions.md` once, at the parent.
@@ -104,6 +104,10 @@ Mode is read from CLAUDE.md `## Workflow` (`Integration mode: pr | direct`).
 
 The QA verdict marker lives on the issue in both modes; `/commit` reads it there.
 
+## Two human gates
+
+The human approves what to build (gate 1: the design note, then the `to-tickets` breakdown) and tests what was built (gate 2: the PR). Between them the agent decides and reports each call in the hand-off; any other stop is a defect.
+
 ## Verify gate
 
 Nothing reaches `ready-for-agent` without a `Verified:` comment (what was checked against the repo, with evidence) or, for new sub-issues, the `to-tickets` fact-check gate, whose publish is that record. Promotion without either is a defect.
@@ -112,17 +116,17 @@ Nothing reaches `ready-for-agent` without a `Verified:` comment (what was checke
 
 1. **Choose.** A named issue wins. Otherwise the frontier:
    `gh issue list --state open --label ready-for-agent --search "no:assignee -label:feature -is:blocked" --json number,title,labels,createdAt,parent`
-   `-is:blocked` counts only open blockers (a closed blocker stays in `blockedBy`, so never filter that client-side); the search index lags seconds behind a write. Prefer a sibling of an in-progress parent (the `parent` field), then P0 to P2, then oldest.
+   `-is:blocked` counts only open blockers (a closed blocker stays in `blockedBy`, so never filter that client-side); the search index lags seconds behind a write. Prefer an answered `needs-info` issue, then a sibling of an in-progress parent (the `parent` field), then P0 to P2, then oldest.
 2. **Claim** before any other write: assignee + "Working:" comment.
 3. **Read** `gh issue view N --comments`; the list view omits comments.
-4. **Re-verify `Current state`** against today's repo; comment what changed before building.
+4. **Re-verify `Current state`** against today's repo; comment what changed before building. Re-check readiness: testable ACs and a `Tests:` or `Proof:` line.
 5. **Build** at the agreed seam: TDD with isolated sub-agents for code, then `/qa --issue N`.
 6. **Open a sub-issue** when a task outgrows the window, and replace its checklist line with the link.
 7. **Tick checkboxes one at a time:** pull the body to a file, keep a `.orig` copy, flip one `- [ ]` to `- [x]`, assert `diff` shows exactly one changed line, then `gh issue edit N --body-file`. ACs tick only with evidence in hand.
-8. **Blocked:** on information, swap to `needs-info`, post Triage Notes, release the claim. On an issue, add the native edge and release.
+8. **Not ready or blocked:** on information, swap to `needs-info`, comment what is missing with a recommended answer, release the claim, say so in one chat line and take the next ticket. On an issue, add the native edge and release.
 9. **Finish** via `/commit`, confirm `CLOSED`, post the close-out; last sibling triggers the parent cascade.
 
-**Standing permission:** approving a parent's design note permits working through its sub-issues without a fresh "next" each time. A standalone ticket or a feature's first sub-issue starts only on the human's word. Agents stop at `needs-info` and at the live-check sub-issue. One sub-issue per context window.
+**Standing permission:** `ready-for-agent` means gate 1 is passed (see Two human gates): work the frontier with no fresh "next". Stop at an empty frontier, at the `ready-for-human` live-check sub-issue, or at about 50% context, writing the handover first.
 
 ## Close-out comment
 

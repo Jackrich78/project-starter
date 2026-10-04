@@ -17,10 +17,11 @@ A lean, observable harness for Claude Code: an orchestrator that delegates to su
 
 ## Principles
 
-<!-- CUSTOMIZE: ≤7. Each one states what it forbids. Run `grilling` on these when you are ready; the three below are the template's. -->
+<!-- CUSTOMIZE: ≤7. Each one states what it forbids. Run `grilling` on these when you are ready; the ones below are the template's. -->
 1. **Reduce** — minimise what loads into context; forbids dumping every doc at session start.
 2. **Offload** — delegate reads, research and drafting to sub-agents; forbids the main thread doing retrieval.
 3. **Isolate** — contain side effects (worktrees, clean-context reviewers, hooks); forbids a writer reviewing its own work.
+4. **Two human gates** — the human approves what to build and tests what was built; forbids any other stop between them.
 
 ## Current state
 
