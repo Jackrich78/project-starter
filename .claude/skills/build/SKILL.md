@@ -15,13 +15,13 @@ One `ready-for-agent` ticket at a time, sized per issue-flow.md § Sizing; `read
 
 ## Pattern
 
-1. **Preflight.** `scripts/github/check_gh.sh` passes; `.claude/agents/{tdd-test-writer,tdd-implementer,tdd-refactorer,qa-reviewer}.md` and the four templates under `.claude/skills/tdd-red-green-refactor/templates/` exist; read the integration mode from CLAUDE.md `## Workflow`. Anything missing: stop and report which.
+1. **Preflight.** `scripts/github/check_gh.sh` passes; `.claude/agents/{tdd-test-writer,tdd-implementer,tdd-refactorer,qa-reviewer}.md` and the three templates under `.claude/skills/tdd-red-green-refactor/templates/` exist; read the integration mode from CLAUDE.md `## Workflow`. Anything missing: stop and report which.
 2. **Pick and claim** through `work-issue` (named issue, else frontier). **Claim before any other write.** No parent issue behind a sub-issue, or nothing to claim: escalate to `/blueprint`, never improvise a plan.
 3. **`pr` mode:** create the branch with `gh issue develop N --checkout --name issue-N-<slug>` (issue-flow.md § Integration modes). `direct` mode: stay put.
 4. **Stubs.** Read the `Tests:` line (AC ids -> test paths). For each AC id create one failing stub at its path (`fail("RED stub: AC-00X")` in the project's runner), AC id in the test name. No `Tests:` line: not ready, pickup step 8 (non-code work has a `Proof:` line: build that artifact, skip to step 6).
 5. **Run `tdd-red-green-refactor`** on the stubs. Gates it enforces: RED proven before GREEN; suite green after REFACTOR. Keep the RED output for the close-out `Proof:`.
 6. **`/simplify`** (native) on the changed code; rerun the suite. Then **`/security-review`** (native); fix findings, rerun the suite.
-7. **`/qa --issue N`.** The verdict is the first line of the report; you (not the fork) post it, per `qa` skill § Post-fork step.
+7. **`/qa --issue N`.** The fork posts its own verdict and returns the marker and URL.
    - `APPROVED`: step 8.
    - `NEEDS_FIXES`: fix, rerun the suite, re-run `/qa --issue N`. At most **3** iterations, then stop and report what was tried.
    - `BLOCKED` or `BLOCKED SECURITY`: stop. Surface to the human with numbered options; never self-approve.

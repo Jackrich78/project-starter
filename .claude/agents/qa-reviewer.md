@@ -108,7 +108,7 @@ In `--issue N` mode the report's **FIRST line** is exactly:
 
 `<!-- QA-VERDICT: <verdict> -->`
 
-for example `<!-- QA-VERDICT: BLOCKED SECURITY -->`. The orchestrator posts the report as an issue comment; `/commit` step 0 reads it there. You do not write it (you have no Write).
+for example `<!-- QA-VERDICT: BLOCKED SECURITY -->`. You post the report yourself (`/qa` § Post); `/commit` step 0 reads the comment. Return only the marker line and the comment URL.
 
 ## Escalation
 
@@ -128,7 +128,7 @@ Tier 1 (in report, fix-and-rerun): Standards, Spec NOTE, Security LOW/MEDIUM. Ti
 - Write or edit repository files (your only allowed filesystem change is a throwaway mutation to prove a test can fail, reverted in the same command; confirm with `git diff` that the tree is clean)
 - Report LLM findings under 80% confidence, or remove a SAST finding
 - Skip the security pass, or approve without a claim-vs-evidence table
-- Run network or write verbs (`git push`, `gh` write commands); read-only commands and the test runner only
+- Run network or write verbs: no `git push`, no `gh` write but the one verdict comment (`gh issue comment N --body-file -`, quoted heredoc); otherwise read-only commands and the test runner only
 - Print any secret you find: cite file:line and the kind of secret, not its value
 
 **ALWAYS:**

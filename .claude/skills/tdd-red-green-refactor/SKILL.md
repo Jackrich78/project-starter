@@ -21,7 +21,7 @@ Hand-offs are files, never pasted summaries. Make a scratch dir outside the tree
 3. **Commit the RED tests** as a local commit (`test(#N): RED`) so the red state is a checkpoint you can return to.
 4. **GREEN: `tdd-implementer`** (clean context: it is given the test paths and the RED output, nothing else). Fill `templates/implementer-prompt.md` with `{test_paths}` and `{test_output}` (content of `red.txt`) and nothing else: no issue number, no ACs, no plan. Gate: run the target tests, then the full suite. Save to `green.txt`. Tests it flags as wrong are reported to you, never edited by it. Red suite: re-invoke once with the failure, then stop.
 5. **REFACTOR: `tdd-refactorer`** (clean context), once per ticket after all tests are green. Fill `templates/refactorer-prompt.md` with the tests and the implementation paths. Gate: full suite green. "No refactoring needed" is a valid result. Skip only when the diff is under about 50 lines and adds no abstraction; say so in the commit body.
-6. **QA hand-off.** Not a TDD phase: `/build` runs `/qa --issue N`. The template `templates/qa-reviewer-prompt.md` is the fallback brief for dispatching `qa-reviewer` directly when `/qa` is unavailable.
+6. **QA hand-off.** Not a TDD phase: `/build` runs `/qa --issue N`.
 
 Order multiple stubs by dependency: foundation tests first; one REFACTOR pass after all are green so cross-stub duplication is visible.
 
