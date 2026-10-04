@@ -1,10 +1,9 @@
 ---
 name: wiki-lint
-description: "Semantic lint of the docs/ wiki: a deterministic pre-pass plus one forked librarian judging contradictions, orphan pages, missing concept pages and stale claims. Use on \"wiki lint\", \"semantic lint\", \"check the docs for contradictions\", \"has the wiki drifted\", or when the last wiki-lint line in docs/log.md is over 14 days old. Fixes structural findings; proposes the rest."
+description: "Semantic lint of the docs/ wiki: a deterministic pre-pass plus one forked librarian judging contradictions, orphan pages, missing concept pages and stale claims; runs at /session-winddown when due. Use on \"wiki lint\", \"semantic lint\", \"check the docs for contradictions\", \"has the wiki drifted\", or when the last wiki-lint line in docs/log.md is over 14 days old. Fixes structural findings; proposes the rest."
 type: skill
 context: fork
 agent: librarian
-disable-model-invocation: true
 ---
 
 # Wiki lint

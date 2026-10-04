@@ -1,9 +1,8 @@
 ---
 name: to-tickets
-description: "Break an approved plan or parent issue into sub-issues, one fresh context window each. Use after /blueprint approval or on \"break this into tickets\", \"turn this plan into issues\", \"slice this feature\". Shows a numbered breakdown the human can veto, then publishes."
+description: "Break an approved plan or parent issue into sub-issues, one fresh context window each; the spine step after /blueprint approval and before /build. Use on \"break this into tickets\", \"turn this plan into issues\", \"slice this feature\", \"to-tickets #N\". Shows a numbered breakdown the human can veto, then publishes."
 type: skill
 context: fork
-disable-model-invocation: true
 argument-hint: "<parent #N>"
 ---
 

@@ -1,8 +1,7 @@
 ---
 name: build
-description: "Build exactly one GitHub sub-issue end to end with TDD, review and QA. Use on \"build #N\", \"/build\", \"work the next ticket\", \"implement #N\". Claims the issue, writes failing tests per acceptance criterion, implements, refactors, runs /simplify and /security-review, then /qa --issue N and /commit. Escalates to /blueprint when there is no parent issue."
+description: "Build exactly one GitHub sub-issue end to end with TDD, review and QA; the spine step after to-tickets, ending in /qa --issue N and /commit. Use on \"build #N\", \"implement #N\", \"work the next ticket\", \"/build\". Claims the issue, writes failing tests per acceptance criterion, implements, refactors. Escalates to /blueprint when there is no parent issue."
 type: skill
-disable-model-invocation: true
 argument-hint: "[#N]"
 ---
 

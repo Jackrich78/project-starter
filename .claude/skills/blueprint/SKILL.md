@@ -1,8 +1,7 @@
 ---
 name: blueprint
-description: "Ground an approved feature spec in the real codebase, then cut it into tickets. Use on \"blueprint #N\", \"plan the build for #N\", \"is #N ready to build\", \"validate the spec against the code\", after /explore has produced a parent feature issue with an approved design note. Re-checks every path and library the spec names, interviews the developer, picks the test pyramid, then hands off to to-tickets."
+description: "Ground an approved feature spec in the real codebase, then cut it into tickets; the spine step after /explore has produced a parent issue with an approved design note, handing off to to-tickets. Use on \"blueprint #N\", \"plan the build for #N\", \"is #N ready to build\", \"validate the spec against the code\". Re-checks every path and library the spec names, interviews the developer, picks the test pyramid."
 type: skill
-disable-model-invocation: true
 argument-hint: "#N"
 ---
 

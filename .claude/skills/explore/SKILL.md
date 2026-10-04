@@ -1,8 +1,7 @@
 ---
 name: explore
-description: "Turn a vague idea, question or decision into the right artifact: one ticket, a parent feature issue with an approved design note, a decisions line, or a wiki page. Use on \"explore #N\", \"let's think through X\", \"should we build X or Y\", \"scope this feature\", \"plan the roadmap\", \"/explore --roadmap\". Runs product and technical discovery, sizes the work, gates on the human approving a design note before any acceptance criteria are written."
+description: "Turn a vague idea, question or decision into the right artifact: one ticket, a parent feature issue with an approved design note, a decisions line or a wiki page; the first spine step, before /blueprint. Use on \"explore #N\", \"let's think through X\", \"should we build X or Y\", \"scope this feature\", \"plan the roadmap\", \"/explore --roadmap\". Gates on the human approving a design note before any acceptance criteria are written."
 type: skill
-disable-model-invocation: true
 argument-hint: "#N | <topic> | --roadmap"
 ---
 

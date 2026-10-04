@@ -1,8 +1,7 @@
 ---
 name: qa
-description: "Independent clean-context QA review: security, standards and spec, one verdict. Use on \"/qa --issue N\", \"review this\", \"QA the build\", \"is #N ready to commit\", \"sweep the repo for security issues\". Forks into the qa-reviewer agent so the reviewer never sees the builder conversation."
+description: "Clean-context QA review of a build: security, standards and spec, one verdict; the spine step after /build and before /commit. Use on \"run QA on #N\", \"/qa --issue N\", \"review this\", \"QA the build\", \"is #N ready to commit\", \"sweep the repo for security issues\". Forks into qa-reviewer so the reviewer never sees the builder conversation."
 type: skill
-disable-model-invocation: true
 context: fork
 agent: qa-reviewer
 argument-hint: "[--issue N | <path> | --sweep]"

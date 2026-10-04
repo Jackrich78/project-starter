@@ -8,7 +8,7 @@ paths:
 Read `.claude/skills/writing-for-agents/SKILL.md` before authoring or editing a skill; build or evaluate with `skill-creator`. Confirm frontmatter semantics with `claude-code-guide` when unsure (`docs/reference/claude-code.md`).
 
 - **`description` is the trigger surface, not a summary.** Name the problem and the phrasings that should fire it. A skill nothing loads is a skill that does not exist.
-- **Frontmatter:** `name` (kebab-case = folder), `description`, `type: skill`; workflow skills the user invokes as `/<name>` carry `disable-model-invocation: true` and an `argument-hint`; clean-context skills use `context: fork` + `agent: <name>`.
+- **Frontmatter:** `name` (kebab-case = folder), `description`, `type: skill`; `disable-model-invocation: true` is reserved for skills only a human should start (setup, recover-session, prime, persona, prototype, audit-claude-md, writing-for-agents), while spine skills carry an `argument-hint` and a model-facing description so the orchestrator can invoke them; clean-context skills use `context: fork` + `agent: <name>`.
 - **Body shape:** `## Context` (when, 1–2 sentences) · `## Pattern` (numbered steps) · `## Example` (one concrete run) · `## Anti-patterns` (what not to do, and why).
 - **Point, never copy.** Operational facts live in `docs/system/<topic>.md`; the skill links to them. A copied procedure is the one that drifts.
 - **Size cap 150 lines** (`tests/harness/test_size_caps.py`); detail goes to `references/` files the body names explicitly ("Read `references/x.md`").

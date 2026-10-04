@@ -1,8 +1,7 @@
 ---
 name: triage
-description: "Move issues out of needs-triage toward a state a human can act on. Use on \"triage\", \"what needs me\", \"let's do some backlog items\", \"I have a new item, triage it\", \"move X to ready\". Recommends and waits for the human's reply before changing any label."
+description: "Move issues out of needs-triage toward a state a human can act on; runs inside /session-winddown or whenever the queue has new items. Use on \"triage\", \"what needs me\", \"let's do some backlog items\", \"I have a new item, triage it\", \"move #N to ready\". Recommends and waits for the human's reply before changing any label."
 type: skill
-disable-model-invocation: true
 argument-hint: "[#N]"
 ---
 

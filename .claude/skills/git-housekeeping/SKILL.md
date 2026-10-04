@@ -1,8 +1,7 @@
 ---
 name: git-housekeeping
-description: "Audit and clean stale git state: orphan worktrees, merged or stale branches (local and remote), accumulated stashes, orphan commits on dead branches. Use on \"clean up branches\", \"tidy the repo\", \"what worktrees do I have\", \"clean my stashes\", \"post-merge cleanup\", \"too many branches\"."
+description: "Audit and clean stale git state: orphan worktrees, merged or stale branches (local and remote), piled-up stashes, orphan commits on dead branches; a maintenance pass after /commit or /session-winddown, not part of the build spine. Use on \"clean up branches\", \"tidy the repo\", \"what worktrees do I have\", \"clean my stashes\", \"post-merge cleanup\", \"too many branches\". Audit first; every deletion approved per item."
 type: skill
-disable-model-invocation: true
 ---
 
 # Git Housekeeping

@@ -1,8 +1,7 @@
 ---
 name: spike
-description: "Time-boxed technical investigation to reduce uncertainty before committing to an approach. Use on \"/spike <topic>\", \"does X work with Y\", \"we're not sure this is feasible\", \"prove this out first\", or when /blueprint finds confidence under 50% or several viable approaches. A spike is a sub-issue whose proof is the learning."
+description: "Time-boxed technical investigation to settle one feasibility question before an approach is chosen; sits between /explore and /blueprint, or fires when /blueprint finds confidence under 50% or several viable approaches. Use on \"spike this\", \"/spike <topic>\", \"does X work with Y\", \"we're not sure this is feasible\", \"prove this out first\". A spike is a sub-issue whose proof is the learning."
 type: skill
-disable-model-invocation: true
 argument-hint: "[question]"
 ---
 

@@ -1,8 +1,7 @@
 ---
 name: architecture-review
-description: "Multi-agent review of an architecture proposal before committing to it. Use on \"challenge this plan\", \"stress-test this design\", \"review this architecture\", \"build vs buy\", \"get a second opinion\", or before acting on one agent's conclusion that would become the thing you build or reach the human as a decision."
+description: "Multi-agent review of an architecture proposal before committing to it; fires during /explore or /blueprint when one agent's conclusion would become the thing built or reach the human as a decision. Use on \"challenge this plan\", \"stress-test this design\", \"review this architecture\", \"build vs buy\", \"get a second opinion\". Cheap decisions go to evaluate instead."
 type: skill
-disable-model-invocation: true
 ---
 
 # Architecture Review

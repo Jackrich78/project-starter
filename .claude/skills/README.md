@@ -19,7 +19,7 @@ The harness reads `name` and `description` from every `.claude/skills/*/SKILL.md
 | `name` | yes | kebab-case, equal to the folder name (`tests/harness/test_size_caps.py` checks) |
 | `description` | yes | **the trigger surface**: the problem and the phrasings that should fire it, not a summary |
 | `type` | yes | `skill` (wiki lint enforces the taxonomy) |
-| `disable-model-invocation` | for user-run workflows | `true` means only `/<name>` runs it |
+| `disable-model-invocation` | for skills only a human should start | `true` means only `/<name>` runs it; spine skills omit it so the orchestrator can invoke them (`.claude/rules/skills.md`) |
 | `argument-hint` | when it takes arguments | shown in the slash-command picker |
 | `context: fork` + `agent:` | for clean-context work | the body becomes that agent's brief |
 

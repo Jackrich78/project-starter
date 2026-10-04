@@ -1,8 +1,7 @@
 ---
 name: work-issue
-description: "Claim and build one GitHub issue end to end: claim, re-verify, build, tick, close. Use on \"work on #N\", \"next\", \"pick up the next ticket\", \"build #N\". A standalone ticket or a feature's first sub-issue starts only on the human's word; later sub-issues of an approved parent start on standing permission."
+description: "Claim and work one GitHub issue end to end: claim, re-verify, build, tick, close; the pickup protocol /build runs when a ticket is taken from the ready-for-agent frontier. Use on \"work on #N\", \"pick up the next ticket\", \"next\", \"what is next on the board\". A standalone ticket or a feature's first sub-issue starts only on the human's word."
 type: skill
-disable-model-invocation: true
 argument-hint: "[#N]"
 ---
 

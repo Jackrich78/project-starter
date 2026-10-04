@@ -1,8 +1,7 @@
 ---
 name: handover
-description: "Write the session handover as an issue comment so the next session starts cold and right. Use on \"handover\", \"hand this over\", \"write up where we are\", \"I'm switching sessions\", or from session-winddown. Forward state only; re-checks every status claim against current state."
+description: "Write the session handover as an issue comment so the next session starts cold and right; the last step of /session-winddown. Use on \"handover\", \"hand this over\", \"write up where we are\", \"I'm switching sessions\", or when /session-winddown reaches the handover step. Forward state only; re-checks every status claim against current state."
 type: skill
-disable-model-invocation: true
 context: fork
 argument-hint: "[#N]"
 ---

@@ -1,8 +1,7 @@
 ---
 name: retro
-description: "Turn what happened into durable process changes. Use on \"retro\", \"what did we learn\", \"that was wrong, remember it\", \"always do X next time\", after a feature closes. Modes: learn, feedback. Proposals need human approval before anything is edited."
+description: "Turn what happened into durable process changes; runs inside /session-winddown, or after a feature closes. Use on \"retro\", \"what did we learn\", \"that was wrong, remember it\", \"always do X next time\". Modes: learn, feedback. Proposals need human approval before anything is edited."
 type: skill
-disable-model-invocation: true
 argument-hint: "[learn|feedback]"
 ---
 

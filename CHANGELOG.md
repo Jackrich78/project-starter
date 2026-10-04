@@ -14,6 +14,7 @@ Planned as 3.0.1: back to the v2.0.1 balance. v3.0.0's enforcement layer cost mo
 - **Security hook** is v2.0.1's flat rule table again (156 lines, was 788), Bash-only, deny by JSON `permissionDecision`, plus five rules for risks seen in real sessions: `.env` reads, grep/rg of `.env` values, bare environment dumps, echo of secret-named variables, trailing force-push flags. Fixes v2's `rm -rf /private/tmp` and `| shasum` false positives; masks URL credentials and token-shaped runs in the block log. Capped at 170 lines by a test.
 - **`settings.json`** sets no `permissions.defaultMode` (the owner's mode governs); the deny list keeps secret stores, Claude Code private state and irreversible remote actions only.
 - **QA gate** is prose in `/commit` step 0, reading the verdict comment on the issue; no verdict file, no hook.
+- **Spine skills are agent-invocable**: 15 workflow skills drop `disable-model-invocation`, so the agent runs build → QA → commit → wind-down without the human typing each step; 7 human-start skills keep it (#2).
 - **Adoption fixes:** two-lane `npm test` (harness and project), `/setup` markers that can actually be met, `.claude/skills/build/` no longer gitignored, testing rules restated in the TDD briefs.
 
 ### Removed

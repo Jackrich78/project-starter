@@ -1,8 +1,7 @@
 ---
 name: commit
-description: "Commit with the QA gate and CI check. Use on \"commit\", \"commit this\", \"ship it\", \"push this\", or when /build, /qa or session-winddown hands over finished work. Refuses on a BLOCKED SECURITY verdict; never amends a pushed commit or force-pushes."
+description: "Commit finished work through the QA gate and CI check; the spine step after /qa and before /session-winddown. Use on \"commit\", \"commit this\", \"ship it\", \"push this\", or when /build or /session-winddown hands over finished work. Refuses on a BLOCKED SECURITY verdict; never amends a pushed commit or force-pushes."
 type: skill
-disable-model-invocation: true
 argument-hint: "[message hint]"
 ---
 

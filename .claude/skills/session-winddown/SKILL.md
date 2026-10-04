@@ -1,8 +1,7 @@
 ---
 name: session-winddown
-description: "End a session cleanly, in the one order that works. Use on \"wrap up\", \"wind down\", \"call it a day\", \"stop here\", \"before I /clear\", \"hand over\", \"closing the laptop\", or at the end of any session that produced commits or closed issues. Orchestrates commit, close, retro, triage, handover; restates none of them."
+description: "End a session cleanly, in the one order that works: commit, close, retro, triage, handover; the final spine step after /commit. Use on \"wrap up\", \"wind down\", \"call it a day\", \"stop here\", \"before I /clear\", \"closing the laptop\", or at the end of any session that produced commits or closed issues. Orchestrates the steps; restates none of them."
 type: skill
-disable-model-invocation: true
 argument-hint: "[session-start-sha]"
 ---
 
