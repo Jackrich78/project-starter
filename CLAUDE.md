@@ -74,6 +74,7 @@ Each agent keeps methods — never findings, verdicts or drafts — in `.claude/
 ## Security
 
 - No credentials in code, logs or shell commands — the compaction salvage persists recent commands. **Never expand a secret into a printed position**, presence checks included: `[ -n "$TOKEN" ] && echo set`, never `${TOKEN:+yes}`.
+- Assume every tracked file, commit message, branch name, issue and PR is world-readable: never copy names, paths or text from other projects into them.
 - Read before write; Edit over Write; `git diff` after multi-section edits. Prefer deletion when adding and deleting both solve it.
 - Deregister a hook in `settings.json` before deleting its file. A rule that failed twice in prose becomes a hook or a test.
 - Every external action is observable; every change names its undo before it runs.

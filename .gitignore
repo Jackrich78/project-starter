@@ -73,7 +73,3 @@ workspace/
 secrets.json
 credentials.json
 .credentials.json
-
-# Maintainer-private files (never track)
-.github/pii-patterns.txt
-.github/release-waivers.txt
