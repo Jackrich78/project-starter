@@ -21,20 +21,24 @@ pre_compact = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(pre_compact)
 
 
+HARNESS_TAGS = ("<command-", "<bash-", "<local-command-", "<task-notification", "<system-reminder")
+
+
 def turns(path):
     for raw in path.read_text(encoding="utf-8", errors="replace").splitlines():
         try:
-            m = json.loads(raw).get("message")
+            e = json.loads(raw)
+            m = e.get("message")
         except (ValueError, AttributeError):
             continue
-        if not isinstance(m, dict):
-            continue
+        if not isinstance(m, dict) or e.get("isMeta"):
+            continue  # isMeta: skill bodies and other harness text marked as user
         c = m.get("content")
         if isinstance(c, list):
             c = "\n".join(b.get("text", "") for b in c if isinstance(b, dict) and b.get("type") == "text")
         if m.get("role") in ("user", "assistant") and isinstance(c, str):
-            if m["role"] == "user" and c.lstrip().startswith("<"):
-                continue  # harness-injected (shell output, command markers)
+            if m["role"] == "user" and c.lstrip().startswith(HARNESS_TAGS):
+                continue  # harness-injected; a human message may still start with <pasted_content>
             for line in filter(str.strip, pre_compact.redact(c).splitlines()):
                 yield ("U: " if m["role"] == "user" else "A: ") + line
 
