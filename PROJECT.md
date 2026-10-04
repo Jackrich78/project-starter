@@ -2,8 +2,8 @@
 type: overview
 title: Project plan
 description: Vision, principles, current state and roadmap themes for this project. Status of individual work lives on GitHub Issues, not here.
-updated: 2026-10-02
-version: 3.0.0-dev
+updated: 2026-10-04
+version: 3.0.2
 ---
 
 # <Project name> — project plan
@@ -26,7 +26,7 @@ A lean, observable harness for Claude Code: an orchestrator that delegates to su
 ## Current state
 
 <!-- CUSTOMIZE: one paragraph. What works today, what is in flight. Point at issues, don't restate them. -->
-v3.0.1 in progress (branch `fix/v3.0.1-adoption-feedback`): the first adoption's feedback round. The security hook returns to the v2 guard model, project settings set no permission mode, and the `/setup`, test-runner and sub-agent-brief gaps the adopter hit are closed. Harness status is read from `gh issue list --label feature --state all`, not from this file.
+v3.0.2 on branch `fix/v3.0.1-adoption-feedback`, pushed to `release/v3.0.1`, not merged to main pending the owner's validation. Adds two human gates, token-based sizing, pr-mode commit/push/PR without asking, one issue protocol with human-reply detection, and a self-posting QA fork on top of the v3.0.1 strip-back. Next: one live acceptance run in an adopter. Harness status is read from `gh issue list --label feature --state all`, not from this file.
 
 ## Roadmap
 

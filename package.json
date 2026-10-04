@@ -1,6 +1,6 @@
 {
   "name": "project-starter",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": true,
   "type": "module",
   "description": "Claude Code agent-harness template: orchestrator + sub-agents, GitHub Issues as spec, linted wiki, per-agent memory.",

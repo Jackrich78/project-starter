@@ -5,9 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.0.2] - 2026-10-04
 
-Planned as 3.0.1: back to the v2.0.1 balance. v3.0.0's enforcement layer cost more autonomy than it bought.
+### Added
+
+- Two human gates (approve what to build, test what was built) with a same-session loop between them; token-based ticket sizing (main-thread tokens, not hours).
+- pr mode commits, pushes and opens the PR without asking; README carries the opt-in snippet.
+- Gate-2 hand-off to the human: How to test and Decided.
+- Issue protocol section in `issue-flow.md`: one Ask block, signature on line 1.
+- `human_input.py` surfaces human replies (incl. a second assistant's signature variant) in `/prime`, triage and wind-down.
+- `/retro` harness mode; redacted `scripts/recall.py` transcript reader.
+- Ticket template: Interface line; test-writer sees Interface.
+
+### Changed
+
+- QA fork posts its own verdict; human-only checks never block; recommend-one questions are asked yes/no.
+- Sub-agent reports capped at 300 words; human reports ~5 lines.
+- Hook: secret-file reader rule widened.
+
+### Removed
+
+- Fallback `qa-reviewer-prompt`; ticket template Sub-tasks section; hook `eval(` rule.
+
+### Fixed
+
+- Hook README matches the rule table.
+
+## [3.0.1] - 2026-10-04
+
+Back to the v2.0.1 balance. v3.0.0's enforcement layer cost more autonomy than it bought.
 
 ### Changed
 
