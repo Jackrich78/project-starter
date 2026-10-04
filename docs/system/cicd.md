@@ -1,52 +1,83 @@
 ---
 type: domain-doc
 title: CI/CD
-description: What validate.yml and the monthly harness-health workflow run and why, how to add project checks, the npm test degrade rule, and local workflow linting.
-tags: [ci, github-actions, validation]
+description: What validate.yml and the monthly harness-health workflow run and why, the two-lane npm test degrade rule, the conftest guard, how to add project checks, and local workflow linting.
+tags: [ci, github-actions, validation, testing]
+updated: 2026-10-03
 ---
 
 # CI/CD
 
-Workflows live in `.github/workflows/`. A test or check that is in no workflow does not exist (`testing-rules.md` principle 7).
+Workflows live in `.github/workflows/`. A test or check that is in no workflow does not exist (`.claude/rules/testing.md`). This page mirrors the workflow files; when they disagree, the workflow is the fact and this page is fixed in the same turn.
 
 ## `validate.yml` (every push and PR, any branch)
 
-`contents: read` only; concurrent runs on a ref cancel; 10-minute timeout. Steps, in order:
+`contents: read` only; concurrent runs on a ref cancel; 10-minute timeout per job. Actions are pinned by commit SHA. Two jobs.
+
+### Job `validate`
+
+Steps, in order; every one is blocking:
 
 | Step | Why |
 |---|---|
-| Checkout, Node 20, Python 3.11 | the two runtimes `npm test` and the hooks need |
-| `pip install pytest pyyaml` | CI always has the optional runtime, so the full suite runs here even when a local clone skips it |
+| Checkout (`fetch-depth: 0`, `persist-credentials: false`), Node 20, Python 3.12 | the two runtimes `npm test` and the hooks need; full history because `wiki_lint` derives staleness from git; repo scripts get no token. 3.12 matches `.python-version` when a project adds one |
+| `pip install 'pytest>=8,<9' 'pyyaml>=6,<7'` | CI always has the optional runtime, so the harness suite runs here even when a local clone skips it |
 | actionlint (`raven-actions/actionlint`) | a workflow syntax error is otherwise found only after pushing |
-| `py_compile` every `.py` under `.claude/hooks` and `scripts` | a hook that does not compile fails every session; catches syntax only |
-| `npm test` | the harness suite: hook corpus, settings wiring, model-tier table, memory-flag allowlist, label list vs docs, leak gate |
+| `git ls-files "*.py" \| xargs python3 -m py_compile` | every tracked `.py` must compile: a hook that does not compile fails every session; catches syntax only |
+| `python3 scripts/audit_claude_md.py --strict` | CLAUDE.md shape and size |
+| `python3 scripts/wiki_lint.py --all` | wiki frontmatter, size caps, links, reserved files |
+| `bash scripts/leak_gate.sh` | path rules only in CI; the private pattern file never ships |
+| `bash scripts/coupling_lint.sh` | no private-product leftovers in the template |
+| `python3 -m pytest tests/harness -q` | the harness suite, run directly (not via `npm test`, which degrades to a notice without pytest and CI must not) |
+| Project deps: `pip install 'uv>=0.11,<0.12' && uv sync --frozen` | `if: hashFiles('pyproject.toml') != ''`: skipped until the project has a `pyproject.toml` |
+| Project tests: `uv run --frozen pytest tests/unit tests/integration -q` | same guard; the project lane on the locked environment, the same command `npm test -- project` runs locally |
 
-The leak gate, coupling lint and wiki lint (`scripts/leak_gate.sh`, `scripts/coupling_lint.sh`, `scripts/wiki_lint.py --all`) are meant to run as blocking steps; check the workflow file for which are wired today rather than trusting this page, and add any that are missing in the commit that adds the script.
+### Job `cold-clone`
 
-## `harness-health.yml` (monthly cron)
+Simulates an adopter with no history, no `node_modules` and no Python deps: `git clone --depth 1` of the checked-out tree into `my-project`, then `npm test` and `node scripts/run_pytest_optional.mjs` (both must degrade to a NOTICE and exit 0 without pytest), `CLAUDE.md`, `PROJECT.md` and `.claude/skills/setup` present, `python3 scripts/adoption_check.py` exits 0, and `bash scripts/github/check_gh.sh --quiet` is allowed to fail (no `gh` auth in CI).
 
-Deterministic checks, zero model tokens: the reference-doc stamp age (`docs/reference/claude-code.md` `last_checked`, tested at 90 days), agent contract checks (`scripts/adoption_check.py`, `scripts/validate_agent_memory.py --check-roster`) and the wiki lint. A cron is used instead of `/loop` (needs a live session) or `CronCreate` (expires after 7 days). The one part that needs a model, re-checking the Claude Code docs, is a SessionStart nudge from `session_prime.py` after 30 days: it asks you to run `/harness-health` and ask `claude-code-guide`.
+## `harness-health.yml` (monthly cron, `workflow_dispatch`)
+
+Runs on the 1st of each month. Python 3.12, `pytest` and `pyyaml` installed, then every validator with `set +e`, each line's exit code captured into `report.md`:
+
+- `python3 scripts/audit_claude_md.py --strict`
+- `python3 scripts/adoption_check.py`
+- `python3 scripts/validate_agent_memory.py --check-roster`
+- `python3 scripts/wiki_lint.py --all`
+- `bash scripts/leak_gate.sh` (path rules only in CI)
+- `bash scripts/coupling_lint.sh --summary`
+- `python3 -m pytest tests/harness -q` (includes the `docs/reference/claude-code.md` `last_checked` age test, 90 days)
+
+Any non-zero exit opens one `chore` issue titled `Harness health <YYYY-MM>`, or comments on it if it is already open. Zero model tokens: a cron is used instead of `/loop` (needs a live session) or `CronCreate` (expires after 7 days). The one part that needs a model, re-checking the Claude Code docs, is a SessionStart nudge from `session_prime.py` after 30 days: it asks you to run `/harness-health` and ask `claude-code-guide`.
+
+## The `npm test` degrade rule (two lanes)
+
+`npm test` runs `scripts/run_pytest_optional.mjs`, which has two lanes with one rule: a lane whose runtime or suite is missing prints one NOTICE and exits 0, so a Node-only cloner never sees red for a missing optional runtime. Pytest exit 5 (no tests collected) also counts as success.
+
+| Lane | Command | Runs when | Otherwise |
+|---|---|---|---|
+| `harness` | `python3 -m pytest tests/harness -q` | `tests/harness/` exists and `python3 -m pytest --version` works | `NOTICE: pytest not found` (or `tests/harness not found`), exit 0 |
+| `project` | `uv run --frozen pytest tests/unit tests/integration -q` (only the suite dirs that exist) | `pyproject.toml` and `.venv/` exist and `uv --version` works | `NOTICE: project tests skipped - add pyproject.toml and run uv sync once`, exit 0 |
+
+- `npm test` runs harness then project and stops on a harness failure.
+- `npm test -- harness [pytest args]` or `npm test -- project [pytest args]` runs one lane and passes the rest to pytest. `npm run test:project` is the project lane; `npm run test:py` is the harness suite under pytest directly.
+- CI runs both lanes directly and never degrades, so the gates still bind there. Never turn the degrade into a failure, and never let a new optional runtime fail the primary command.
+
+### The conftest guard
+
+`Bash(npm test -- *)` is pre-approved in `.claude/settings.json`, so anything pytest collects runs without a permission prompt. `tests/conftest.py` is an autouse fixture for every test in every lane: it deletes each environment variable whose name ends in `KEY`, `TOKEN`, `SECRET` or `PASSWORD` and makes `socket.socket` and `socket.create_connection` raise. A collected test can never spend an API budget or call out. The guard is in-process only: a test that shells out starts a child with the parent environment and a working network, so tests must not subprocess anything that reads keys or opens a socket. Live checks are explicit script calls outside pytest, which prompt.
 
 ## Add a project check
 
-Add a step under the marked `CUSTOMIZE` comment in `validate.yml`:
+For a Python project: add `pyproject.toml`, run `uv sync` once, put tests in `tests/unit` and `tests/integration`. Nothing else to wire: `npm test` picks the lane up locally and the two guarded steps in `validate.yml` run it in CI.
 
-```yaml
-- run: npx tsc --noEmit
-- run: ruff check .
-```
-
-Put project tests in `test/` (or `tests/`) and have `npm test` call them; do not add a second runner with a different exit contract. Scope a step with `paths:` only if its backlog is zero: an advisory step that cannot fail is deleted, not tolerated.
-
-## The `npm test` degrade rule
-
-`npm test` runs `scripts/run_pytest_optional.mjs`, which runs `tests/harness` when `python3 -m pytest` works and otherwise prints a NOTICE and exits 0, so a Node-only cloner never sees red for a missing optional runtime. Pytest exit 5 (no tests collected) also counts as success. CI installs pytest, so the gates still bind there. Never turn the degrade into a failure, and never let a new optional runtime fail the primary command.
+For another stack, replace the two guarded project steps in `validate.yml` with your runner (for example `npx tsc --noEmit` and `npm run test:unit`) and have `npm test` call the same command, so local and CI share one exit contract. Scope a step with `paths:` only if its backlog is zero: an advisory step that cannot fail is deleted, not tolerated.
 
 ## Validate workflows locally
 
 ```bash
-actionlint .github/workflows/*.yml     # syntax and expression errors
-npm test                               # what CI runs, minus the installs
+actionlint .github/workflows/validate.yml .github/workflows/harness-health.yml   # syntax and expression errors
+npm test                                                                       # both lanes, minus the installs
 ```
 
-Pin third-party actions to a major tag or SHA, give every workflow a `permissions:` block, and never pipe an unpinned installer to a shell. The `ci-validation` skill carries the full pre-push checklist.
+Pin third-party actions to a commit SHA, give every workflow a `permissions:` block, and never pipe an unpinned installer to a shell. The `ci-validation` skill carries the full pre-push checklist.

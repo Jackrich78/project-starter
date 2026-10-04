@@ -12,6 +12,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 MAX_BYTES = 4096
 PRIORITIES_STALE_DAYS = 14
 HEALTH_STALE_DAYS = 30
+# The template ships current-priorities.md with this placeholder; /setup step 3 replaces it.
+PLACEHOLDER = "(issue links, one line each)"
+PLACEHOLDER_NOTICE = ("Current priorities: placeholder not yet filled (docs/system/current-priorities.md)"
+                      " - fill it in /setup step 3.")
 
 
 def _frontmatter(text: str):
@@ -37,22 +41,24 @@ def _age_days(value):
         return None
 
 
-def main() -> int:
-    from agent_db_path import project_root
+def collect_parts(root) -> list[str]:
+    """The context blocks for a project rooted at `root` (a Path), in injection order."""
     from send_event import redact
 
-    root = project_root()
     parts = []
     pri = root / "docs" / "system" / "current-priorities.md"
     if pri.is_file():
         fm, body = _frontmatter(pri.read_text(encoding="utf-8", errors="replace"))
-        updated = fm.get("updated")
-        age = _age_days(updated) if updated else None
-        body = redact(body).encode("utf-8")[:MAX_BYTES].decode("utf-8", "ignore").strip()
-        head = "Current priorities (docs/system/current-priorities.md):"
-        if age is None or age > PRIORITIES_STALE_DAYS:
-            head += f" PRIORITIES MAY BE STALE (updated: {updated or 'unknown'})"
-        parts.append(head + "\n\n" + body)
+        if PLACEHOLDER in body:
+            parts.append(PLACEHOLDER_NOTICE)
+        else:
+            updated = fm.get("updated")
+            age = _age_days(updated) if updated else None
+            body = redact(body).encode("utf-8")[:MAX_BYTES].decode("utf-8", "ignore").strip()
+            head = "Current priorities (docs/system/current-priorities.md):"
+            if age is None or age > PRIORITIES_STALE_DAYS:
+                head += f" PRIORITIES MAY BE STALE (updated: {updated or 'unknown'})"
+            parts.append(head + "\n\n" + body)
     ref = root / "docs" / "reference" / "claude-code.md"
     if ref.is_file():
         fm, _ = _frontmatter(ref.read_text(encoding="utf-8", errors="replace"))
@@ -60,6 +66,13 @@ def main() -> int:
         age = _age_days(checked) if checked else None
         if age is None or age > HEALTH_STALE_DAYS:
             parts.append(f"harness-health due (last checked {checked or 'never'}): run /harness-health")
+    return parts
+
+
+def main() -> int:
+    from agent_db_path import project_root
+
+    parts = collect_parts(project_root())
     if parts:
         print(json.dumps({"hookSpecificOutput": {
             "hookEventName": "SessionStart", "additionalContext": "\n\n".join(parts)}}))

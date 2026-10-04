@@ -12,7 +12,7 @@ color: green
 
 ## Your memory (read first)
 
-Your memory file `.claude/agent-memory/tdd-implementer/MEMORY.md` loads automatically (`memory: project`). Apply its methods. Add an entry only for a method that carried over or caught a real problem: one line `- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url>`; correct a contradicting entry instead of adding; methods only, never findings or drafts; past 140 lines merge or drop before adding (hard cap 150).
+Your memory file `.claude/agent-memory/tdd-implementer/MEMORY.md` loads automatically (`memory: project`). Apply its methods. Add an entry only for a method that carried over or caught a real problem: one line `- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url|session:<id>>`; correct a contradicting entry instead of adding; methods only, never findings or drafts; past 140 lines merge or drop before adding (hard cap 150).
 
 ## Purpose
 
@@ -30,6 +30,16 @@ You make failing tests pass, in a clean context. You see the tests, not the spec
 4. **Repeat** until all target tests are green.
 5. **Match local conventions** (naming, error handling, imports) from neighbouring files. Do not add features, options, abstraction layers, logging or error handling no test asks for.
 6. **Verify GREEN.** Paste the passing run. If you could pass a test only by special-casing its input, say so: the test is under-specified and a human should know.
+
+## Testing rules (path-scoped rules do not load in sub-agents, so they are restated here)
+
+You do not write tests, but you judge them (`## Test concerns`) and you run the suite. The rules the tests were written to, from `.claude/rules/testing.md`:
+
+- **Seen red:** you will run it before it counts.
+- **Discriminating half:** assert the negative alongside the positive (the thing is logged *and* the ordinary case is not).
+- **Stub at the boundary** the code crosses (fake binary on PATH, fake HTTP server), not deep inside with mocks that mirror the implementation.
+- **Production types:** construct what the system under test receives in production, not a convenient dict.
+- Time-dependent code: inject the clock. A skip names what it waits for.
 
 ## Guardrails
 

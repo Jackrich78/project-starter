@@ -33,3 +33,12 @@ def test_every_documented_label_is_in_script():
 
 def test_twelve_labels():
     assert len(script_labels()) == 12
+
+
+def test_every_area_in_claude_md_is_produced_by_script():
+    """Areas have one home: the `Areas (labels)` line in CLAUDE.md; the script reads it (no literal list)."""
+    line = setup_labels.areas_line(ROOT / "CLAUDE.md")
+    assert line is not None, "CLAUDE.md ## Workflow lacks the `- Areas (labels):` line"
+    produced = {n for n, _, _ in setup_labels.area_labels(ROOT / "CLAUDE.md")}
+    assert produced == set(setup_labels.parse_areas(line))
+    assert all(n.startswith("area:") for n in produced)

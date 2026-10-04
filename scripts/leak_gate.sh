@@ -32,6 +32,9 @@
 # Exit: 0 = zero un-waived hits, 1 = hits, 2 = usage/config error.
 
 set -uo pipefail
+# macOS `cut`/`sort` abort with "Illegal byte sequence" on UTF-8 input under a UTF-8 locale, which
+# silently emptied --report; matching is byte-wise and case-insensitive either way.
+export LC_ALL=C
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TREE="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -46,7 +49,7 @@ while [ $# -gt 0 ]; do
     --report) REPORT=1; shift ;;
     --history) [ $# -ge 2 ] || { echo "error: --history needs a base ref" >&2; exit 2; }
                HIST="$2"; shift 2 ;;
-    -h|--help) sed -n '2,36p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,32p' "$0"; exit 0 ;;
     -*) echo "error: unknown option $1" >&2; exit 2 ;;
     *) [ -d "$1" ] || { echo "error: '$1' is not a directory" >&2; exit 2; }
        TREE="$(cd "$1" && pwd)"; shift ;;
@@ -235,6 +238,8 @@ done < "$LIST"
 echo "== leak_gate: scanned $TREE =="
 if [ "$UNWAIVED" -gt 0 ]; then
   if [ "$REPORT" -eq 1 ]; then
+    K="$(cut -f1 "$HITS" | sort -u | grep -c '^pattern #')"
+    echo "$UNWAIVED hits across $K patterns. Waive one hit: add \"path:key # reason\" to .github/leak-waivers.txt. Change what is scanned: edit .github/pii-patterns.txt yourself (one regex per line; the agent cannot read it)."
     cut -f1 "$HITS" | sort -u | while IFS= read -r g; do
       echo "-- $g --"
       awk -F'\t' -v g="$g" '$1 == g { printf "  %s\n      %s\n", $2, $3 }' "$HITS"

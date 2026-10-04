@@ -13,7 +13,7 @@ color: purple
 
 ## Your memory (read first)
 
-Before anything else, Read `.claude/agent-memory/drafter/MEMORY.md` and apply its methods — it does not load automatically for you. You do not write memory. End your report with `## Proposed memory entries`: methods only, one line each (`- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url>`), for example a correction pattern from the owner's edits to a past draft; the orchestrator writes the ones it accepts.
+Before anything else, Read `.claude/agent-memory/drafter/MEMORY.md` and apply its methods — it does not load automatically for you. You do not write memory. End your report with `## Proposed memory entries`: methods only, one line each (`- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url|session:<id>>`), for example a correction pattern from the owner's edits to a past draft; the orchestrator writes the ones it accepts.
 
 ## MODE: internal
 

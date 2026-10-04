@@ -142,3 +142,44 @@ def test_summary_line_and_text_format(wiki):
     r = subprocess.run([sys.executable, str(SCRIPT), "--root", str(wiki), "--all"], capture_output=True, text=True)
     assert "docs/guides/a.md:1 ERROR" in r.stdout
     assert r.stdout.strip().splitlines()[-1] == "wiki_lint: 1 errors, 0 warnings over 3 files"
+
+
+def text_lint(root, *flags):
+    r = subprocess.run([sys.executable, str(SCRIPT), "--root", str(root), "--all", *flags],
+                       capture_output=True, text=True)
+    return r.returncode, r.stdout
+
+
+@pytest.fixture
+def deferred_wiki(wiki):
+    (wiki / "docs/guides/a.md").write_text(page(body="# SPLIT-DEFERRED too big for now\n" + "x\n" * 319))
+    return wiki
+
+
+SPLIT_SUMMARY = "1 page(s) over the 300-line cap with SPLIT-DEFERRED (run with --strict to list them)"
+
+
+def test_split_deferred_is_one_summary_line_in_text_mode(deferred_wiki):
+    code, out = text_lint(deferred_wiki)
+    assert code == 0
+    assert out.count(SPLIT_SUMMARY) == 1
+    assert "docs/guides/a.md:301 WARNING" not in out
+    assert "wiki_lint: 0 errors, 1 warnings over 3 files" in out
+
+
+def test_split_deferred_listed_per_file_with_strict(deferred_wiki):
+    code, out = text_lint(deferred_wiki, "--strict")
+    assert code == 1
+    assert "docs/guides/a.md:301 ERROR" in out and "over the 300-line cap (SPLIT-DEFERRED)" in out
+    assert SPLIT_SUMMARY not in out
+
+
+def test_split_deferred_keeps_per_file_entry_in_json(deferred_wiki):
+    code, rep = lint(deferred_wiki)
+    assert code == 0 and has(rep, "WARNING", "SPLIT-DEFERRED")
+    assert rep["findings"][0]["path"] == "docs/guides/a.md" and rep["findings"][0]["line"] == 301
+
+
+def test_no_split_summary_when_nothing_deferred(wiki):
+    _, out = text_lint(wiki)
+    assert "SPLIT-DEFERRED (run with --strict" not in out

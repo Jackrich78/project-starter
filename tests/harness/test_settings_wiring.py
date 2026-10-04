@@ -1,4 +1,6 @@
-"""Layer 0: .claude/settings.json is internally consistent and read-only by default."""
+"""Layer 0: .claude/settings.json is internally consistent: sets no permission mode; allow list read-only;
+denies only secret stores, Claude Code private state and irreversible remote actions."""
+import fnmatch
 import json
 import py_compile
 import re
@@ -71,8 +73,9 @@ def test_security_hook_wired_on_all_guarded_tools(settings):
     assert groups and set(groups[0]["matcher"].split("|")) >= {"Bash", "Read", "Edit", "Write", "MultiEdit"}
 
 
-def test_default_mode_is_default(settings):
-    assert settings["permissions"]["defaultMode"] == "default"
+def test_settings_leave_permission_mode_to_user(settings):
+    """Any project value overrides the user's choice; the project sets no mode at all."""
+    assert not ({"defaultMode", "disableBypassPermissionsMode"} & set(settings["permissions"]))
 
 
 def test_no_write_or_exec_verb_pre_approved(settings):
@@ -93,7 +96,8 @@ def test_allow_list_has_no_bare_wildcard(settings):
 def test_credential_reads_denied(settings):
     deny = set(settings["permissions"]["deny"])
     for need in ("Read(./.env)", "Read(~/.ssh/**)", "Read(~/.aws/**)", "Read(~/.netrc)", "Read(~/.config/gh/**)",
-                 "Bash(sudo *)", "Bash(gh api *)", "Bash(git push --force*)"):
+                 "Bash(sudo *)", "Bash(git push --force*)", "Bash(git push --mirror*)",
+                 "Bash(gh repo delete*)", "Bash(gh gist create*)", "Bash(gh secret *)"):
         assert need in deny, need
 
 
@@ -111,9 +115,7 @@ def test_no_bare_prefix_allow_entries(settings):
 
 def test_exec_vector_denies_present(settings):
     deny = set(settings["permissions"]["deny"])
-    for need in ("Bash(rg --pre*)", "Bash(rg * --pre*)", "Bash(find * -exec*)", "Bash(find * -delete*)",
-                 "Bash(git -c *)", "Bash(npm * --node-options*)", "Bash(npm * --script-shell*)",
-                 "Bash(npm * --prefix*)", "Bash(git config remote.*)", "Bash(git config alias.*)"):
+    for need in ("Bash(git config remote.*)",):
         assert need in deny, need
 
 
@@ -138,9 +140,8 @@ def test_security_hook_matcher_covers_notebooks(settings):
 
 
 def test_new_denies_present_and_memory_dir_readable(settings):
-    import fnmatch
     deny = settings["permissions"]["deny"]
-    for need in ("Bash(git * --output*)", "Bash(gh auth status --show-token*)", "Bash(gh auth status -t*)",
+    for need in ("Bash(gh auth status --show-token*)", "Bash(gh auth status -t*)",
                  "Read(~/.claude/projects/**/*.jsonl)", "Read(**/.dev.vars)", "Read(**/id_rsa*)"):
         assert need in deny, need
     assert "Read(~/.claude/projects/**)" not in deny
@@ -150,3 +151,50 @@ def test_new_denies_present_and_memory_dir_readable(settings):
         if m:
             pat = m.group(1).replace("**", "*")
             assert not fnmatch.fnmatch(target, pat), "deny rule matches auto-memory: " + entry
+
+
+def _matching_denies(settings, call):
+    """Deny entries whose pattern matches `call` (`Tool(arg)`), with `**` collapsed to `*` as above."""
+    tool, _, arg = call.partition("(")
+    arg = arg[:-1]
+    hits = []
+    for entry in settings["permissions"]["deny"]:
+        m = re.match(r'^(\w+)\((.*)\)$', entry)
+        if m and m.group(1) == tool and fnmatch.fnmatchcase(arg, m.group(2).replace("**", "*")):
+            hits.append(entry)
+    return hits
+
+
+ROUTINE_CALLS = (
+    "Bash(rm -rf node_modules)",
+    "Bash(rm -fr dist)",
+    "Bash(gh api repos/o/r/pulls)",
+    "Bash(find . -name x -exec grep -l y {} +)",
+    "Bash(find . -name '*.pyc' -delete)",
+    "Bash(git -c color.ui=never log -1)",
+    "Bash(npm install --prefix web)",
+    "Read(docs/guides/credentials-setup.md)",
+    "Read(tests/test_credentials.py)",
+    "Read(./.env.example)",
+)
+DANGEROUS_CALLS = (
+    "Bash(git push --force origin x)",
+    "Bash(sudo ls)",
+    "Bash(gh repo delete o/r)",
+    "Bash(gh gist create f)",
+    "Read(~/.ssh/id_rsa)",
+    "Read(./.env)",
+    "Read(./.env.local)",
+    "Read(config/credentials.json)",
+)
+
+
+@pytest.mark.parametrize("call", ROUTINE_CALLS)
+def test_routine_work_matches_no_deny_rule(settings, call):
+    """A project deny can never be undone by the user, so only what is dangerous in every mode is denied."""
+    assert _matching_denies(settings, call) == [], call
+
+
+@pytest.mark.parametrize("call", DANGEROUS_CALLS)
+def test_dangerous_work_still_matches_a_deny_rule(settings, call):
+    assert _matching_denies(settings, call), call

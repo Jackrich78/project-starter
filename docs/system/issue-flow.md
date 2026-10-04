@@ -84,7 +84,7 @@ Created by `scripts/github/setup_labels.py` (idempotent; `--dry-run` first). The
 | `chore` | kind | Internal tidiness; no user-visible change, no incident |
 | `feature` | parent | Parent issue holding a feature's spec; never picked up by agents |
 
-<!-- CUSTOMIZE: areas. List your `area:*` labels here and in AREA_LABELS in scripts/github/setup_labels.py (e.g. area:core, area:ops). Excluded from the label test. -->
+<!-- Areas: the `area:*` labels are listed once, on the `Areas (labels)` line in CLAUDE.md; scripts/github/setup_labels.py reads them from there. -->
 
 **Deliberately absent:** `in-progress`, `blocked`, `in-review` labels (assignee, native edges and `ready-for-human` cover them); milestones; GitHub Projects (a third status surface). Teams wanting milestones add them knowingly.
 

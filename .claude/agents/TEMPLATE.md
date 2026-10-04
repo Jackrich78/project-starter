@@ -20,7 +20,7 @@ color: blue
 ## Your memory (read first)
 
 <!-- Variant A: self-curate. Only agents carrying `memory: project` (the TDD trio).
-Your memory file `.claude/agent-memory/<name>/MEMORY.md` loads automatically (`memory: project`). Apply its methods. Add an entry only for a method that carried over or caught a real problem: one line `- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url>`; correct a contradicting entry instead of adding; methods only, never findings or drafts; past 140 lines merge or drop before adding (hard cap 150).
+Your memory file `.claude/agent-memory/<name>/MEMORY.md` loads automatically (`memory: project`). Apply its methods. Add an entry only for a method that carried over or caught a real problem: one line `- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url|session:<id>>`; correct a contradicting entry instead of adding; methods only, never findings or drafts; past 140 lines merge or drop before adding (hard cap 150).
 -->
 
 <!-- Variant B: proposed entries. Everyone else, and always for agents that read web or pasted material.
@@ -135,7 +135,8 @@ PASS | FAIL: <reason> | ESCALATION: <reason>
 ## Proposed memory entries
 
 <!-- Always the LAST heading of the report (variant B agents). Methods only, one line each:
-- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url>
+- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url|session:<id>>
+Use `session:<id>` when the method came from this conversation rather than a file.
 Write "none" when nothing carried over. -->
 
 ---

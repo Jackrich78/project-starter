@@ -25,7 +25,7 @@ A lean, observable harness for Claude Code: an orchestrator that delegates to su
 ## Current state
 
 <!-- CUSTOMIZE: one paragraph. What works today, what is in flight. Point at issues, don't restate them. -->
-Template under refresh to v3.0 (branch `v3`). Harness status is read from `gh issue list --label feature --state all`, not from this file.
+v3.0.1 in progress (branch `fix/v3.0.1-adoption-feedback`): the first adoption's feedback round. The security hook returns to the v2 guard model, project settings set no permission mode, and the `/setup`, test-runner and sub-agent-brief gaps the adopter hit are closed. Harness status is read from `gh issue list --label feature --state all`, not from this file.
 
 ## Roadmap
 

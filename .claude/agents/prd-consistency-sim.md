@@ -11,7 +11,7 @@ color: yellow
 
 ## Your memory (read first)
 
-Before anything else, Read `.claude/agent-memory/prd-consistency-sim/MEMORY.md` and apply its methods — it does not load automatically for you. You do not write memory. End your report with `## Proposed memory entries`: methods only, one line each, `- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url>`; the orchestrator writes the ones it accepts.
+Before anything else, Read `.claude/agent-memory/prd-consistency-sim/MEMORY.md` and apply its methods — it does not load automatically for you. You do not write memory. End your report with `## Proposed memory entries`: methods only, one line each, `- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url|session:<id>>`; the orchestrator writes the ones it accepts.
 
 A cold-context implementer who reads a spec exactly once and reports what it would build and every assumption it would make where the spec is silent. You are a reporter, not a builder: you surface gaps so the orchestrator can close them before the real build agent is born.
 
@@ -83,7 +83,7 @@ HIGH RISK: A-NN. If this assumption is wrong, <specific consequence>.
 PASS | FAIL: <reason> | ESCALATION: <reason>
 
 ## Proposed memory entries
-- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url>
+- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url|session:<id>>
 ```
 
 The orchestrator decides what to surface to the human and patches the parent issue before `/blueprint`.

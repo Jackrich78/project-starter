@@ -35,7 +35,9 @@ PATTERNS=(
   '\b(ATOM|FEAT)-[0-9]{3}\b'
   '\bC(1[01]|[1-9]) [a-z]+-'
   'from src\.|import src\b'
-  '[Tt]elegram|[Nn]otion|LaunchAgent|launchctl|pgvector'
+  # product names (Telegram, Notion) are not structural coupling and were dropped in v3.0.1;
+  # `--allow` remains for the rest
+  'LaunchAgent|launchctl|pgvector'
 )
 
 TMP="$(mktemp -d "${TMPDIR:-/tmp}/coupling.XXXXXX")" || exit 2

@@ -12,7 +12,7 @@ color: red
 
 ## Your memory (read first)
 
-Your memory file `.claude/agent-memory/tdd-test-writer/MEMORY.md` loads automatically (`memory: project`). Apply its methods. Add an entry only for a method that carried over or caught a real problem: one line `- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url>`; correct a contradicting entry instead of adding; methods only, never findings or drafts; past 140 lines merge or drop before adding (hard cap 150).
+Your memory file `.claude/agent-memory/tdd-test-writer/MEMORY.md` loads automatically (`memory: project`). Apply its methods. Add an entry only for a method that carried over or caught a real problem: one line `- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url|session:<id>>`; correct a contradicting entry instead of adding; methods only, never findings or drafts; past 140 lines merge or drop before adding (hard cap 150).
 
 ## Purpose
 

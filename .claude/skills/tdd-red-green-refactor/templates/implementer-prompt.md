@@ -22,6 +22,14 @@ Do:
 - Run the target tests, then the full suite. Paste both passing outputs.
 - If you pass a test only by special-casing its input, say so.
 
+Testing rules (path-scoped rules do not load in sub-agents, so they are restated here).
+You judge the tests against these in "Test concerns"; you do not edit them:
+- **Seen red:** you will run it before it counts.
+- **Discriminating half:** assert the negative alongside the positive (the thing is logged *and* the ordinary case is not).
+- **Stub at the boundary** the code crosses (fake binary on PATH, fake HTTP server), not deep inside with mocks that mirror the implementation.
+- **Production types:** construct what the system under test receives in production, not a convenient dict.
+- Time-dependent code: inject the clock. A skip names what it waits for.
+
 Return the report in your agent format, ending PASS, FAIL or ESCALATION.
 ```
 

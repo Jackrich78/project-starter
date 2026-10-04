@@ -1,11 +1,12 @@
 {
   "name": "project-starter",
-  "version": "3.0.0-dev",
+  "version": "3.0.1",
   "private": true,
   "type": "module",
   "description": "Claude Code agent-harness template: orchestrator + sub-agents, GitHub Issues as spec, linted wiki, per-agent memory.",
   "scripts": {
     "test": "node scripts/run_pytest_optional.mjs",
-    "test:py": "python3 -m pytest tests/harness -q"
+    "test:py": "python3 -m pytest tests/harness -q",
+    "test:project": "node scripts/run_pytest_optional.mjs project"
   }
 }

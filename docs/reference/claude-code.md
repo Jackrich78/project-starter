@@ -13,7 +13,7 @@ last_checked: 2026-10-02
 |---|---|---|
 | Sub-agents | frontmatter: `name`, `description`, `model`, `effort`, `tools`, `disallowedTools`, `memory` (user/project/local), `maxTurns`, `isolation: worktree`, `background`, `hooks`, `skills` | https://code.claude.com/docs/en/sub-agents |
 | Skills | `SKILL.md` frontmatter: `description` (the trigger surface), `disable-model-invocation`, `allowed-tools`, `context: fork`, `agent`, `model`, `argument-hint`; `$ARGUMENTS`, `$0…`, `${CLAUDE_PROJECT_DIR}` | https://code.claude.com/docs/en/skills |
-| Memory (CLAUDE.md, rules, auto-memory) | load order global → project → directory → `.claude/rules/*.md` (`paths:`) → auto-memory; CLAUDE.md sizing guidance | https://code.claude.com/docs/en/memory |
+| Memory (CLAUDE.md, rules, auto-memory) | load order global → project → directory → `.claude/rules/*.md` (`paths:`) → auto-memory; CLAUDE.md sizing guidance. Path-scoped `.claude/rules/*.md` load in the main thread only; a sub-agent sees none of them, so a brief must restate what it needs (see the TDD templates). | https://code.claude.com/docs/en/memory |
 | Hooks | events (SessionStart, UserPromptSubmit, PreToolUse, PostToolUse, PostToolUseFailure, Stop, SubagentStart/Stop, PreCompact, SessionEnd …); types `command`, `prompt`, `agent`; stdin JSON, `hookSpecificOutput.additionalContext`, exit 2 to block | https://code.claude.com/docs/en/hooks · https://code.claude.com/docs/en/hooks-guide |
 | Settings and permissions | `permissions.allow/deny`, `defaultMode`, hook wiring, `settings.local.json` | https://code.claude.com/docs/en/settings |
 | Model configuration | aliases `opus`, `sonnet`, `haiku`; `CLAUDE_CODE_SUBAGENT_MODEL`; `/effort` levels | https://code.claude.com/docs/en/model-config |

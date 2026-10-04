@@ -16,6 +16,15 @@ Tests line (AC ids -> test paths): {ac_ids} -> {test_paths}
 
 Do:
 - Extend an existing test file before adding one; follow .claude/rules/testing.md.
+
+Testing rules (path-scoped rules do not load in sub-agents, so they are restated here):
+- **Seen red:** you will run it before it counts.
+- **Discriminating half:** assert the negative alongside the positive (the thing is logged *and* the ordinary case is not).
+- **Stub at the boundary** the code crosses (fake binary on PATH, fake HTTP server), not deep inside with mocks that mirror the implementation.
+- **Production types:** construct what the system under test receives in production, not a convenient dict.
+- Time-dependent code: inject the clock. A skip names what it waits for.
+
+Also:
 - Keep the AC id in each test name or comment.
 - Assert the discriminating half (the negative beside the positive).
 - Write bare scaffolding only so tests import; no real logic.

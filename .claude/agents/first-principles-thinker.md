@@ -11,7 +11,7 @@ color: purple
 
 ## Your memory (read first)
 
-Before anything else, Read `.claude/agent-memory/first-principles-thinker/MEMORY.md` and apply its methods — it does not load automatically for you. You do not write memory. End your report with `## Proposed memory entries`: methods only, one line each, `- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url>`; the orchestrator writes the ones it accepts.
+Before anything else, Read `.claude/agent-memory/first-principles-thinker/MEMORY.md` and apply its methods — it does not load automatically for you. You do not write memory. End your report with `## Proposed memory entries`: methods only, one line each, `- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url|session:<id>>`; the orchestrator writes the ones it accepts.
 
 You break a problem into what is fundamentally true, strip the assumptions the question smuggled in, and rebuild a conclusion from the foundations. Direct, honest, assumption-challenging.
 
@@ -83,5 +83,5 @@ State the conclusion first, then support it. Quantify confidence ("80%") instead
 PASS | FAIL: <reason> | ESCALATION: <reason>
 
 ## Proposed memory entries
-- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url>
+- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url|session:<id>>
 ```

@@ -3,7 +3,9 @@
 
 Labels and states are described in docs/system/issue-flow.md. State labels
 follow Matt Pocock's triage skill (MIT, https://github.com/mattpocock/skills);
-priorities and kinds are this template's.
+priorities and kinds are this template's. Area labels have one home: the
+`- Areas (labels): area:a, area:b` line in CLAUDE.md `## Workflow` (filled by
+/setup step 3); a line still carrying `<!-- CUSTOMIZE` yields no areas.
 
 Usage:
   python3 scripts/github/setup_labels.py [--dry-run] [--repo OWNER/REPO] [--prune-defaults]
@@ -35,11 +37,32 @@ LABELS = [
     ("feature", "5319e7", "Parent issue holding a feature's spec; never picked up by agents"),
 ]
 
-# CUSTOMIZE: your areas. Also list them in docs/system/issue-flow.md.
-AREA_LABELS: list[tuple[str, str, str]] = [
-    # ("area:core", "c2e0c6", "Core product code"),
-    # ("area:ops", "c2e0c6", "CI, deploys, scheduled jobs"),
-]
+AREA_COLOUR = "c2e0c6"
+AREAS_LINE = re.compile(r"^- Areas \(labels\):.*$", re.M)
+AREA_TOKEN = re.compile(r"area:[a-z0-9-]+")
+NO_AREAS_NOTICE = "areas: none (fill the `Areas (labels)` line in CLAUDE.md ## Workflow; see /setup step 3)"
+
+
+def parse_areas(line: str) -> list[str]:
+    """`- Areas (labels): area:core, area:ops` -> ['area:core', 'area:ops'] (comma or space separated,
+    deduplicated, order kept). A line still carrying the template's `<!-- CUSTOMIZE` comment yields []."""
+    if "<!-- CUSTOMIZE" in line:
+        return []
+    return list(dict.fromkeys(AREA_TOKEN.findall(line)))
+
+
+def areas_line(claude_md: Path) -> str | None:
+    """The `- Areas (labels):` line of CLAUDE.md, or None when the file or the line is missing."""
+    if not claude_md.is_file():
+        return None
+    m = AREAS_LINE.search(claude_md.read_text(encoding="utf-8", errors="replace"))
+    return m.group(0) if m else None
+
+
+def area_labels(claude_md: Path | None = None) -> list[tuple[str, str, str]]:
+    """(name, colour, description) for every area on the CLAUDE.md line; [] when unset."""
+    line = areas_line(claude_md or _root() / "CLAUDE.md")
+    return [(a, AREA_COLOUR, f"Area: {a[len('area:'):]}") for a in parse_areas(line or "")]
 
 # GitHub's defaults. `wontfix` is kept: the flow uses it.
 DEFAULTS_TO_DELETE = ["documentation", "duplicate", "good first issue", "help wanted", "invalid", "question"]
@@ -60,10 +83,13 @@ def _existing(repo: str | None) -> set[str]:
     return set(r.stdout.split("\n")) - {""}
 
 
+def _root() -> Path:
+    return Path(__file__).resolve().parents[2]
+
+
 def _repo_from_origin() -> str | None:
     """OWNER/REPO of this checkout's origin, so gh never acts on whatever repo the caller's cwd resolves to."""
-    root = Path(__file__).resolve().parents[2]
-    r = subprocess.run(["git", "-C", str(root), "remote", "get-url", "origin"], capture_output=True, text=True)
+    r = subprocess.run(["git", "-C", str(_root()), "remote", "get-url", "origin"], capture_output=True, text=True)
     m = re.search(r"github\.com[:/]([^/\s]+/[^/\s]+?)(?:\.git)?/?$", r.stdout.strip()) if r.returncode == 0 else None
     return m.group(1) if m else None
 
@@ -80,7 +106,10 @@ def main(argv: list[str]) -> int:
         print("cannot determine the target repo: pass --repo OWNER/REPO", file=sys.stderr)
         return 2
     print(f"repo: {repo}")
-    labels = LABELS + AREA_LABELS
+    areas = area_labels()
+    if not areas:
+        print(NO_AREAS_NOTICE)
+    labels = LABELS + areas
 
     if dry:
         have = _existing(repo)

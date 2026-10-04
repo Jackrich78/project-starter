@@ -20,6 +20,14 @@ Do:
   and say so). Do not change public signatures.
 - "No refactoring needed" with one line on what you checked is a valid result.
 
+Testing rules (path-scoped rules do not load in sub-agents, so they are restated here).
+A mechanical rename in a test must keep it within these:
+- **Seen red:** you will run it before it counts.
+- **Discriminating half:** assert the negative alongside the positive (the thing is logged *and* the ordinary case is not).
+- **Stub at the boundary** the code crosses (fake binary on PATH, fake HTTP server), not deep inside with mocks that mirror the implementation.
+- **Production types:** construct what the system under test receives in production, not a convenient dict.
+- Time-dependent code: inject the clock. A skip names what it waits for.
+
 Return the report in your agent format, ending PASS, FAIL or ESCALATION.
 ```
 

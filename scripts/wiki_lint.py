@@ -16,6 +16,8 @@ Usage:
     python3 scripts/wiki_lint.py --path docs/guides [--path FILE ...]
 
 Output: `path:line LEVEL message`, then `wiki_lint: E errors, W warnings over N files`.
+SPLIT-DEFERRED over-cap pages collapse to one count line in text mode; `--strict`
+and `--json` keep the per-file entries.
 Exit: 0 clean/warnings only, 1 errors, 2 bad usage or missing pyyaml.
 """
 from __future__ import annotations
@@ -253,8 +255,13 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"summary": summary, "errors": errors, "warnings": warnings,
                           "files": len(files), "findings": findings}, indent=2))
     else:
+        # SPLIT-DEFERRED is acknowledged debt: one count per run, per-file only under --strict or --json.
+        deferred = [x for x in findings if x["level"] == "WARNING" and "(SPLIT-DEFERRED)" in x["message"]]
         for x in findings:
-            print(f"{x['path']}:{x['line']} {x['level']} {x['message']}")
+            if x not in deferred:
+                print(f"{x['path']}:{x['line']} {x['level']} {x['message']}")
+        if deferred:
+            print(f"{len(deferred)} page(s) over the {SIZE_CAP}-line cap with SPLIT-DEFERRED (run with --strict to list them)")
         print(summary)
     return 1 if errors else 0
 

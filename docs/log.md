@@ -2,6 +2,10 @@
 
 Append-only, newest first. ISO date heading, then a bold verb (**Creation**, **Update**, **Deprecation**) per line.
 
+## 2026-10-04
+
+- **Update** — `system/cicd.md` rewritten to match the workflows (two-lane `npm test`, project tests behind `pyproject.toml`, `cold-clone` job); `system/current-priorities.md` and `system/issue-flow.md` comments point at the single home for area labels; `reference/claude-code.md` notes that path-scoped rules do not load in sub-agents.
+
 ## 2026-10-02
 
 - **Update** — security pass: deny hook hardened against obfuscated forms, pre-approved execution vectors removed from the allow list, `scripts/recall.py` added, `leak_gate.sh --history`, redactor covers `sk-` keys; `tests/component/` convention made real.

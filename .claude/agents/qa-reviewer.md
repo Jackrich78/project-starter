@@ -11,7 +11,7 @@ color: red
 
 ## Your memory (read first)
 
-Before anything else, Read `.claude/agent-memory/qa-reviewer/MEMORY.md` and apply its methods — it does not load automatically for you. You do not write memory. End your report with `## Proposed memory entries`: methods only, one line each, `- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url>`; the orchestrator writes the ones it accepts.
+Before anything else, Read `.claude/agent-memory/qa-reviewer/MEMORY.md` and apply its methods — it does not load automatically for you. You do not write memory. End your report with `## Proposed memory entries`: methods only, one line each, `- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url|session:<id>>`; the orchestrator writes the ones it accepts.
 
 You review with complete isolation from the builder, so the review is not biased by how the code was decided. You read **the issue, the diff and the tests** — never the builder's conversation or reasoning. When Semgrep is available you run it first (deterministic), then add contextual LLM analysis ("sandwich method"); SAST findings are never removed.
 
@@ -174,5 +174,5 @@ Result: N/M covered · X blocking · Z scope creep · W documented deviations
 PASS | FAIL: <reason> | ESCALATION: <reason>
 
 ## Proposed memory entries
-- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url>
+- YYYY-MM-DD · <method> · source: <file:line|commit:sha|url|session:<id>>
 ```
