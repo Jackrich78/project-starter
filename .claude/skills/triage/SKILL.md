@@ -19,6 +19,7 @@ The human wants to work the backlog: a sweep ("triage", "what needs me"), a name
 
 ### Sweep
 
+0. Run `python3 scripts/github/human_input.py` first: replies and closes outrank the queue.
 1. List the oldest 5 `needs-triage` issues: `gh issue list --state open --label needs-triage --json number,title,labels,createdAt --limit 100`, sort oldest first, take 5.
 2. For each, read the issue and comments, then:
    - **Redundancy by concept:** search the repo for an existing implementation by what it does, not by the issue's wording. Exists means `wontfix` pointing at it, not `needs-info`.

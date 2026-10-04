@@ -112,7 +112,7 @@ The human approves what to build (gate 1: the design note, then the `to-tickets`
 
 `gh` acts as one account for human and agent, so the thread is the channel and the signature is the only tell.
 
-- **Read:** before acting on an issue, read every comment newer than the last signed one: human replies, human closes.
+- **Read:** `python3 scripts/github/human_input.py` lists human replies, human closes and open asks since the last signed comment (`/prime`, `triage` run it first); before acting on an issue, read what it lists.
 - **Write:** the agent signature (CLAUDE.md `## Workflow`; empty disables) is line 1 of every agent comment, after the QA marker when there is one. At most one Ask block per comment: `**Ask (#N · gloss):** … · Options: … (recommend …) · If no reply: … · Reply: … · ~N min`. A chat ask is one line pointing at the issue. Acknowledge a reply with `Re: <date>:`.
 - **Close:** tickets via `Closes #N`; the agent closes an ask or live check once the answer is recorded; parents by cascade only.
 - **Agent limits:** agents cannot read `.claude/settings.local.json`, so a script allow entry is a human step, phrased as an Ask.

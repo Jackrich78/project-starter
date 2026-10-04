@@ -14,16 +14,16 @@ Start of every session. CLAUDE.md is already loaded: do NOT re-read it. Budget u
 
 ## Pattern
 
+0. Human input first: run `python3 scripts/github/human_input.py` and print its output before anything else.
 1. Git: `git branch --show-current`, `git status --short | wc -l` (dirty count), `git log --oneline -3`.
 2. Read `PROJECT.md` sections Current state and Roadmap only.
 3. Frontier: `gh issue list --state open --label ready-for-agent --search "no:assignee -label:feature -is:blocked" --json number,title,labels,parent --limit 10`.
-4. Mine: `gh issue list --state open --assignee @me --json number,title,comments` and keep issues whose comments contain "Working:".
-5. Handover: for that issue, `gh issue view N --comments`; take the latest comment headed `# Session Handover`. Extract the blocker (first line) and next step.
+4. Handover: find the issue with the latest `# Session Handover` comment (`gh issue list --state open --search "Session Handover in:comments" --json number,title`, then `gh issue view N --comments`). Extract the blocker (first line) and next step. Its status lines are "from handover, unverified" unless step 0 shows nothing newer on that issue.
 6. Mode hint (optional argument):
    - `think`: read the tail (last ~20 lines) of `docs/decisions.md`.
    - `build`: point at `.claude/rules/testing.md`; do not load it until a test is written.
    - `review`: nothing extra.
-7. Print at most 25 lines: branch/dirty/commits; state in two lines; roadmap themes; frontier (`#N title`); the claimed issue with blocker and next step. End with one suggested next command.
+7. Print at most 25 lines: human input (step 0 output); branch/dirty/commits; state in two lines; roadmap themes; frontier (`#N title`); the handover issue with blocker and next step. End with one suggested next command.
 
 ## Example
 
