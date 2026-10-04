@@ -26,11 +26,11 @@ All hooks: Python 3 stdlib, interpreter `python3`, no network, never print a sec
 
 ## The security guard
 
-A guard against mistakes, not a sandbox: a flat regex table over the Bash command string (v2.0.1's rules plus five added on 2026-10-04 for risks seen in real sessions). Verdicts: allow, caution (allowed, flagged), block.
+A guard against mistakes, not a sandbox: a flat regex table over the Bash command string (v2.0.1's rules less `eval(`, plus secret-read, env-dump and force-push rules added on 2026-10-04 for risks seen in real sessions). Verdicts: allow, caution (allowed, flagged), block.
 
 - **Destructive**: recursive `rm` of `/`, `~` or `*`; `sudo rm`; `chmod 777`; `mkfs`; `dd if=`; writes to `/dev/sd*` or `/etc/`; fork bombs.
-- **Execution**: `curl`/`wget` piped to a shell; `eval(`.
-- **Secrets into the transcript**: reading `.env*` (not `.example`/`.sample`/`.template`); `grep`/`rg` printing `.env` lines (`-q`, `-c`, `-l` pass); bare `env`, `printenv`, `set`, `export`; `echo`/`printf`/`printenv` of an upper-case `*KEY|TOKEN|SECRET|PASSW*` variable.
+- **Execution**: `curl`/`wget` piped to a shell.
+- **Secrets into the transcript**: reading a secret file: `.env*` (not `.example`/`.sample`/`.template`), `.dev.vars`, `*.pem`, `*.key`, `*.p12`, `*.pfx`, `.secret*`, `credentials.json`, `.git-credentials`, `.npmrc`, `.pypirc`, `id_rsa`/`id_ed25519` (not `.pub`), `settings.local.json`; `grep`/`rg` printing those files' lines (`-q`, `-c`, `-l` pass); bare `env`, `printenv`, `set`, `export`; `echo`/`printf`/`printenv` of an upper-case `*KEY|TOKEN|SECRET|PASSW*` variable.
 - **Force push** in any position (`--force*`, `-f`, `--mirror`, `+refspec`).
 - **Caution only**: `git reset --hard`, `npm publish`, `docker system prune`.
 

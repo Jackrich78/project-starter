@@ -24,8 +24,9 @@ import re
 import sys
 import os
 
-# A .env path; .env.example/.sample/.template are safe to read
-_ENV_FILE = r'\.env(?!\.(?:example|sample|template))(?:\.[\w-]+)?'
+# In-repo secret files (the set settings.json Read-denies); .env.example/.sample/.template are safe
+_SECRET_FILE = (r'(?:\.env(?!\.(?:example|sample|template))(?:\.[\w-]+)?|\.dev\.vars|\.(?:pem|key|p12|pfx)|\.npmrc|\.pypirc'
+                r'|\.secret[\w.-]*|credentials\.json|\.git-credentials|id_(?:rsa|ed25519)|settings\.local\.json)')
 
 # Dangerous command patterns
 BLOCKED_PATTERNS = [
@@ -36,18 +37,17 @@ BLOCKED_PATTERNS = [
     r'chmod\s+777',               # World-writable
     r'chmod\s+-R\s+777',          # Recursive world-writable
     r'(?:curl|wget).*\|\s*(?:ba|z)?sh\b',  # Pipe to shell
-    r'eval\s*\(',                 # Eval execution
     r'>\s*/dev/sd',               # Write to disk devices
     r'mkfs\.',                    # Format commands
     r'dd\s+if=',                  # Disk operations
     r':\(\)\{.*\};\:',             # Fork bomb
     r'>\s*/etc/',                 # Write to /etc
     r'rm\s+/etc/',                # Remove from /etc
-    # Reading .env puts its keys in the transcript
+    # Reading a secret file puts its values in the transcript
     r'\b(?:cat|less|more|head|tail|bat|nl|tac|strings|xxd|od|base64|sed|awk)\s[^|;&\n]*'
-    + _ENV_FILE + r'(?=[\s;&|)\'"]|$)',
-    # grep/rg print matching .env lines, values included; -q/-c/-l presence checks pass
-    r'\b(?:grep|rg)(?![^|;&\n]*\s-\w*(?-i:[qcl]))\s[^|;&\n]*\s\S*' + _ENV_FILE + r'(?=[\s;&|)]|$)',
+    + _SECRET_FILE + r'(?=[\s;&|)\'"]|$)',
+    # grep/rg print matching secret-file lines, values included; -q/-c/-l presence checks pass
+    r'\b(?:grep|rg)(?![^|;&\n]*\s-\w*(?-i:[qcl]))\s[^|;&\n]*\s\S*' + _SECRET_FILE + r'(?=[\s;&|)]|$)',
     # Bare environment dumps print every exported token
     r'(?:^|[;&|(])\s*(?:printenv|env|set|export)\s*(?:$|[;&|)])',
     # A secret-named variable expanded into output

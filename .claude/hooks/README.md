@@ -7,7 +7,7 @@ Tests: `tests/harness/test_hooks.py` (security corpus), `tests/harness/test_hook
 
 | Hook | Event | Matcher | What it does | Fail mode |
 |---|---|---|---|---|
-| `pre_tool_use.py` | PreToolUse | `Bash` | Blocks a flat table of dangerous commands: recursive delete of root/home/`*`, pipe-to-shell, disk writes, `.env` reads, environment dumps, secret variables echoed, force pushes. Logs blocks to `.claude/logs/security.log` (URL credentials and token-shaped runs masked). | Open on internal error; block = exit 0 + JSON `permissionDecision: deny` |
+| `pre_tool_use.py` | PreToolUse | `Bash` | Blocks a flat table of dangerous commands: recursive delete of root/home/`*`, pipe-to-shell, disk writes, secret-file reads (`.env`, `.dev.vars`, keys, `credentials.json`, `.npmrc`, `.pypirc`), environment dumps, secret variables echoed, force pushes. Logs blocks to `.claude/logs/security.log` (URL credentials and token-shaped runs masked). | Open on internal error; block = exit 0 + JSON `permissionDecision: deny` |
 | `post_tool_use.py` | PostToolUse | `*` | Nudges when a `docs/` file is missing from `docs/index.md`. | Open |
 | `pre_compact.py` | PreCompact | all | Writes a gitignored, redacted structural salvage file before compaction. | Open |
 | `stop.py` | Stop | all | Reminds about uncommitted work. | Open |
@@ -29,7 +29,7 @@ real sessions. The real controls are the permission prompt and `permissions.deny
 - Secret-variable names match upper case only (`$API_KEY` blocks, a loop's `$key` passes).
 - Cautions (`git reset --hard`, `npm publish`, `docker system prune`) are allowed and only flagged.
 
-**Known gaps (by design):** Bash reads of credential files other than `.env` (`cat ~/.ssh/id_*`, `cat ~/.aws/credentials`; the Read denies cover the Read tool only), `gh auth token`, a script file, `$(...)`, variables or globs that hide a path, `bash -c`,
+**Known gaps (by design):** Bash reads of credential files outside the repo whose names are not matched (`~/.aws/credentials`, `~/.netrc`, `~/.ssh/config`; the Read denies cover the Read tool only), interpreter reads (`python3 -c "open(...)"`), `gh auth token`, a script file, `$(...)`, variables or globs that hide a path, `bash -c`,
 `cp .env elsewhere`, Edit/Write of `.env` (only Read is denied), recursive deletes outside root/home/`*`,
 `git reset --hard`. Closing them meant a tokenizer that blocked routine work (v3.0.0); see `docs/decisions.md`.
 
