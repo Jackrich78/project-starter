@@ -18,8 +18,8 @@ Tests: `tests/harness/test_hooks.py` (security corpus), `tests/harness/test_hook
 
 ## Security hook
 
-A guard against mistakes, not a security boundary: the v2.0.1 rule table plus five rules for risks seen in
-real sessions. The real controls are the permission prompt and `permissions.deny` in `settings.json`
+A guard against mistakes, not a security boundary: the v2.0.1 rule table less `eval(`, plus rules for risks seen in
+real sessions (secret-file reads, env dumps, secret variables echoed, force pushes). The real controls are the permission prompt and `permissions.deny` in `settings.json`
 (credential-file reads by the Read tool, force and mirror pushes, `sudo`, secret-store CLIs).
 
 - The whole command string is scanned, so a commit message that names a blocked command can trip it:
@@ -29,7 +29,7 @@ real sessions. The real controls are the permission prompt and `permissions.deny
 - Secret-variable names match upper case only (`$API_KEY` blocks, a loop's `$key` passes).
 - Cautions (`git reset --hard`, `npm publish`, `docker system prune`) are allowed and only flagged.
 
-**Known gaps (by design):** Bash reads of credential files outside the repo whose names are not matched (`~/.aws/credentials`, `~/.netrc`, `~/.ssh/config`; the Read denies cover the Read tool only), interpreter reads (`python3 -c "open(...)"`), `gh auth token`, a script file, `$(...)`, variables or globs that hide a path, `bash -c`,
+**Known gaps (by design):** Bash reads of credential files outside the repo whose names are not matched (`~/.aws/credentials`, `~/.netrc`, `~/.ssh/config`; the Read denies cover the Read tool only), interpreter reads (`python3 -c "open(...)"`), a `|` inside a quoted grep pattern (`grep -E 'A|B' .dev.vars`), `gh auth token`, a script file, `$(...)`, variables or globs that hide a path, `bash -c`,
 `cp .env elsewhere`, Edit/Write of `.env` (only Read is denied), recursive deletes outside root/home/`*`,
 `git reset --hard`. Closing them meant a tokenizer that blocked routine work (v3.0.0); see `docs/decisions.md`.
 

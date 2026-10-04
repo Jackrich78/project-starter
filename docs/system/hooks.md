@@ -26,7 +26,7 @@ All hooks: Python 3 stdlib, interpreter `python3`, no network, never print a sec
 
 ## The security guard
 
-A guard against mistakes, not a sandbox: a flat regex table over the Bash command string (v2.0.1's rules less `eval(`, plus secret-read, env-dump and force-push rules added on 2026-10-04 for risks seen in real sessions). Verdicts: allow, caution (allowed, flagged), block.
+A guard against mistakes, not a sandbox: a flat regex table over the Bash command string (v2.0.1's rules less `eval(`, plus secret-read, env-dump, secret-echo and force-push rules added on 2026-10-04 for risks seen in real sessions). Verdicts: allow, caution (allowed, flagged), block.
 
 - **Destructive**: recursive `rm` of `/`, `~` or `*`; `sudo rm`; `chmod 777`; `mkfs`; `dd if=`; writes to `/dev/sd*` or `/etc/`; fork bombs.
 - **Execution**: `curl`/`wget` piped to a shell.
