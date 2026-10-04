@@ -47,7 +47,7 @@ Non-code work follows the same path; its tickets carry a `Proof:` line where cod
 
 ## Partial adoption
 
-Take only `.claude/rules/` + `.claude/hooks/` + `settings.json`. See [getting started](docs/guides/getting-started.md).
+Take only `.claude/rules/` + `.claude/hooks/` + `settings.json`. See [getting started](docs/guides/getting-started.md), which also covers [upgrading](docs/guides/getting-started.md#upgrading).
 
 ## Requirements
 

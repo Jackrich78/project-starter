@@ -2,6 +2,10 @@
 
 Append-only, newest first. ISO date heading, then a bold verb (**Creation**, **Update**, **Deprecation**) per line.
 
+## 2026-10-05
+
+- **Update** — `guides/getting-started.md` gains § Upgrading (never edit a shipped file; the upgrade runs as one `chore` issue); `/setup` now keeps the page instead of offering to delete it.
+
 ## 2026-10-04
 
 - **Update** — v3.0.1 strip-back: `system/hooks.md` rewritten for the v2.0.1 guard plus five rules; leak gate, coupling lint, harness-health, recall and claim-check references removed across `system/`, `guides/` and `index.md`.

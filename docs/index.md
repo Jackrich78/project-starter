@@ -21,7 +21,7 @@ Progressive-disclosure index. Read a section's one-line descriptions before open
 
 ## Guides — practitioner how-tos (`guides/`)
 
-- [`guides/getting-started.md`](guides/getting-started.md) — clone → `/setup` → first issue.
+- [`guides/getting-started.md`](guides/getting-started.md) — clone → `/setup` → first issue; upgrading.
 - [`guides/first-session.md`](guides/first-session.md) — a scripted ten-minute first task that exercises the whole loop.
 - [`guides/knowledge-architecture.md`](guides/knowledge-architecture.md) — the wiki schema: frontmatter, reserved names, decay tiers, ingest routing.
 - [`guides/agent-harness-patterns.md`](guides/agent-harness-patterns.md) — self-healing briefs, ESCALATION sentinel, file hand-offs, forks over named agents.

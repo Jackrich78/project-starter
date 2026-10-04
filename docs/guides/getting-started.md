@@ -1,7 +1,7 @@
 ---
 type: guide
 title: Getting started
-description: Clone the template, run /setup, and know what you have afterwards; includes the partial-adoption path.
+description: Clone the template, run /setup, and know what you have afterwards; includes the partial-adoption and upgrade paths.
 tags: [onboarding, setup]
 ---
 
@@ -39,6 +39,19 @@ Principles are not set during `/setup`. When ready, run the `grilling` skill on 
 ## Partial adoption
 
 Not ready for the whole harness? Take only `.claude/rules/` + `.claude/hooks/` + `settings.json` into an existing repo. You get path-scoped conventions and the deny/salvage hooks with no workflow change. Add skills and agents later, one at a time, as you hit the need.
+
+## Upgrading
+
+Never edit a file the template ships. Local behaviour goes in files it does not ship, or in the files you own: `CLAUDE.md`, `PROJECT.md`, `.claude/settings.local.json`. If a shipped file needs a fix now, edit it, file the fix upstream in the same turn (`/retro harness`), and expect the next upgrade to overwrite your edit.
+
+Open one `chore` issue, "Upgrade harness to <tag>", then on its branch:
+
+1. `git fetch upstream --tags`.
+2. Delete what the template removed: `git diff --diff-filter=D --name-only <old-tag> <new-tag> -- <paths>`, then `git rm` each file. Remove a hook from `.claude/settings.json` before you delete its file.
+3. `git checkout <new-tag> -- <paths>`, where `<paths>` is `.claude/skills .claude/agents .claude/hooks .claude/rules tests/harness docs/system docs/guides docs/templates docs/reference/claude-code.md .github/ISSUE_TEMPLATE scripts .semgrep .semgrep.yml`. Partial adopters list only what they took.
+4. Merge `.claude/settings.json`, `CLAUDE.md`, `package.json` and `.github/workflows/validate.yml` by hand: take the template's lines and keep your own.
+5. A file of yours under those paths that repeats or patches template behaviour: upstream it or delete it. Project-specific skills and agents stay.
+6. Run `npm test`, then `/commit` with `Closes #N`.
 
 ## Troubleshooting
 
