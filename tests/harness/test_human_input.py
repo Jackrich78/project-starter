@@ -315,6 +315,21 @@ def test_qa_quote_reply_is_not_signed(tmp_path):
     assert sorted(nums(listed(r.stdout, "Human replied"))) == [50, 51]
 
 
+def test_signature_variant_from_another_assistant_is_signed(tmp_path):
+    """A second assistant on the same account extends the signature ("…, not the owner.");
+    a line starting with the signature's stem is signed, a quote-reply of it is not."""
+    variant = SIG.rstrip(".*") + ", not the owner.*"
+    issues = [
+        issue(60, comments=[comment("human ask", "2026-10-02T09:00:00Z"),
+                            comment(f"{variant}\n\nanswer", "2026-10-03T09:00:00Z")]),
+        issue(61, comments=[comment(f"{variant}\n\nstatus", "2026-10-02T09:00:00Z"),
+                            comment(f"> {variant}\n\nno", "2026-10-03T09:00:00Z")]),
+    ]
+    r = run(tmp_path, issues)
+    assert r.returncode == 0, r.stderr
+    assert nums(listed(r.stdout, "Human replied")) == [61]
+
+
 def test_qa_ask_mid_line_is_not_an_ask(tmp_path):
     """QA: pins the ^ anchor on the Ask line."""
     issues = [issue(60, comments=[comment("see the **Ask** above; Ask: is answered",

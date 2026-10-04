@@ -34,9 +34,11 @@ def read_signature(path):
 
 def entries(issue, sig):
     """(time, signed, body) for the issue body and every comment."""
-    # a whole line equal to the signature: a quote-reply ("> > sig") or an inline quote is not
-    return [(ts(e["createdAt"]), any(l.strip() == sig for l in e["body"].splitlines()), e["body"])
-            for e in [issue, *issue["comments"]]]
+    # a line starting with the signature's stem, so a second assistant's "…, not <owner>.*"
+    # counts; a quote-reply ("> > sig") or an inline quote does not
+    stem = sig.rstrip(".*_ ")
+    return [(ts(e["createdAt"]), any(l.strip().startswith(stem) for l in e["body"].splitlines()),
+             e["body"]) for e in [issue, *issue["comments"]]]
 
 
 def classify(issue, sig):
