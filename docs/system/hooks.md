@@ -34,7 +34,7 @@ A guard against mistakes, not a sandbox: a flat regex table over the Bash comman
 - **Force push** in any position (`--force*`, `-f`, `--mirror`, `+refspec`).
 - **Caution only**: `git reset --hard`, `npm publish`, `docker system prune`.
 
-`settings.json` carries the rest: `permissions.deny` for credential-file reads by the Read tool, Claude Code's private state, force and mirror pushes, `sudo`, `gh secret|variable`, `gh repo delete`; `permissions.allow` holds read-only verbs only. No `defaultMode` is set, so the owner's own mode governs.
+`settings.json` carries the rest: `permissions.deny` for credential-file reads by the Read tool, Claude Code's private state, force and mirror pushes, `sudo`, `gh secret|variable`, `gh repo delete`; `permissions.allow` holds read-only verbs only, plus `npm test` for the TDD loop (it runs whatever the tests contain). No `defaultMode` is set, so the owner's own mode governs.
 
 Known gaps are listed in `.claude/hooks/README.md`. A command-string filter cannot see a script file, so gaps are documented rather than closed: the 2026-10-04 decision rejected the evasion-resistant v3.0.0 hook, which blocked routine work.
 

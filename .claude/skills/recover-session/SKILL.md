@@ -22,20 +22,16 @@ Every conversation is a `.jsonl` file at `~/.claude/projects/<escaped-project-pa
 ## Example
 
 ```
-Found 3 sessions in /Users/<you>/dev/my-app (last 24h):
+Found 3 sessions in /Users/<you>/dev/my-app (newest first):
 
- 1  Oct 01 18:02  448KB  "I want to investigate adding a retry layer to the
-                          queue worker..."
+ 1  Oct 01 18:02  448KB  00000000-0000-0000-0000-000000000001
     Resume: claude --resume 00000000-0000-0000-0000-000000000001
-
- 2  Oct 01 17:40  719KB  First message is a slash command; likely a build
-                          session
+ 2  Oct 01 17:40  719KB  00000000-0000-0000-0000-000000000002
     Resume: claude --resume 00000000-0000-0000-0000-000000000002
-
- 3  Sep 30 14:11  321KB  "Notifications stopped arriving after the deploy..."
+ 3  Sep 30 14:11  321KB  00000000-0000-0000-0000-000000000003
     Resume: claude --resume 00000000-0000-0000-0000-000000000003
 
-Which one? Or share a phrase you remember typing.
+Which one? Or share a phrase you remember typing and I'll grep -l for it.
 ```
 
 ## Anti-patterns
