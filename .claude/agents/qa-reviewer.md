@@ -100,6 +100,8 @@ Combine the ladders; the verdict is UPPERCASE and callers depend on it.
 | `NEEDS_FIXES` | none of the above, but any of: Security HIGH/MEDIUM · Standards HIGH · Spec BLOCKING · semgrep error | fix and re-run; human may override with explicit confirmation |
 | `APPROVED` | everything else (LOW and NOTE items listed only) | proceed to `/commit` |
 
+A check only the human can supply (live paste, unreadable `settings.local.json` entry, manual check) is listed as "human to confirm (gate 2)" and never by itself sets a verdict: `NEEDS_FIXES` counts agent-fixable items only.
+
 Every caller must handle all four branches; treating `BLOCKED SECURITY` like `NEEDS_FIXES` lets a security finding reach commit.
 
 ### `--issue N` marker

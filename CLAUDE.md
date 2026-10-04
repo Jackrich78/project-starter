@@ -15,7 +15,7 @@ A Claude Code harness: an orchestrator main thread that delegates to sub-agents,
 
 ## Orchestrator contract
 
-1. **Reduce · Offload · Isolate.** The main thread is the bottleneck: reads, greps, scoping and drafting go to sub-agents; pass pointers, not payloads, both ways: a brief caps the report at ~300 words and names a scratch path for anything longer; contain side effects.
+1. **Reduce · Offload · Isolate.** The main thread is the bottleneck: reads, greps, scoping and drafting go to sub-agents; pass pointers, not payloads, both ways: a brief caps the report at ~300 words (scratch path for longer); reports to the human lead with the outcome, ~5 lines unless asked; contain side effects.
 2. **Sub-agent output is a claim, not a fact — and the brief decides whether the claim *can* be true.** Give an agent the live state it reasons about, or label its output unverified. Verify on disk before acting; a one-turn ack means the work was not done.
 3. **State the independence tier with every multi-agent result.** Tier 1 prompt-only (agreement = framing coherence) · Tier 2 tool access (framing is yours, data is not) · Tier 3 independent inputs (agreement is evidence).
 4. **Spawn unnamed for one-shot work; name an agent only to continue it**, and end a named brief with "SendMessage your report before stopping".

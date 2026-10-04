@@ -34,9 +34,9 @@ Post the report yourself: `gh issue comment N --body-file -` with a quoted hered
 The orchestrator acts on the verdict, all four branches:
 
 - `APPROVED`: proceed to `/commit`.
-- `NEEDS_FIXES`: fix Tier 1 items and re-run; the human may override with explicit confirmation.
+- `NEEDS_FIXES`: agent-fixable Tier 1 items only; fix and re-run. Human-only checks are listed as "human to confirm (gate 2)", never a verdict; the human may override with explicit confirmation.
 - `BLOCKED`: tests fail or review incomplete; stop.
-- `BLOCKED SECURITY`: stop, no override. Surface to the human with numbered options (the comment's Tier 2 section), one reversible decision each.
+- `BLOCKED SECURITY`: stop, no override. Recommend one fix and ask yes/no; numbered options (the comment's Tier 2 section, one reversible decision each) only for `BLOCKED SECURITY`.
 
 ## Example
 

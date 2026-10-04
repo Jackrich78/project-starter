@@ -24,7 +24,7 @@ One `ready-for-agent` ticket at a time, sized per issue-flow.md § Sizing; `read
 7. **`/qa --issue N`.** The fork posts its own verdict and returns the marker and URL.
    - `APPROVED`: step 8.
    - `NEEDS_FIXES`: fix, rerun the suite, re-run `/qa --issue N`. At most **3** iterations, then stop and report what was tried.
-   - `BLOCKED` or `BLOCKED SECURITY`: stop. Surface to the human with numbered options; never self-approve.
+   - `BLOCKED` or `BLOCKED SECURITY`: stop. Recommend one fix and ask yes/no (numbered options only for `BLOCKED SECURITY`); never self-approve.
 8. **`/commit`** (`Closes #N` or `Refs #N` per mode). `/commit` runs `/code-review --fix` (at most 2 passes) in `pr` mode. Then the `work-issue` finish steps: post the close-out hand-off (`Proof:` includes the RED output), parent cascade if last sibling.
 
 Then take the next ready ticket (issue-flow.md, Standing permission).
