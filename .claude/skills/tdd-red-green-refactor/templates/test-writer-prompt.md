@@ -4,7 +4,7 @@ title: "tdd-test-writer dispatch prompt (RED)"
 description: "Prompt the orchestrator fills before dispatching tdd-test-writer."
 ---
 
-Fill the `{}` fields, dispatch with `subagent_type: tdd-test-writer`. It sees ACs and `Tests:` only: never paste the plan, the parent body or any implementation.
+Fill the `{}` fields, dispatch with `subagent_type: tdd-test-writer`. It sees ACs, `Tests:` and the ticket's `Interface:` line only: never paste the plan, the parent body or any implementation.
 
 ```
 Convert the failing stubs into real failing tests for issue {issue}.
@@ -13,6 +13,7 @@ Acceptance criteria:
 {ac_text}
 
 Tests line (AC ids -> test paths): {ac_ids} -> {test_paths}
+Interface (signatures the tests call; omit if none): {interface}
 
 Do:
 - Extend an existing test file before adding one; follow .claude/rules/testing.md.

@@ -24,7 +24,7 @@ A feature has a parent issue with an approved design note and an approved `/blue
 5. **Fact-check gate.** Every AC traces to a line in the parent body (no source = invented requirement or promoted open question: stop). Every file:line or "N hits" claim is grepped in this turn, never from an earlier read. Quoted spec clauses are diffed against the current spec. Then a `challenger` sample over up to 10 tickets must score 10/10; fix and re-check below that. Passing is the `Verified:` record (issue-flow.md § Verify gate).
 6. **Publish blockers first,** in dependency order, so later tickets cite real numbers:
    `gh issue create --parent <P> --blocked-by <N> --label ready-for-agent,<kind>,<priority> --title "<t>" --body-file <f>`
-   Never hand-link dependencies in a body. Prepend the agent signature from CLAUDE.md `## Workflow`.
+   Never hand-link dependencies in a body. Signature: issue-flow.md § Talking to the human.
 7. **Last sub-issue:** a `ready-for-human` live check blocked by every slice, taken from the parent's Validation live-check line.
 
 Do not edit or close the parent beyond what `--parent` links.

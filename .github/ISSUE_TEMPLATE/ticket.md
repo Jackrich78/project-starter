@@ -19,14 +19,11 @@ One sentence.
 - [ ] ...
 
 Tests: <AC ids this ticket covers> -> <test file paths that prove it>
+Interface: <new signatures the tests call; omit if none>
 <!-- Non-code work: replace the Tests: line with `Proof: <artifact and how it is checked>` -->
 
 ## Use cases
 - A <role> wants <goal>, so they <do what>.
-
-## Sub-tasks
-- [ ] task 1
-- [ ] task 2
 
 ## Out of scope
 - <item> (raised and excluded in <link>)

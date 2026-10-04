@@ -26,7 +26,7 @@ The human wants to work the backlog: a sweep ("triage", "what needs me"), a name
 3. **Verify the claim.** Bug: reproduce from the reporter's steps. Enhancement: check the described current state against today's repo. A brief built on a stale claim wastes the next session.
 4. **Recommend,** numbered, one line each: priority, kind, target state, reason, whether the claim held. Fold a parent's sub-issues under it.
 5. **Wait.** Apply nothing until the human answers by number ("1 ready, 3 drop: duplicate").
-6. Apply exactly what they ruled with the commands in issue-flow.md. `ready-for-agent` needs a `Verified:` comment first (issue-flow.md § Verify gate). Prepend the agent signature from CLAUDE.md `## Workflow`.
+6. Apply exactly what they ruled with the commands in issue-flow.md. `ready-for-agent` needs a `Verified:` comment first (issue-flow.md § Verify gate). Comment format: issue-flow.md § Talking to the human.
 
 ### Named item
 
@@ -34,19 +34,7 @@ Confirm the label swap and any comment, then act. Skip redundancy checks; the hu
 
 ### needs-info
 
-Post and leave on `needs-info`:
-
-```markdown
-## Triage Notes
-
-**What we've established so far:**
-- point 1
-
-**What we still need from you:**
-- question 1
-```
-
-Questions are specific and answerable, never "please provide more info". The answer is recorded in the thread or body, not only in chat.
+Post an Ask block (issue-flow.md § Talking to the human) and leave on `needs-info`. Questions are specific and answerable, never "please provide more info". The answer is recorded in the thread or body, not only in chat.
 
 ### New item
 

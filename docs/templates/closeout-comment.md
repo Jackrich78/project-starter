@@ -4,7 +4,7 @@ title: "Close-out comment"
 description: "The six-line gate 2 hand-off posted on an issue when the PR opens; /retro harvests the Learned line."
 ---
 
-Post with `gh issue comment N --body-file <file>` when the PR opens (after the push in `direct` mode). Start with the agent signature from CLAUDE.md `## Workflow`. See `docs/system/issue-flow.md` § Close-out comment.
+Post with `gh issue comment N --body-file <file>` when the PR opens (after the push in `direct` mode). Signature on line 1. See `docs/system/issue-flow.md` § Close-out comment.
 
 ```markdown
 Shipped: <commit SHA, or PR number in pr mode>

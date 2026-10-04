@@ -15,7 +15,7 @@ Runs forked: it inherits the session but keeps the main context clean. The hando
 ## Pattern
 
 1. **Find the issue.** `$ARGUMENTS`, else the issue assigned to `@me` with a "Working:" comment, else `#N` in the branch name, else the parent of that issue. None -> ask which issue; never invent one, never write a file.
-2. **Read the previous handover.** `gh issue view N --comments`; latest comment starting `# Session Handover`. Keep unresolved blockers and still-true decisions, drop resolved or superseded items, mark survivors `(from previous session)`. Keep its `Generated:` stamp and add `Updated:`.
+2. **Read the previous handover.** `gh issue view N --comments`; latest comment containing `# Session Handover`. Keep unresolved blockers and still-true decisions, drop resolved or superseded items, mark survivors `(from previous session)`. Keep its `Generated:` stamp and add `Updated:`.
 3. **Re-check every status claim against current state**, not against commit messages or the old handover. A commit message is frozen at the moment it was written. Re-run the check, re-read the file, re-query the issue.
 4. **Git state:** `git branch --show-current`, `git log --oneline -1`, `git status --short` (list dirty files).
 5. **Draft** in this order, at most 1500 tokens:
@@ -26,7 +26,7 @@ Runs forked: it inherits the session but keeps the main context clean. The hando
    - **Decisions and open questions**
    - **Next step:** one concrete command or action
    - **Process retro** (only when session-winddown supplies an `agile-coach` block)
-6. **Post:** write to a temp file, then `gh issue comment N --body-file <file>`, ending with the agent signature from `CLAUDE.md ## Workflow`. Confirm with the issue number and token estimate. Output no file path.
+6. **Post:** write to a temp file, then `gh issue comment N --body-file <file>`, signature on line 1 (issue-flow.md § Talking to the human). Confirm with the issue number and token estimate. Output no file path.
 
 ## Example
 

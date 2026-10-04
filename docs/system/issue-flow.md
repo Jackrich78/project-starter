@@ -41,7 +41,7 @@ Every open issue carries one kind (`bug`, `enhancement`, `chore`), one priority 
 |---|---|---|
 | raised | `needs-triage` | `gh issue create --title "<t>" --body-file <f> --label needs-triage,<kind>` |
 | triaged | `needs-triage` removed, kind + priority set | `gh issue edit N --remove-label needs-triage --add-label <state>,<P>` |
-| needs-info | `needs-info` + Triage Notes comment | `gh issue edit N --remove-label <old> --add-label needs-info` then `gh issue comment N --body-file <notes>` |
+| needs-info | `needs-info` + Ask block comment | `gh issue edit N --remove-label <old> --add-label needs-info` then `gh issue comment N --body-file <notes>` |
 | ready-for-agent / ready-for-human | label, no assignee | `gh issue edit N --add-label ready-for-agent` (or `ready-for-human`) |
 | in progress | assignee + "Working:" comment | `gh issue edit N --add-assignee @me` then `gh issue comment N --body "Working: <session or branch>"` |
 | in review | `ready-for-human` + "Built, awaits <step>" comment | `gh issue edit N --remove-label ready-for-agent --add-label ready-for-human --remove-assignee @me` then `gh issue comment N --body "Built, awaits <step>"` |
@@ -108,6 +108,15 @@ The QA verdict marker lives on the issue in both modes; `/commit` reads it there
 
 The human approves what to build (gate 1: the design note, then the `to-tickets` breakdown) and tests what was built (gate 2: the PR). Between them the agent decides and reports each call in the hand-off; any other stop is a defect.
 
+## Talking to the human
+
+`gh` acts as one account for human and agent, so the thread is the channel and the signature is the only tell.
+
+- **Read:** before acting on an issue, read every comment newer than the last signed one: human replies, human closes.
+- **Write:** the agent signature (CLAUDE.md `## Workflow`; empty disables) is line 1 of every agent comment, after the QA marker when there is one. At most one Ask block per comment: `**Ask (#N · gloss):** … · Options: … (recommend …) · If no reply: … · Reply: … · ~N min`. A chat ask is one line pointing at the issue. Acknowledge a reply with `Re: <date>:`.
+- **Close:** tickets via `Closes #N`; the agent closes an ask or live check once the answer is recorded; parents by cascade only.
+- **Agent limits:** agents cannot read `.claude/settings.local.json`, so a script allow entry is a human step, phrased as an Ask.
+
 ## Verify gate
 
 Nothing reaches `ready-for-agent` without a `Verified:` comment (what was checked against the repo, with evidence) or, for new sub-issues, the `to-tickets` fact-check gate, whose publish is that record. Promotion without either is a defect.
@@ -121,9 +130,9 @@ Nothing reaches `ready-for-agent` without a `Verified:` comment (what was checke
 3. **Read** `gh issue view N --comments`; the list view omits comments.
 4. **Re-verify `Current state`** against today's repo; comment what changed before building. Re-check readiness: testable ACs and a `Tests:` or `Proof:` line.
 5. **Build** at the agreed seam: TDD with isolated sub-agents for code, then `/qa --issue N`.
-6. **Open a sub-issue** when a task outgrows the window, and replace its checklist line with the link.
+6. **Open a sub-issue** when the remainder outgrows the window, and link it in a comment.
 7. **Tick checkboxes one at a time:** pull the body to a file, keep a `.orig` copy, flip one `- [ ]` to `- [x]`, assert `diff` shows exactly one changed line, then `gh issue edit N --body-file`. ACs tick only with evidence in hand.
-8. **Not ready or blocked:** on information, swap to `needs-info`, comment what is missing with a recommended answer, release the claim, say so in one chat line and take the next ticket. On an issue, add the native edge and release.
+8. **Not ready or blocked:** on information, swap to `needs-info`, post an Ask block, release the claim, say so in one chat line and take the next ticket. On an issue, add the native edge and release.
 9. **Finish** via `/commit`, post the close-out (`direct` mode: confirm `CLOSED`); the closure of the last sibling triggers the parent cascade.
 
 **Standing permission:** `ready-for-agent` means gate 1 is passed (see Two human gates): work the frontier with no fresh "next". Stop at an empty frontier, at the `ready-for-human` live-check sub-issue, or at about 50% context, writing the handover first.
@@ -141,10 +150,6 @@ Template: `docs/templates/closeout-comment.md`. It is the gate 2 hand-off, so it
 ## Non-code work
 
 Documents, research and decisions use the same flow. Put a `Proof:` line in the ticket instead of `Tests:` (the artifact and how it is checked). `/qa --issue` routes to `challenger` when the diff has no code.
-
-## Agent signature
-
-The `Agent signature` value in CLAUDE.md `## Workflow` is the first line of every agent-authored issue and comment (after the QA verdict marker, when there is one), because `gh` acts as the human's account. Empty value disables it.
 
 ## `gh` capabilities
 
