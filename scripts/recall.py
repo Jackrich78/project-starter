@@ -6,7 +6,7 @@
 Default: the newest top-level session of this project (sub-agent runs skipped).
 Prints only user/assistant text as `U:`/`A:` lines. Tool inputs and tool results
 are dropped (that is where most secrets land); every whole message passes through
-pre_compact.redact (before line-splitting); harness-injected `<…` user text is skipped. Read-only; never writes a file.
+pre_compact.redact (before line-splitting); user text starting with a HARNESS_TAGS tag, and isMeta entries, are skipped. Read-only; never writes a file.
 """
 import argparse
 import importlib.util
