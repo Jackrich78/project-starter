@@ -9,13 +9,13 @@ disable-model-invocation: true
 
 ## Context
 
-Every conversation is a `.jsonl` file at `~/.claude/projects/<escaped-project-path>/<session-uuid>.jsonl`. The escaped path is the project path with every `/` replaced by `-` (`/Users/<you>/dev/my-app` becomes `-Users-<you>-dev-my-app`). Each line is `{"message": {"role": ..., "content": ...}}`; content is a string or a list of `{type, text}`. Sub-agent runs appear as small separate files. This is a diagnostic task: list and match filenames only; never print transcript contents (they can hold pasted tokens).
+Every conversation is a `.jsonl` file at `~/.claude/projects/<escaped-project-path>/<session-uuid>.jsonl`. The escaped path is the project path with every `/` replaced by `-` (`/Users/<you>/dev/my-app` becomes `-Users-<you>-dev-my-app`). Each line is `{"message": {"role": ..., "content": ...}}`; content is a string or a list of `{type, text}`. Sub-agent runs appear as small separate files. This is a diagnostic task: list and match filenames only; read contents only through `scripts/recall.py` (redacted), never raw cat/grep (they can hold pasted tokens).
 
 ## Pattern
 
 1. **List sessions**: `ls -lt ~/.claude/projects/<project-dir>/*.jsonl | head -20` (project-dir = the absolute project path with `/` replaced by `-`). Newest first: modified time, size, uuid. Very small files are usually sub-agent runs.
 2. **Present a numbered table**, newest first (time, size, topic), each with its resume command.
-3. **Narrow by phrase** when the human remembers one: `grep -l "phrase" ~/.claude/projects/<project-dir>/*.jsonl` (filenames only, never matching lines), then check the match's mtime and size.
+3. **Narrow by phrase** when the human remembers one: `grep -l "phrase" ~/.claude/projects/<project-dir>/*.jsonl` (filenames only, never matching lines), then check the match's mtime and size. To confirm, `python3 scripts/recall.py <uuid> --grep "phrase"` (redacted text turns only).
 4. **Widen** if not found: `ls ~/.claude/projects/` and repeat for the project they name.
 5. **Resume** from the project directory so the right CLAUDE.md loads: `cd <project-dir> && claude --resume <uuid>` (uuid = filename without `.jsonl`).
 
