@@ -128,7 +128,7 @@ When information is missing, this agent assumes:
 
 ## Report format
 
-[What the report contains, in order. Keep it short; findings cite file:line.]
+[What the report contains, in order. At most ~300 words, longer output to the scratch path the brief names; findings cite file:line.]
 
 PASS | FAIL: <reason> | ESCALATION: <reason>
 
