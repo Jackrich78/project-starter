@@ -45,7 +45,7 @@ Every open issue carries one kind (`bug`, `enhancement`, `chore`), one priority 
 | ready-for-agent / ready-for-human | label, no assignee | `gh issue edit N --add-label ready-for-agent` (or `ready-for-human`) |
 | in progress | assignee + "Working:" comment | `gh issue edit N --add-assignee @me` then `gh issue comment N --body "Working: <session or branch>"` |
 | in review | `ready-for-human` + "Built, awaits <step>" comment | `gh issue edit N --remove-label ready-for-agent --add-label ready-for-human --remove-assignee @me` then `gh issue comment N --body "Built, awaits <step>"` |
-| done | closed as completed via `Closes #N`, then close-out | `gh issue view N --json state` reads `CLOSED`, then `gh issue comment N --body-file <closeout>` |
+| done | closed as completed via `Closes #N`; close-out posted | `gh issue comment N --body-file <closeout>` (when the PR opens in `pr` mode, after the push in `direct`); `gh issue view N --json state` reads `CLOSED` |
 | wontfix | `wontfix`, closed as not planned | `gh issue close N --reason "not planned" --comment "<reason>"` then `gh issue edit N --add-label wontfix` |
 | duplicate | closed as duplicate | `gh issue close N --duplicate-of M` |
 
@@ -56,7 +56,7 @@ Rules behind the rows:
 - **In review** is only for work needing a human or a live surface before it counts (relaunch, deploy, manual check). Code review is not a state: it happens before `/commit` (see Integration modes).
 - **Blocked on another issue** is a native edge: `gh issue edit N --add-blocked-by M`, and release the claim (`--remove-assignee @me`). Blocked on information: `needs-info`.
 - **Needs-info returns to `ready-for-agent`** when answered (`needs-triage` if it was never ready); the answer is recorded in the thread, never only in chat.
-- **Done** needs every AC ticked with evidence, `Closes #N` in the closing commit (or PR body in `pr` mode), `state` = `CLOSED`, then the close-out comment. A bare `#N` never closes. Anything needing a live check goes to in review instead.
+- **Done** needs every AC ticked with evidence, `Closes #N` in the closing commit (or PR body in `pr` mode, where the human's merge closes it), and the close-out comment, posted when the PR opens or the push lands. A bare `#N` never closes. Anything needing a live check goes to in review instead.
 - **Wontfix** splits three ways: already built (say where), rejected bug (reason), rejected enhancement (one `REJECTED` line in `docs/decisions.md`).
 - **Parent close-out cascade:** when the last sub-issue closes (`gh issue view P --json subIssuesSummary`, completed = total), the closing agent posts the parent's close-out answering the outcome test, closes the parent, and moves lasting facts to the wiki. **Abandon cascade:** closing a parent as not planned closes its open sub-issues the same way; the reason goes in `docs/decisions.md` once, at the parent.
 - **The last sub-issue is always the `ready-for-human` live check**; its close triggers the parent cascade.
@@ -99,8 +99,8 @@ Mode is read from CLAUDE.md `## Workflow` (`Integration mode: pr | direct`).
 | Branch | `gh issue develop N --checkout --name issue-N-<slug>` | default branch |
 | Commits | `Refs #N` | `Closes #N` |
 | Close keyword | PR body carries `Closes #N` (`gh pr create --body-file`) | the commit message |
-| Review | `/code-review`; human merges `gh pr merge <PR> --squash --delete-branch` | `/code-review` on the diff |
-| Close-out | after merge | after push |
+| Review | `/code-review`; the agent never merges; the human tests, then merges `gh pr merge <PR> --squash --delete-branch` | `/code-review` on the diff |
+| Close-out | when the PR opens (the gate 2 hand-off) | after push |
 
 The QA verdict marker lives on the issue in both modes; `/commit` reads it there.
 
@@ -124,13 +124,13 @@ Nothing reaches `ready-for-agent` without a `Verified:` comment (what was checke
 6. **Open a sub-issue** when a task outgrows the window, and replace its checklist line with the link.
 7. **Tick checkboxes one at a time:** pull the body to a file, keep a `.orig` copy, flip one `- [ ]` to `- [x]`, assert `diff` shows exactly one changed line, then `gh issue edit N --body-file`. ACs tick only with evidence in hand.
 8. **Not ready or blocked:** on information, swap to `needs-info`, comment what is missing with a recommended answer, release the claim, say so in one chat line and take the next ticket. On an issue, add the native edge and release.
-9. **Finish** via `/commit`, confirm `CLOSED`, post the close-out; last sibling triggers the parent cascade.
+9. **Finish** via `/commit`, post the close-out (`direct` mode: confirm `CLOSED`); the closure of the last sibling triggers the parent cascade.
 
 **Standing permission:** `ready-for-agent` means gate 1 is passed (see Two human gates): work the frontier with no fresh "next". Stop at an empty frontier, at the `ready-for-human` live-check sub-issue, or at about 50% context, writing the handover first.
 
 ## Close-out comment
 
-Template: `docs/templates/closeout-comment.md`. Four lines: `Shipped:` (commit SHA or PR), `Proof:` (fenced command output), `Not covered:` (what this does not prove), `Learned:` (one line plus where filed, or "nothing new"). `/retro` harvests `Learned:` from `gh issue list --state closed --search "closed:>YYYY-MM-DD" --json number,title,comments`.
+Template: `docs/templates/closeout-comment.md`. It is the gate 2 hand-off, so it is posted when the PR opens, not after the merge. Six lines: `Shipped:` (commit SHA or PR), `Proof:` (fenced command output), `How to test:` (what the human runs or checks), `Decided:` (each call made without asking, with the option rejected), `Not covered:` (what this does not prove), `Learned:` (one line plus where filed, or "nothing new"). `/retro` harvests `Learned:` from `gh issue list --state closed --search "closed:>YYYY-MM-DD" --json number,title,comments`.
 
 ## QA verdict marker
 

@@ -25,13 +25,13 @@ One `ready-for-agent` ticket at a time, sized per issue-flow.md § Sizing; `read
    - `APPROVED`: step 8.
    - `NEEDS_FIXES`: fix, rerun the suite, re-run `/qa --issue N`. At most **3** iterations, then stop and report what was tried.
    - `BLOCKED` or `BLOCKED SECURITY`: stop. Surface to the human with numbered options; never self-approve.
-8. **`/commit`** (`Closes #N` or `Refs #N` per mode). `/commit` runs `/code-review --fix` (at most 2 passes) in `pr` mode. Then the `work-issue` finish steps: confirm `CLOSED`, post the close-out (`Proof:` includes the RED output), parent cascade if last sibling.
+8. **`/commit`** (`Closes #N` or `Refs #N` per mode). `/commit` runs `/code-review --fix` (at most 2 passes) in `pr` mode. Then the `work-issue` finish steps: post the close-out hand-off (`Proof:` includes the RED output), parent cascade if last sibling.
 
 Then take the next ready ticket (issue-flow.md, Standing permission).
 
 ## Example
 
-`/build #31` ("reject expired tokens", `Tests: AC-002 -> tests/auth/test_expiry.py`). Preflight green, claimed, branch `issue-31-expired-tokens`. One stub generated; test-writer returns RED output; implementer GREEN; refactorer "No refactoring needed". `/simplify` trims one helper, `/security-review` clean. QA returns NEEDS_FIXES (negative case untested); fix, re-QA, APPROVED. `/commit`, PR opened, close-out posted.
+`/build #31` ("reject expired tokens", `Tests: AC-002 -> tests/auth/test_expiry.py`). Preflight green, claimed, branch `issue-31-expired-tokens`. One stub generated; test-writer returns RED output; implementer GREEN; refactorer "No refactoring needed". `/simplify` trims one helper, `/security-review` clean. QA returns NEEDS_FIXES (negative case untested); fix, re-QA, APPROVED. `/commit`, PR opened, hand-off posted, next ticket.
 
 ## Anti-patterns
 

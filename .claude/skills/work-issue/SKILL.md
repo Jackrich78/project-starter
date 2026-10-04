@@ -25,13 +25,13 @@ One ticket at a time, sized per issue-flow.md § Sizing. `ready-for-agent` is ga
 6. **Tick checkboxes one at a time** with the one-line diff assertion (issue-flow.md, pickup step 7). ACs tick only with evidence in hand.
 7. **A task outgrows the ticket?** `gh issue create --parent N ...`, replace the checklist line with the link. Needing a handover to finish means the ticket was mis-sized.
 8. **Blocked:** on information, `needs-info` plus Triage Notes (see `triage`); on an issue, the native edge. Either way release the claim and take the next ticket; never push on a guess.
-9. **Finish** via `/commit` (`Closes #N` per mode), confirm `CLOSED`, post the close-out from `docs/templates/closeout-comment.md`. A live check goes to in review instead of closing. Last open sibling: run the parent close-out cascade.
+9. **Finish** via `/commit` (`Closes #N` per mode), post the close-out hand-off from `docs/templates/closeout-comment.md` (`direct` mode: confirm `CLOSED`). A live check goes to in review instead of closing. Last open sibling: run the parent close-out cascade.
 
 Prepend the agent signature from CLAUDE.md `## Workflow` to every issue and comment you post.
 
 ## Example
 
-Human: "work on #14". Claim it, read it with comments, confirm the file it cites still has the bug, drive the fix through TDD, run `/qa --issue 14`, tick the one sub-task with the diff assertion, `/commit` with `Closes #14`, confirm it closed, post the close-out with test output as `Proof:`.
+Human: "work on #14". Claim it, read it with comments, confirm the file it cites still has the bug, drive the fix through TDD, run `/qa --issue 14`, tick the one sub-task with the diff assertion, `/commit` with `Closes #14`, post the hand-off with test output as `Proof:`, take the next ticket.
 
 ## Anti-patterns
 

@@ -55,7 +55,7 @@ Claude Code; `gh` 2.96+ authenticated; Node 18+ for `npm test`; Python 3.9+ opti
 
 ## Security stance
 
-The project sets no permission mode, so yours governs; the allow list is read-only and the deny list covers secret stores and irreversible remote actions in every mode. Details in `docs/system/`.
+The project sets no permission mode, so yours governs; the allow list is read-only and the deny list covers secret stores and irreversible remote actions in every mode. For fewer prompts, add to `.claude/settings.local.json` `permissions.allow`: `Bash(git commit -F *)`, `Bash(git push -u origin issue-*)`, `Bash(gh pr create *)`, `Bash(gh issue comment *)`, `Bash(gh issue edit *)`, `Bash(gh issue develop *)`. Give each live external-API script its own exact entry. Agents cannot read or write that file; you add the entries. Details in `docs/system/`.
 
 ## Learn more
 

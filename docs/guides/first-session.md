@@ -31,12 +31,12 @@ Put a `Tests:` line (AC id + test path) or, for non-code work, a `Proof:` line (
 - **Proves:** an independent reviewer with clean context judged it, not the builder.
 
 ## 5. `/commit`
-- **See:** the QA gate checked, a conventional message ending `Closes #N` (in `pr` mode, a PR you merge).
+- **See:** the QA gate checked, a conventional message ending `Closes #N` (in `pr` mode, a PR opened for you to test and merge).
 - **Proves:** a BLOCKED SECURITY verdict would have stopped here (`/commit` step 0).
 
 ## 6. Close-out comment
-On the issue, four lines: `Shipped:` (SHA) · `Proof:` (fenced output, including the RED run) · `Not covered:` · `Learned:`.
-- **See:** the issue closed with evidence attached.
+On the issue when the PR opens: `Shipped:` (SHA) · `Proof:` (fenced output, including the RED run) · `How to test:` · `Decided:` · `Not covered:` · `Learned:`.
+- **See:** the hand-off with evidence attached.
 - **Proves:** what shipped and what was learned survive the session.
 
 ## 7. `/session-winddown`
