@@ -30,7 +30,7 @@ A guard against mistakes, not a sandbox: a flat regex table over the Bash comman
 
 - **Destructive**: recursive `rm` of `/`, `~` or `*`; `sudo rm`; `chmod 777`; `mkfs`; `dd if=`; writes to `/dev/sd*` or `/etc/`; fork bombs.
 - **Execution**: `curl`/`wget` piped to a shell; `eval(`.
-- **Secrets into the transcript**: reading `.env*` (not `.example`/`.sample`/`.template`); `grep`/`rg` printing `.env` lines (`-q`, `-c`, `-l` pass); bare `env`, `printenv`, `set`, `export`; `echo`/`printf`/`printenv` of a `*KEY|TOKEN|SECRET|PASSW*` variable.
+- **Secrets into the transcript**: reading `.env*` (not `.example`/`.sample`/`.template`); `grep`/`rg` printing `.env` lines (`-q`, `-c`, `-l` pass); bare `env`, `printenv`, `set`, `export`; `echo`/`printf`/`printenv` of an upper-case `*KEY|TOKEN|SECRET|PASSW*` variable.
 - **Force push** in any position (`--force*`, `-f`, `--mirror`, `+refspec`).
 - **Caution only**: `git reset --hard`, `npm publish`, `docker system prune`.
 

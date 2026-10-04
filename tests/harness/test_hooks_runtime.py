@@ -114,9 +114,6 @@ def test_redact_benign_round3(text):
     assert redact(text) == text
 
 
-
-
-
 def _transcript(tmp_path):
     def u(t):
         return {"type": "user", "message": {"role": "user", "content": t}}

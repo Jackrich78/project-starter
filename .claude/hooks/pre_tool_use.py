@@ -30,7 +30,7 @@ _ENV_FILE = r'\.env(?!\.(?:example|sample|template))(?:\.[\w-]+)?'
 # Dangerous command patterns
 BLOCKED_PATTERNS = [
     r'rm\s+-rf\s+/\*?(?:\s|$)',   # Recursive delete root
-    r'rm\s+-rf\s+~/?(?:\s|$)',    # Recursive delete home
+    r'rm\s+-rf\s+~/?\*?(?:\s|$)', # Recursive delete home
     r'rm\s+-rf\s+\*',             # Recursive delete all
     r'sudo\s+rm',                 # Sudo remove
     r'chmod\s+777',               # World-writable
@@ -47,13 +47,13 @@ BLOCKED_PATTERNS = [
     r'\b(?:cat|less|more|head|tail|bat|nl|tac|strings|xxd|od|base64|sed|awk)\s[^|;&\n]*'
     + _ENV_FILE + r'(?=[\s;&|)\'"]|$)',
     # grep/rg print matching .env lines, values included; -q/-c/-l presence checks pass
-    r'\b(?:grep|rg)(?![^|;&\n]*\s-\w*[qcl])\s[^|;&\n]*\s\S*' + _ENV_FILE + r'(?=[\s;&|)]|$)',
+    r'\b(?:grep|rg)(?![^|;&\n]*\s-\w*(?-i:[qcl]))\s[^|;&\n]*\s\S*' + _ENV_FILE + r'(?=[\s;&|)]|$)',
     # Bare environment dumps print every exported token
     r'(?:^|[;&|(])\s*(?:printenv|env|set|export)\s*(?:$|[;&|)])',
     # A secret-named variable expanded into output
-    r'\b(?:(?:echo|printf)\b[^|;&\n]*\$\{?|printenv\s+)\w*(?:KEY|TOKEN|SECRET|PASSW)',
+    r'\b(?:(?:echo|printf)\b[^|;&\n]*\$\{?|printenv\s+)(?-i:\w*(?:KEY|TOKEN|SECRET|PASSW))',
     # Force flags anywhere in a push (settings denies only match prefixes)
-    r'\bgit\s+push\b[^|;&\n]*\s(?:-f|--force\S*|--mirror|\+\S+)(?=\s|$)',
+    r'\bgit(?:\s+-[cC]\s+\S+)*\s+push\b[^|;&\n]*\s(?:-\w*f\w*|--force\S*|--mirror|\+\S+)(?=\s|$)',
 ]
 
 # Commands requiring extra caution (allowed, flagged)

@@ -57,7 +57,6 @@ Each gate has an owner who is not the author of the thing gated.
 | Need | Mechanism | Why |
 |---|---|---|
 | Rule that must always hold | hook (`hooks.md`) | no session, no tokens, deterministic |
-| Periodic deterministic check (stale docs) | GitHub Actions cron | zero tokens; runs without a session; survives laptop sleep |
 | React to something in a live session | `/loop` (dynamic, self-paced) | needs the session's context; stop it when done |
 | Reminder to look at something | SessionStart nudge | cheapest possible: a sentence at the right moment |
 

@@ -26,9 +26,10 @@ real sessions. The real controls are the permission prompt and `permissions.deny
   write the message to a file and use `git commit -F <file>`.
 - `grep -q`, `-c` and `-l` on `.env` pass (presence checks print no values); `.env.example`, `.sample`
   and `.template` are always readable.
+- Secret-variable names match upper case only (`$API_KEY` blocks, a loop's `$key` passes).
 - Cautions (`git reset --hard`, `npm publish`, `docker system prune`) are allowed and only flagged.
 
-**Known gaps (by design):** a script file, `$(...)`, variables or globs that hide a path, `bash -c`,
+**Known gaps (by design):** Bash reads of credential files other than `.env` (`cat ~/.ssh/id_*`, `cat ~/.aws/credentials`; the Read denies cover the Read tool only), `gh auth token`, a script file, `$(...)`, variables or globs that hide a path, `bash -c`,
 `cp .env elsewhere`, Edit/Write of `.env` (only Read is denied), recursive deletes outside root/home/`*`,
 `git reset --hard`. Closing them meant a tokenizer that blocked routine work (v3.0.0); see `docs/decisions.md`.
 

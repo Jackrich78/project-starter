@@ -142,6 +142,3 @@ def test_primer_injects_body_once_filled(tmp_path):
 def test_shipped_priorities_file_is_the_detection_marker():
     text = (ROOT / "docs/system/current-priorities.md").read_text(encoding="utf-8")
     assert PLACEHOLDER in text or "/setup step 3" in text, "either the placeholder (template) or a filled file"
-
-
-# --- 2/3. hygiene scripts -------------------------------------------------------
