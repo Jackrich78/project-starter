@@ -1,6 +1,7 @@
 """scripts/recall.py: redacted text-only transcript reader. Stub at the boundary: a fake HOME."""
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -14,10 +15,10 @@ def _line(role, content):
     return json.dumps({"type": role, "message": {"role": role, "content": content}})
 
 
-def _setup(tmp_path):
-    proj = tmp_path / "work" / "app"
+def _setup(tmp_path, name="app"):
+    proj = tmp_path / "work" / name
     proj.mkdir(parents=True)
-    d = tmp_path / "home" / ".claude" / "projects" / str(proj.resolve()).replace("/", "-")
+    d = tmp_path / "home" / ".claude" / "projects" / re.sub(r"[^A-Za-z0-9]", "-", str(proj.resolve()))
     d.mkdir(parents=True)
     return proj, d
 
@@ -76,3 +77,37 @@ def test_missing_dir_fails_clearly(tmp_path):
     (tmp_path / "home").mkdir()
     r = _run(tmp_path, proj)
     assert r.returncode != 0 and "no transcript" in r.stderr.lower()
+
+
+def test_multiline_private_key_redacted_whole_message(tmp_path):
+    proj, d = _setup(tmp_path)
+    body = "KEYBODYLINE1abc\nKEYBODYLINE2def"
+    pem = f"-----BEGIN RSA PRIVATE KEY-----\n{body}\n-----END RSA PRIVATE KEY-----"
+    _session(d, "s.jsonl", [_line("user", f"here:\n{pem}\nthanks")], 1000)
+    out = _run(tmp_path, proj).stdout
+    assert "KEYBODYLINE" not in out and "REDACTED PRIVATE KEY" in out and "thanks" in out
+
+
+def test_key_value_split_across_lines_redacted(tmp_path):
+    proj, d = _setup(tmp_path)
+    _session(d, "s.jsonl", [_line("user", '"password":\n "hunter2hunter2"')], 1000)
+    assert "hunter2hunter2" not in _run(tmp_path, proj).stdout
+
+
+def test_harness_injected_user_text_skipped(tmp_path):
+    proj, d = _setup(tmp_path)
+    _session(d, "s.jsonl", [_line("user", f"<bash-stdout>{TOKEN}</bash-stdout>"), _line("user", "real")], 1000)
+    assert _run(tmp_path, proj).stdout.strip() == "U: real"
+
+
+def test_project_dir_escapes_dots_and_underscores(tmp_path):
+    proj, d = _setup(tmp_path, "my.app_v2")
+    _session(d, "s.jsonl", [_line("user", "found")], 1000)
+    assert _run(tmp_path, proj).stdout.strip() == "U: found"
+
+
+def test_string_message_skipped(tmp_path):
+    proj, d = _setup(tmp_path)
+    _session(d, "s.jsonl", [json.dumps({"type": "user", "message": "oops"}), _line("user", "ok")], 1000)
+    r = _run(tmp_path, proj)
+    assert r.returncode == 0 and r.stdout.strip() == "U: ok"
