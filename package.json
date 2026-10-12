@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "postinstall": "cd .github/tests && npm ci",
     "test": "cd .github/tests && npm test && cd ../.. && node scripts/run_pytest_optional.mjs",
     "test:py": "python3 -m pytest test/unit/FEAT-035/ -v",
     "setup:browser": "npx playwright install chromium"

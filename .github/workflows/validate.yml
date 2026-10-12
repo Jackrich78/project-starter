@@ -1,6 +1,6 @@
 # .github/workflows/validate.yml
 # Base validation workflow for Project Starter template
-# Runs on every push and PR - target: <15 seconds
+# Runs on every push and PR
 
 name: Validate
 
@@ -57,10 +57,13 @@ jobs:
           chmod +x .github/tests/validate-structure.sh
           ./.github/tests/validate-structure.sh
 
-      - name: Run FEAT-035 Unit Tests (pytest)
-        run: |
-          pip install pytest --quiet
-          pytest test/unit/FEAT-035/ -v
+      - name: Install pytest
+        run: pip install pytest --quiet
+
+      - name: Run npm test
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
+        run: npm ci && npm test
 
       # CUSTOMIZATION: Add your project-specific validation steps below
       # Examples:
