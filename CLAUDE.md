@@ -27,7 +27,7 @@ Lifecycle commands are in the Lifecycle table. Others: `/setup [docs path]` (one
 
 ## Lifecycle
 
-From idea to merge; a GitHub issue follows Issue process instead. Not all work is a build: research, exploration and mapping stop after `/explore` with a research memo or a decision (logged in `DECISIONS.md`); planning an automation or process stops after `/blueprint` with `plan.md`; prompt and doc changes are edited directly and reviewed per Review depth.
+From idea to merge; a GitHub issue follows Issue process instead. Not all work is a build: a research or mapping question goes straight to the `researcher` agent and ends in a memo or a decision (logged in `DECISIONS.md`); planning an automation or process runs `/explore` then `/blueprint` and ends at `plan.md`, skipping test stubs and `/build`; prompt and doc changes are edited directly and reviewed per Review depth.
 
 | Step | Runs | Who | Output |
 |---|---|---|---|
@@ -57,7 +57,7 @@ From idea to merge; a GitHub issue follows Issue process instead. Not all work i
 
 ## Issue process
 
-A label on the issue is its state, and the state labels below must exist in the repo; "the owner" is the human who runs the repo.
+A label on the issue is its state, and the state labels below must exist in the repo (if one is missing, stop and ask the owner); "the owner" is the human who runs the repo.
 
 | State | Meaning | Who moves it |
 |---|---|---|
