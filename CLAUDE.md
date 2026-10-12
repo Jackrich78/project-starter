@@ -79,6 +79,33 @@ Full index: `.claude/agents/README.md`
 - **Outcomes over outputs**: Features solve user problems, not just ship code
 - **Spike before commit**: Use `spikes/` for uncertain approaches, extract learnings to `docs/`
 
+## Issue process
+
+A label on the issue is its state; "the owner" is the human who runs the repo.
+
+| State | Meaning | Who moves it |
+|---|---|---|
+| (no state label) | Not looked at yet | Agents leave it alone |
+| `needs-plan` | The owner wants a plan | The agent posts a plan comment, then swaps to `needs-info` |
+| `needs-info` | The owner's turn: a plan or question is waiting | The owner answers, then relabels `needs-plan` for a new plan, or approves by adding `ready-for-agent` and removing `needs-info` |
+| `ready-for-agent` | The newest plan is approved | The agent builds it on an `issue-N-<slug>` branch, opens a PR with `Closes #N`, then swaps to `ready-for-human` |
+| `ready-for-human` | A PR is waiting for review | The owner merges it, or comments and relabels the issue `ready-for-agent` to send it back |
+
+**Plans.** A plan is a comment whose second line is exactly `**Plan vK**` (the first line is free), numbered upward from v1. It opens with three lines — what changes for you, why it's worth it, scope — then the files to change, how the change will be proved, and numbered questions or "No questions". Approval counts only if `ready-for-agent` was added after the newest plan; otherwise treat the issue as stuck (see Rules).
+
+**Rules.**
+- Only labels on the issue carry state, never comment text: the owner and agents may post from the same account.
+- Only the owner adds `ready-for-agent` or removes `needs-info`. Agents never push to the base branch.
+- One issue per run. An agent that is stuck or fails pushes any work to its issue branch, comments the question or failure, swaps its state label for `needs-info`, and unassigns itself.
+
+### Build loop
+
+<!-- CUSTOMIZE: the values the build loop reads for this repo. -->
+- **Test command:** `npm ci && (cd .github/tests && npm ci) && npm test`
+- **Base branch:** `main`
+- **Proof of a change:** fenced test-command output in the PR
+- **Tracker:** GitHub Issues on this repo
+
 ## Context Rules
 
 - **Web research**: Always use the Researcher agent (`subagent_type="researcher"`) for web searches. This preserves context in the main thread.
