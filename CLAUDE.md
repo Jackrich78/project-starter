@@ -102,7 +102,7 @@ Work is tracked in GitHub Issues. A label on the issue is its state; "the owner"
 ### Build loop
 
 <!-- CUSTOMIZE: the values the build loop reads for this repo. -->
-- **Test command:** `npm ci && npm test`
+- **Test command:** `npm ci && (cd .github/tests && npm ci) && npm test`
 - **Base branch:** `main`
 - **Proof of a change:** fenced test-command output in the PR
 - **Tracker:** GitHub Issues on this repo
