@@ -1,83 +1,59 @@
 # Project Starter
 
-Lean agent harness template for AI-assisted development.
-
-> **New project?** See [docs/guides/getting-started.md](docs/guides/getting-started.md) for setup instructions.
+Lean agent harness template for AI-assisted development. New project? Start with [docs/guides/getting-started.md](docs/guides/getting-started.md).
 
 ## Governing documents (orient here first)
 
-<!-- CUSTOMIZE: /setup fills this in with the project's real governing docs. These carry the *what/why* — read the right ones before proposing or building; don't re-litigate a settled decision unless its revisit clause fires. The portable `context-priming` skill (`.claude/skills/context-priming/`) and `/prime` key off this table, so keep it current when a new governing doc is added. This repo picked "Full governance" via `/setup`: `PROJECT.md` and `DECISIONS.md` are real files here; `PRINCIPLES.md` and `docs/ARCHITECTURE.md` are left in the table as the template's example rows and are NOT present in this repo (see `.claude/commands/setup.md` §2.7 for how "Full governance" would generate them) — remove or fill them in if this repo later adopts them. -->
+<!-- CUSTOMIZE: /setup writes one row per doc it generates; /prime and the context-priming skill load them by tier. Keep it current when a governing doc is added. -->
 
 | Document | What it's for | Load |
 |---|---|---|
 | `PROJECT.md` | current state + roadmap | orient (all modes) |
-| `PRINCIPLES.md` | operating principles — each states what it *forbids* | orient (all modes) |
 | `DECISIONS.md` | index + the *why* behind every call; superseded entries archived | index always; full entries on-demand |
-| `docs/ARCHITECTURE.md` | design rationale | on-demand (build/review) |
 
 ## Quick Start
 
 ```bash
-# Run tests
-npm test
-
-# Start dev
-npm run dev
+npm ci && npm test   # install and run all tests (works on a fresh clone)
 ```
 
 ## Agents
 
-Specialists in `.claude/agents/` (descriptions auto-loaded from frontmatter).
-
-**Command bindings:**
-- `/build` → `tdd-test-writer` → `tdd-implementer` → `tdd-refactorer` → `qa-reviewer`
-- `/qa` → `qa-reviewer`
-
-Full index: `.claude/agents/README.md`
+Specialists live in `.claude/agents/` (descriptions auto-load from frontmatter; index: `.claude/agents/README.md`). Which agent runs at which step: see Lifecycle.
 
 ## Commands
 
-- `/setup [docs path]` - One-time project initialization from template
-- `/explore [topic]` - Discover and define features → PRD
-- **Step 5.5 (post-PRD, pre-blueprint):** After `/explore` produces a PRD, always run the `prd-consistency-sim` agent (cold read) before `/blueprint`. It surfaces spec gaps and ambiguous assumptions in a single sub-agent call — far cheaper than discovering them mid-build.
-- `/blueprint FEAT-XXX` - Technical grounding + implementation plan
-- `/build FEAT-XXX` - TDD implementation with isolated subagents + QA
-- `/qa [target]` - QA review (file, directory, feature, or sweep)
-- `/commit` - Git workflow (checks QA gate first)
-- `/handover` - Session recovery
-- `/retro` - Extract learnings → skills
-- `/logs` - Query observability database
-- `/debug [issue]` - Systematic bug investigation
-- `/create-specialist [lib]` - Create domain-expert sub-agent
-- `/update-docs` - Update documentation index
-- `/sync [target]` - Sync template hooks/commands to downstream projects
-- `/prime [mode]` - Load project context
+Lifecycle commands are in the Lifecycle table. Others: `/setup [docs path]` (one-time init) · `/prime [mode]` (load context) · `/qa [target]` (standalone review: file, directory, feature or sweep) · `/handover` · `/debug [issue]` · `/logs` · `/create-specialist [lib]` · `/update-docs` · `/sync [target]`. Details: `.claude/commands/`.
+
+## Lifecycle
+
+| Step | Command | Who | Output |
+|---|---|---|---|
+| Spec | `/explore` (researcher, challenger, `prd-consistency-sim`) | agent + owner | `docs/features/FEAT-XXX_slug/prd.md` |
+| Plan | `/blueprint FEAT-XXX` (challenger) | agent; owner approves | `plan.md`, test stubs |
+| Build | `/build FEAT-XXX`: tdd-test-writer → tdd-implementer → tdd-refactorer → qa-reviewer | agent | code, tests, `handover.md`, QA verdict |
+| Ship | `/commit`: QA gate, commit, push; PR optional | agent + owner | commit / PR |
+| Merge | — | owner | |
+| Learn | `/retro`: agile-coach → owner → librarian | all | Hard-won rules |
+
+`/qa [target]` runs `qa-reviewer` on its own; a `BLOCKED` verdict stops `/commit`.
+
+**Review depth.** Code → `qa-reviewer` on the branch diff (`/qa` with no target sees only `HEAD~1`), plus one challenger critique. Docs and prompts (`CLAUDE.md`, agents, skills, commands) → a cold read by `prd-consistency-sim`, which follows the changed text with no context and reports where it would misread or hesitate. Mixed → both.
 
 ## Key Files
 
-- `PROJECT.md` - Project context and roadmap
-- `docs/features/` - Feature documentation (README, prd, plan per feature)
-- `docs/qa/` - QA review reports
-- `stacks/` - Deployment scaffolding (copy to root when using a stack)
-- `.claude/skills/` - Learned patterns
-- `.claude/agents/tdd-*.md` - TDD subagents (test-writer, implementer, refactorer)
-- `.claude/agents/qa-reviewer.md` - Security and quality reviewer
-- `.claude/logs/agent.db` - Session tracking
-- `.github/tests/` - Scaffold validation tests (extend or delete)
-- `test/` - Your project tests (unit/, integration/, e2e/)
+`docs/features/FEAT-XXX_slug/` per-feature prd, plan, handover · `docs/qa/` QA reports · `stacks/` deployment scaffolding (copy to root to use) · `.github/tests/` scaffold tests (extend or delete) · `test/` your tests (`unit/`, `integration/`, `e2e/`) · `.claude/logs/agent.db` session tracking (`/logs`).
 
 ## Principles
 
-1. **Reduce** - Minimize context, load on-demand
-2. **Offload** - Use sub-agents for specialized work
-3. **Isolate** - Contain side effects, fail gracefully
+**Reduce** context, load on demand · **Offload** specialised work to sub-agents · **Isolate** side effects, fail gracefully.
 
 ## Development Standards (This Project)
 
-- **TDD with isolation**: `/build` runs RED-GREEN-REFACTOR with context-isolated subagents
-- **QA gate**: Security issues from `/build` or `/qa` block `/commit` until resolved
-- **Outcomes over outputs**: Features solve user problems, not just ship code
-- **Spike before commit**: Use `spikes/` for uncertain approaches, extract learnings to `docs/`
+- **TDD with isolation**: `/build` runs RED-GREEN-REFACTOR in separate sub-agents — the test writer sees only the PRD, the implementer only the tests, the refactorer tests + code.
+- **QA gate**: security issues from `/build` or `/qa` block `/commit` until resolved.
+- **Outcomes over outputs**: features solve user problems, not just ship code.
+- **Spike before commit**: for an uncertain approach use the spike skill (it creates `spikes/`); extract learnings to `docs/`.
 
 ## Issue process
 
@@ -86,17 +62,19 @@ A label on the issue is its state; "the owner" is the human who runs the repo.
 | State | Meaning | Who moves it |
 |---|---|---|
 | (no state label) | Not looked at yet | Agents leave it alone |
-| `needs-plan` | The owner wants a plan | The agent posts a plan comment, then swaps to `needs-info` |
-| `needs-info` | The owner's turn: a plan or question is waiting | The owner answers, then relabels `needs-plan` for a new plan, or approves by adding `ready-for-agent` and removing `needs-info` |
-| `ready-for-agent` | The newest plan is approved | The agent builds it on an `issue-N-<slug>` branch, opens a PR with `Closes #N`, then swaps to `ready-for-human` |
-| `ready-for-human` | A PR is waiting for review | The owner merges it, or comments and relabels the issue `ready-for-agent` to send it back |
+| `needs-plan` | The owner wants a plan | Agent posts a plan comment, swaps to `needs-info` |
+| `needs-info` | The owner's turn | Owner answers, then relabels `needs-plan` for a new plan, or approves: adds `ready-for-agent`, removes `needs-info` |
+| `ready-for-agent` | Newest plan approved | Agent builds it (below), swaps to `ready-for-human` |
+| `ready-for-human` | A PR awaits review | Owner merges, or comments and relabels the issue `ready-for-agent` to send it back |
 
-**Plans.** A plan is a comment whose second line is exactly `**Plan vK**` (the first line is free), numbered upward from v1. It opens with three lines — what changes for you, why it's worth it, scope — then the files to change, how the change will be proved, and numbered questions or "No questions". Approval counts only if `ready-for-agent` was added after the newest plan; otherwise treat the issue as stuck (see Rules).
+**On `ready-for-agent`:** build test-first on an `issue-N-<slug>` branch, review per Review depth, commit, push, open a PR with `Closes #N`. Not `/commit`: it stops for approval and treats the PR as optional. Proof — code: write a failing test first; docs-only: the Build loop test command is the proof.
+
+**Plans.** A comment whose second line is exactly `**Plan vK**` (first line free), numbered up from v1. It opens with three lines — what changes for you, why it's worth it, scope — then files, proof, and numbered questions or "No questions". Approval counts only if `ready-for-agent` was added after the newest plan; otherwise the issue is stuck.
 
 **Rules.**
 - Only labels on the issue carry state, never comment text: the owner and agents may post from the same account.
 - Only the owner adds `ready-for-agent` or removes `needs-info`. Agents never push to the base branch.
-- One issue per run. An agent that is stuck or fails pushes any work to its issue branch, comments the question or failure, swaps its state label for `needs-info`, and unassigns itself.
+- One issue per run. A stuck or failing agent pushes any work to its issue branch, comments the question or failure, swaps its state label for `needs-info`, and unassigns itself.
 
 ### Build loop
 
@@ -108,60 +86,34 @@ A label on the issue is its state; "the owner" is the human who runs the repo.
 
 ## Context Rules
 
-- **Web research**: Always use the Researcher agent (`subagent_type="researcher"`) for web searches. This preserves context in the main thread.
-- **TDD subagents**: Test writer sees only PRD, implementer sees only tests, refactorer sees tests + implementation. This isolation prevents bias.
-- **QA context**: The qa-reviewer reads handover.md, NOT the builder conversation. Clean context enables honest review.
+- **Web research**: always through the `researcher` agent, never on the main thread.
+- **QA context**: `qa-reviewer` reads `handover.md`, never the builder conversation.
 
 ## Model Defaults
 
-Three tiers govern which model runs each agent. The goal: expensive models where judgment is irreplaceable, cheap models for retrieval.
+Expensive models where judgement gates shipping, cheap ones for retrieval. Set per agent with `model:` in its frontmatter (e.g. `challenger` on `sonnet` for low-stakes projects).
 
-| Tier | Model | When to use | Example agents |
-|------|-------|-------------|----------------|
-| Opus | `opus` | Orchestrator + high-stakes review: any agent whose output directly gates whether work ships | `challenger`, `qa-reviewer` |
-| Sonnet | `sonnet` | Workhorse — ~95% of agents: planning, writing, coding, research synthesis | `librarian`, `specialist-creator`, `tech-product-lead`, `tdd-*`, `agile-coach` |
-| Haiku | `haiku` | Scout / retrieval: fast lookups, symbol resolution, grep-and-return tasks with no judgment required | narrow retrieval specialists only |
-
-**Override at the call site** with `model: <tier>` in agent frontmatter when a small project wants cheaper review (e.g. set `challenger` to `sonnet` for low-stakes internal tooling).
+| Tier | When | Agents (as on disk) |
+|---|---|---|
+| `opus` | review that gates whether work ships | challenger, qa-reviewer |
+| `sonnet` | workhorse: planning, writing, coding | agile-coach, first-principles-thinker, librarian, n8n-specialist, prd-consistency-sim, prompt-specialist, specialist-creator, tdd-*, tech-product-lead |
+| `haiku` | retrieval and lookups | researcher |
 
 ## Agent Learning Loop
 
-The harness supports an evidence-gated learning loop so per-feature retros compound into lasting CLAUDE.md improvements.
-
-**Flow:** Agile Coach proposes → human approves → Librarian applies.
-
-1. **Agile Coach** (read-only) cross-reads agent memory files and `git log` after a feature ships, identifies patterns with ≥2 converging sources or objective evidence, and emits a structured proposal.
-2. **Human reviews** the proposal and approves, rejects, or edits individual items.
-3. **Librarian** applies approved items via `Edit` only — never `Write`. It reads the target file first, makes surgical line changes, then runs `git diff --stat` to confirm <10% line-count delta.
-
-**Coach scope boundary** — proposals may target:
-- `docs/system/`, `docs/guides/` (process documentation)
-- `CLAUDE.md § Hard-won rules` (this file)
-- `memory/agents/*.md` (agent memory files)
-- Agent prompt files in `.claude/agents/`
-
-**Out of scope for Coach proposals:** `src/` code, database schema, test fixtures, CI configuration.
+Agile Coach (read-only) proposes patterns backed by ≥2 converging sources → the owner approves each item → Librarian applies them with `Edit` only, never `Write`. Proposals may target `docs/system/`, `docs/guides/`, `CLAUDE.md § Hard-won rules`, `memory/agents/*.md` and `.claude/agents/`; never `src/`, database schema, test fixtures or CI.
 
 ## Hard-won rules
 
-Rules extracted from feature retros via the Agile Coach → human approval → Librarian pipeline.
+Added only through the Agent Learning Loop.
 
-1. **Porting from a private repo: adversarial public-readiness pass required.** Acceptance criteria verify functional correctness; they do not catch confidential leakage (real names, private repo identifiers) or security properties of ported scripts (e.g. a `--dry-run` flag that still writes). Before any private-to-public port ships: (1) run a blocking grep gate for private identifiers — zero hits required; (2) audit every ported script's side-effect contract independently of its claimed flags; (3) treat the bar as "genuinely public-ready," not "passes the ACs." _(from this template's own development retros.)_
-
-2. **Optional runtimes must never break the primary test command.** When adding tests in a non-primary language to a polyglot template (e.g. Python pytest in a Node.js template), the primary test runner (`npm test`) MUST degrade gracefully when the secondary runtime is absent — exit 0 with a notice, never a hard failure. Use a bridge script that detects runtime availability before delegating. CI runs the full suite; local cloners without the optional runtime are unaffected. _(from this template's own development retros.)_
-
-3. **Sync manifests must be flag-derived, not hand-maintained.** When a pipeline propagates a subset of files to downstream targets, a hand-maintained list silently drifts when files are added. Instead: mark canonical files with a `template-owned: true` (or equivalent) frontmatter flag; enforce bidirectionally — every flagged file must appear in the manifest, and every manifest entry must resolve to an existing file. The flag travels with the file and survives renames; the validator is CI-gated. One-directional checks are insufficient. _(from this template's own development retros.)_
-
-4. **Run the "does this already exist?" competitive check before building a differentiation thesis, not after.** A named competitor that already ships the capability can invalidate the thesis; discovering it mid-build is expensive. Check first, reword the claim before it ships. _(from a downstream project retro.)_
-
-5. **Spike the single load-bearing technical unknown in parallel with planning, never only after it.** Identify the one mechanism the story cannot survive without and validate it early — an entire plan can rest on an unverified mechanism. _(from a downstream project retro.)_
-
-6. **Don't re-litigate settled decisions — read the decision log and principles doc first.** A settled decision is settled unless new evidence trips its revisit clause; recurring re-openings cost repeated rounds. _(from a downstream project retro.)_
-
-7. **Name load-bearing constraints and first-class tensions up front.** State the hard constraints and the core design tensions (e.g. "watchability vs. credibility") at the start of a design round, so they aren't discovered late as detours. _(from a downstream project retro.)_
-
-8. **Every feature folder gets a `README.md` index from the start; mark drafts and separate them from canonical outputs.** A flat folder of many undated, unmarked files becomes unnavigable — a reviewer (or future session) can't tell canonical from draft from superseded. Convention: (a) each `docs/features/FEAT-XXX/` has a `README.md` mapping every file to a one-line purpose + status + where it was promoted; (b) discussion drafts carry a `DRAFT-` prefix and a `STATUS:` banner; (c) canonical outputs live at their promoted location (root/`docs/`) — the feature folder is the *working record*, not the source of truth; (d) keep the index current as files land (the Librarian / `/update-docs` owns this). _(from a downstream project retro.)_
-
-9. **Confidentiality tooling must not leak what it protects.** Any file whose job is to enforce or document a confidentiality boundary (gate pattern lists, waiver files, rule provenance notes, comments in gate scripts) must itself be audited for the category of content it guards before first publish — enforcement artifacts are exactly where leaks hide, because they're the last thing anyone treats as "content." _(v2.0.0 release retro, 2026-07-19.)_
-
-10. **Leak-detection gates must scan filenames and run case-insensitively from day one.** Both are default-off in naive grep gates and both are real leak vectors (a private name in a filename; a capitalized token slipping past a lowercase pattern). _(v2.0.0 release retro, 2026-07-19.)_
+1. **Private-to-public ports need an adversarial public-readiness pass.** ACs don't catch leaked names or a `--dry-run` that still writes: run a blocking grep for private identifiers (zero hits), audit each ported script's side effects whatever its flags claim, and hold the bar at "public-ready", not "passes the ACs".
+2. **Optional runtimes never break the primary test command.** `npm test` exits 0 with a notice when a secondary runtime (e.g. Python) is missing — a bridge script checks first; CI runs the full suite.
+3. **Sync manifests are flag-derived, not hand-kept.** Mark canonical files `template-owned: true` in frontmatter and validate both ways in CI: every flagged file is in the manifest, every entry resolves to a file.
+4. **Check "does this already exist?" before a differentiation thesis**, not mid-build; reword the claim before it ships.
+5. **Spike the one load-bearing unknown in parallel with planning**, never only after it.
+6. **Don't re-litigate settled decisions** — read the decision log first; reopen only when new evidence trips the revisit clause.
+7. **Name hard constraints and core design tensions at the start of a design round**, so they don't surface late as detours.
+8. **Every feature folder gets a `README.md` index from day one.** (a) `docs/features/FEAT-XXX/README.md` maps each file to purpose + status + where it was promoted; (b) drafts carry a `DRAFT-` prefix and a `STATUS:` banner; (c) canonical outputs live at their promoted location — the folder is the working record, not the source of truth; (d) keep the index current (Librarian / `/update-docs`).
+9. **Confidentiality tooling must not leak what it protects.** Before first publish, audit gate pattern lists, waivers, provenance notes and gate-script comments for the content they guard.
+10. **Leak gates scan filenames and match case-insensitively from day one.**
