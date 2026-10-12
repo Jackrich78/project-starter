@@ -23,11 +23,11 @@ Specialists live in `.claude/agents/` (descriptions auto-load from frontmatter; 
 
 ## Commands
 
-Lifecycle commands are in the Lifecycle table. Others: `/setup [docs path]` (one-time init) · `/prime [mode]` (load context) · `/qa [target]` (standalone review: file, directory, feature or sweep) · `/handover` · `/debug [issue]` · `/logs` · `/create-specialist [lib]` · `/update-docs` · `/sync [target]`. Details: `.claude/commands/`.
+Lifecycle commands are in the Lifecycle table. `/next` works GitHub issues (see Build loop). Others: `/setup [docs path]` (one-time init) · `/prime [mode]` (load context) · `/qa [target]` (standalone review: file, directory, feature or sweep) · `/handover` · `/debug [issue]` · `/logs` · `/create-specialist [lib]` · `/update-docs` · `/sync [target]`. Details: `.claude/commands/`.
 
 ## Lifecycle
 
-From idea to merge; a GitHub issue follows Issue process instead. Not all work is a build: a research or mapping question goes straight to the `researcher` agent and ends in a memo or a decision (logged in `DECISIONS.md`); planning an automation or process runs `/explore` then `/blueprint` and ends at `plan.md`, skipping test stubs and `/build`; prompt and doc changes are edited directly and reviewed per Review depth.
+From idea to merge; a GitHub issue goes through `/next` instead (see Build loop). Not all work is a build: a research or mapping question goes straight to the `researcher` agent and ends in a memo or a decision (logged in `DECISIONS.md`); planning an automation or process runs `/explore` then `/blueprint` and ends at `plan.md`, skipping test stubs and `/build`; prompt and doc changes are edited directly and reviewed per Review depth.
 
 | Step | Runs | Who | Output |
 |---|---|---|---|
@@ -55,39 +55,20 @@ From idea to merge; a GitHub issue follows Issue process instead. Not all work i
 - **Outcomes over outputs**: features solve user problems, not just ship code.
 - **Spike before commit**: for an uncertain approach use the spike skill (it creates `spikes/`); extract learnings to `docs/`.
 
-## Issue process
-
-A label on the issue is its state, and the state labels below must exist in the repo (if one is missing, stop and ask the owner); "the owner" is the human who runs the repo.
-
-| State | Meaning | Who moves it |
-|---|---|---|
-| (no state label) | Not looked at yet | Agents leave it alone |
-| `needs-plan` | The owner wants a plan | Agent posts a plan comment, swaps to `needs-info` |
-| `needs-info` | The owner's turn | Owner answers, then relabels `needs-plan` for a new plan, or approves: adds `ready-for-agent`, removes `needs-info` |
-| `ready-for-agent` | Newest plan approved | Agent builds it (below), swaps to `ready-for-human` |
-| `ready-for-human` | A PR awaits review | Owner merges, or comments and relabels the issue `ready-for-agent` to send it back |
-
-**On `ready-for-agent`:** build test-first on an `issue-N-<slug>` branch, review per Review depth, commit, push, open a PR with `Closes #N`. Not `/commit` (it waits for the owner; use it only when the owner is present). A `BLOCKED` review verdict stops the push: treat the issue as stuck (Rules). Proof per Build loop; docs-only changes skip test-first.
-
-**Plans.** A comment whose second line is exactly `**Plan vK**` (first line free), numbered up from v1. It opens with three lines — what changes for you, why it's worth it, scope — then files, proof, and numbered questions or "No questions". Approval counts only if `ready-for-agent` was added after the newest plan (check the issue timeline); otherwise the issue is stuck.
-
-**Rules.**
-- Only labels on the issue carry state, never comment text: the owner and agents may post from the same account.
-- Only the owner adds `ready-for-agent` or removes `needs-info`. Agents never push to the base branch.
-- One issue per run; the agent assigns itself when it starts. A stuck or failing agent pushes any work to its issue branch, comments the question or failure, swaps its state label for `needs-info`, and unassigns itself.
-
-### Build loop
+## Build loop
 
 <!-- CUSTOMIZE: the values the build loop reads for this repo. -->
-- **Test command:** `npm ci && npm test`
-- **Base branch:** `main`
-- **Proof of a change:** fenced test-command output in the PR
-- **Tracker:** GitHub Issues on this repo
+- States: `needs-plan` (the owner wants a plan) → `needs-info` (the owner's turn) → `ready-for-agent` (plan approved) → `ready-for-human` (a PR to review); `size:large` asks for full discovery and review. `/next` works them; its rules are in `.claude/commands/next.md`.
+- Test command: npm ci && npm test
+- Base branch: main
+- How to prove a change: command output
+- Research notes: docs/research/
+- Tracker: GitHub
 
 ## Context Rules
 
-- **Web research**: always through the `researcher` agent, never on the main thread.
-- **QA context**: `qa-reviewer` reads `docs/features/FEAT-XXX/handover.md`, never the builder conversation.
+- **Web research**: always through a sub-agent, never on the main thread: the `researcher` agent in the Lifecycle; under `/next`, `general-purpose` briefed as a researcher.
+- **QA context**: `qa-reviewer` reads `docs/features/FEAT-XXX/handover.md`, never the builder conversation. Under `/next`, the plan and test output are pasted in as its handover.
 
 ## Model Defaults
 
