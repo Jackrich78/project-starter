@@ -81,7 +81,7 @@ Full index: `.claude/agents/README.md`
 
 ## Issue process
 
-Work is tracked in GitHub Issues. A label on the issue is its state; "the owner" is the human who runs the repo.
+A label on the issue is its state; "the owner" is the human who runs the repo.
 
 | State | Meaning | Who moves it |
 |---|---|---|
@@ -91,13 +91,12 @@ Work is tracked in GitHub Issues. A label on the issue is its state; "the owner"
 | `ready-for-agent` | The newest plan is approved | The agent builds it on an `issue-N-<slug>` branch, opens a PR with `Closes #N`, then swaps to `ready-for-human` |
 | `ready-for-human` | A PR is waiting for review | The owner merges it, or comments and relabels the issue `ready-for-agent` to send it back |
 
-**Plans.** A plan is a comment whose second line is exactly `**Plan vK**`, numbered upward from v1. It opens with three lines — what changes for you, why it's worth it, scope — then the files to change, how the change will be proved, and numbered questions or "No questions". Comments since the last plan are input to the next one. Approval counts only if `ready-for-agent` was added after the newest plan.
+**Plans.** A plan is a comment whose second line is exactly `**Plan vK**` (the first line is free), numbered upward from v1. It opens with three lines — what changes for you, why it's worth it, scope — then the files to change, how the change will be proved, and numbered questions or "No questions". Approval counts only if `ready-for-agent` was added after the newest plan; otherwise treat the issue as stuck (see Rules).
 
 **Rules.**
 - Only labels on the issue carry state, never comment text: the owner and agents may post from the same account.
 - Only the owner adds `ready-for-agent` or removes `needs-info`. Agents never push to the base branch.
 - One issue per run. An agent that is stuck or fails pushes any work to its issue branch, comments the question or failure, swaps its state label for `needs-info`, and unassigns itself.
-- Comments after the approved plan may narrow or clarify it; anything that widens scope becomes a question.
 
 ### Build loop
 
