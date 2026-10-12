@@ -12,7 +12,7 @@ These tests validate the STARTER structure itself, not your code.
 
 ## For Your Project
 
-You can extend these tests OR delete this directory entirely. If you delete it, also remove the `postinstall` and `test` entries from the root `package.json`, or root `npm ci` will fail.
+You can extend these tests OR delete this directory entirely. If you delete it, remove `postinstall` from the root `package.json` and change `test` to `node scripts/run_pytest_optional.mjs`, or root `npm ci` / `npm test` will fail.
 Your feature tests go in `/test/unit/`, not here.
 
 ## Running These Tests
