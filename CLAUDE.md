@@ -27,18 +27,18 @@ Lifecycle commands are in the Lifecycle table. Others: `/setup [docs path]` (one
 
 ## Lifecycle
 
+The feature path, from idea to merge. A GitHub issue follows Issue process instead.
+
 | Step | Command | Who | Output |
 |---|---|---|---|
-| Spec | `/explore` (researcher, challenger, `prd-consistency-sim`) | agent + owner | `docs/features/FEAT-XXX_slug/prd.md` |
+| Spec | `/explore [topic]` (researcher, challenger, `prd-consistency-sim`) | agent + owner | `docs/features/FEAT-XXX_slug/prd.md` |
 | Plan | `/blueprint FEAT-XXX` (challenger) | agent; owner approves | `plan.md`, test stubs |
 | Build | `/build FEAT-XXX`: tdd-test-writer → tdd-implementer → tdd-refactorer → qa-reviewer | agent | code, tests, `handover.md`, QA verdict |
 | Ship | `/commit`: QA gate, commit, push; PR optional | agent + owner | commit / PR |
 | Merge | — | owner | |
-| Learn | `/retro`: agile-coach → owner → librarian | all | Hard-won rules |
+| Learn | `/retro`: agile-coach → owner → librarian | all | Hard-won rules, `.claude/skills/` |
 
-`/qa [target]` runs `qa-reviewer` on its own; a `BLOCKED` verdict stops `/commit`.
-
-**Review depth.** Code → `qa-reviewer` on the branch diff (`/qa` with no target sees only `HEAD~1`), plus one challenger critique. Docs and prompts (`CLAUDE.md`, agents, skills, commands) → a cold read by `prd-consistency-sim`, which follows the changed text with no context and reports where it would misread or hesitate. Mixed → both.
+**Review depth.** Code → `qa-reviewer` invoked directly on `git diff origin/main...HEAD` (`/qa` has no branch target; with no target it sees only `HEAD~1`), plus one challenger critique. Docs and prompts (`CLAUDE.md`, agents, skills, commands) → a cold read by `prd-consistency-sim` (brief it with the changed files in place of a PRD), which follows the changed text with no context and reports where it would misread or hesitate. Mixed → both.
 
 ## Key Files
 
@@ -67,14 +67,14 @@ A label on the issue is its state; "the owner" is the human who runs the repo.
 | `ready-for-agent` | Newest plan approved | Agent builds it (below), swaps to `ready-for-human` |
 | `ready-for-human` | A PR awaits review | Owner merges, or comments and relabels the issue `ready-for-agent` to send it back |
 
-**On `ready-for-agent`:** build test-first on an `issue-N-<slug>` branch, review per Review depth, commit, push, open a PR with `Closes #N`. Not `/commit`: it stops for approval and treats the PR as optional. Proof — code: write a failing test first; docs-only: the Build loop test command is the proof.
+**On `ready-for-agent`:** build test-first on an `issue-N-<slug>` branch, review per Review depth, commit, push, open a PR with `Closes #N`. Not `/commit` (it waits for the owner; use it only when the owner is present). A `BLOCKED` review verdict stops the push: treat the issue as stuck (Rules). Proof per Build loop; docs-only changes skip test-first.
 
-**Plans.** A comment whose second line is exactly `**Plan vK**` (first line free), numbered up from v1. It opens with three lines — what changes for you, why it's worth it, scope — then files, proof, and numbered questions or "No questions". Approval counts only if `ready-for-agent` was added after the newest plan; otherwise the issue is stuck.
+**Plans.** A comment whose second line is exactly `**Plan vK**` (first line free), numbered up from v1. It opens with three lines — what changes for you, why it's worth it, scope — then files, proof, and numbered questions or "No questions". Approval counts only if `ready-for-agent` was added after the newest plan (check the issue timeline); otherwise the issue is stuck.
 
 **Rules.**
 - Only labels on the issue carry state, never comment text: the owner and agents may post from the same account.
 - Only the owner adds `ready-for-agent` or removes `needs-info`. Agents never push to the base branch.
-- One issue per run. A stuck or failing agent pushes any work to its issue branch, comments the question or failure, swaps its state label for `needs-info`, and unassigns itself.
+- One issue per run; the agent assigns itself when it starts. A stuck or failing agent pushes any work to its issue branch, comments the question or failure, swaps its state label for `needs-info`, and unassigns itself.
 
 ### Build loop
 
@@ -87,7 +87,7 @@ A label on the issue is its state; "the owner" is the human who runs the repo.
 ## Context Rules
 
 - **Web research**: always through the `researcher` agent, never on the main thread.
-- **QA context**: `qa-reviewer` reads `handover.md`, never the builder conversation.
+- **QA context**: `qa-reviewer` reads `docs/features/FEAT-XXX/handover.md`, never the builder conversation.
 
 ## Model Defaults
 
@@ -101,11 +101,11 @@ Expensive models where judgement gates shipping, cheap ones for retrieval. Set p
 
 ## Agent Learning Loop
 
-Agile Coach (read-only) proposes patterns backed by ≥2 converging sources → the owner approves each item → Librarian applies them with `Edit` only, never `Write`. Proposals may target `docs/system/`, `docs/guides/`, `CLAUDE.md § Hard-won rules`, `memory/agents/*.md` and `.claude/agents/`; never `src/`, database schema, test fixtures or CI.
+Agile Coach (read-only) proposes patterns backed by ≥2 converging sources or one piece of objective evidence (commit, QA finding) → the owner approves each item → Librarian applies them with `Edit` only, never `Write`. Proposals may target `docs/system/`, `docs/guides/`, `CLAUDE.md § Hard-won rules`, `memory/agents/*.md` and `.claude/agents/`; never `src/`, database schema, test fixtures or CI.
 
 ## Hard-won rules
 
-Added only through the Agent Learning Loop.
+Extracted from retros via the Agent Learning Loop.
 
 1. **Private-to-public ports need an adversarial public-readiness pass.** ACs don't catch leaked names or a `--dry-run` that still writes: run a blocking grep for private identifiers (zero hits), audit each ported script's side effects whatever its flags claim, and hold the bar at "public-ready", not "passes the ACs".
 2. **Optional runtimes never break the primary test command.** `npm test` exits 0 with a notice when a secondary runtime (e.g. Python) is missing — a bridge script checks first; CI runs the full suite.
