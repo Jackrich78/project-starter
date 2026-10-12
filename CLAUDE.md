@@ -27,16 +27,16 @@ Lifecycle commands are in the Lifecycle table. Others: `/setup [docs path]` (one
 
 ## Lifecycle
 
-The feature path, from idea to merge. A GitHub issue follows Issue process instead.
+From idea to merge; a GitHub issue follows Issue process instead. Not all work is a build: research, exploration and mapping stop after `/explore` with a research memo or a decision (logged in `DECISIONS.md`); planning an automation or process stops after `/blueprint` with `plan.md`; prompt and doc changes are edited directly and reviewed per Review depth.
 
-| Step | Command | Who | Output |
+| Step | Runs | Who | Output |
 |---|---|---|---|
-| Spec | `/explore [topic]` (researcher, challenger, `prd-consistency-sim`) | agent + owner | `docs/features/FEAT-XXX_slug/prd.md` |
-| Plan | `/blueprint FEAT-XXX` (challenger) | agent; owner approves | `plan.md`, test stubs |
-| Build | `/build FEAT-XXX`: tdd-test-writer → tdd-implementer → tdd-refactorer → qa-reviewer | agent | code, tests, `handover.md`, QA verdict |
-| Ship | `/commit`: QA gate, commit, push; PR optional | agent + owner | commit / PR |
-| Merge | — | owner | |
-| Learn | `/retro`: agile-coach → owner → librarian | all | Hard-won rules, `.claude/skills/` |
+| `/explore [topic]` | researcher, challenger, `prd-consistency-sim` | agent + owner | `docs/features/FEAT-XXX_slug/prd.md`, research memos |
+| `/blueprint FEAT-XXX` | challenger | agent; owner approves | `plan.md`, test stubs |
+| `/build FEAT-XXX` | tdd-test-writer → tdd-implementer → tdd-refactorer → qa-reviewer | agent | code, tests, `handover.md`, QA verdict |
+| `/commit` | QA gate, commit, push; PR optional | agent + owner | commit / PR |
+| merge | — | owner | |
+| `/retro` | agile-coach → owner → librarian | all | Hard-won rules, `.claude/skills/` |
 
 **Review depth.** Code → `qa-reviewer` invoked directly on `git diff origin/main...HEAD` (`/qa` has no branch target; with no target it sees only `HEAD~1`), plus one challenger critique. Docs and prompts (`CLAUDE.md`, agents, skills, commands) → a cold read by `prd-consistency-sim` (brief it with the changed files in place of a PRD), which follows the changed text with no context and reports where it would misread or hesitate. Mixed → both.
 
@@ -46,7 +46,7 @@ The feature path, from idea to merge. A GitHub issue follows Issue process inste
 
 ## Principles
 
-**Reduce** context, load on demand · **Offload** specialised work to sub-agents · **Isolate** side effects, fail gracefully.
+**Reduce** context, load on demand · **Offload** specialised work to sub-agents · **Isolate** side effects, fail gracefully · **Simplify**: build the simplest thing that works — no speculative features (YAGNI), keep it simple (KISS), prefer deleting to adding.
 
 ## Development Standards (This Project)
 
@@ -57,7 +57,7 @@ The feature path, from idea to merge. A GitHub issue follows Issue process inste
 
 ## Issue process
 
-A label on the issue is its state; "the owner" is the human who runs the repo.
+A label on the issue is its state, and the state labels below must exist in the repo; "the owner" is the human who runs the repo.
 
 | State | Meaning | Who moves it |
 |---|---|---|
