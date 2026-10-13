@@ -56,7 +56,7 @@ Key sections:
 
 | Agent | Purpose | Tools |
 |-------|---------|-------|
-| **Researcher** | Deep research using WebSearch to answer open questions from PRDs | Read, WebSearch, Task, Glob, Write |
+| **Researcher** | Research that reads the pages it cites, to answer open questions from PRDs | Read, Glob, WebSearch, WebFetch, Write |
 | **Challenger** | Critical review with two-tier escalation | Read, Glob, Grep |
 | **First Principles Thinker** | Breaks down problems into fundamental truths | Read, WebSearch |
 | **Specialist Creator** | Creates domain-expert sub-agents | Read, Write, WebSearch |

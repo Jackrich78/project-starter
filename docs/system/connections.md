@@ -400,7 +400,7 @@ User Request
 ```
 Main Agent (user-facing)
     │
-    ├──► Task(researcher) ──► WebSearch
+    ├──► Task(researcher) ──► WebSearch + WebFetch
     │
     ├──► Task(challenger) ──► Review feedback
     │

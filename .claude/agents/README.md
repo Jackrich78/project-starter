@@ -38,11 +38,10 @@ This directory contains specialized sub-agents that provide focused expertise. E
 
 ### [Researcher](researcher.md)
 **Status:** Active | **Color:** Orange
-**Description:** Deep research specialist that investigates technical approaches using WebSearch to answer open questions from PRDs
-**Triggers:** Invoked by `/explore` and `/blueprint` commands when research needed
-**Outputs:** `docs/features/FEAT-XXX_[slug]/research-[topic]-[timestamp].md` (REQUIRED: must be in feature folder, single file per invocation)
-**Tools:** Read, WebSearch, Task, Glob, Write
-**Validation:** Enforces feature folder placement, offers skeleton feature creation if context missing
+**Description:** Research specialist that reads the pages it cites (WebSearch + WebFetch), checks its quotes, and lists what it could not confirm
+**Triggers:** Invoked by `/explore`, `/blueprint`, the spike skill and the debug skill when research needed
+**Outputs:** `research-[topic]-[timestamp].md` at the path the caller gives (usually the feature folder), or text if no path is given
+**Tools:** Read, Glob, WebSearch, WebFetch, Write
 
 ### [Challenger](challenger.md)
 **Status:** Active | **Color:** Red
@@ -296,7 +295,7 @@ Debug Report + Regression Test
 
 | Agent | Read | Write | Edit | Glob | Grep | Bash | WebSearch | Task |
 |-------|------|-------|------|------|------|------|-----------|------|
-| Researcher | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ |
+| Researcher | ✅ | ✅ | - | ✅ | - | - | ✅ +WebFetch | - |
 | Challenger | ✅ | - | - | ✅ | ✅ | - | - | - |
 | First Principles Thinker | ✅ | - | - | - | - | - | ✅ | - |
 | Specialist Creator | ✅ | ✅ | - | - | - | - | ✅ | - |

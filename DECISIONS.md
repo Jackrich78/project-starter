@@ -6,6 +6,7 @@ Index of significant decisions. Full entries below; superseded entries move to
 | ID | Title | Status |
 |---|---|---|
 | D-001 | Three-tier repo pipeline: keep two repos, batched tagged releases, /prime-surfaced port briefs | Active |
+| D-002 | No deep-research skill yet: harden the single `researcher` agent instead | Active |
 
 ---
 
@@ -23,3 +24,14 @@ Index of significant decisions. Full entries below; superseded entries move to
   - **Cleanup:** `docs/guides/upstream-workflow-contributions.md` and FEAT-023 retired — they documented a `v2`-branch/`npm run sync-workflow` process that was never built.
 - **Trade-off accepted:** Two repos mean the release ritual stays a manual (scriptable) step rather than a `git merge`; the /prime reminder reaches a source project only after its next `/sync` (no retroactive coverage of un-synced projects).
 - **Revisit if:** a release requires >30 min of mechanical work despite the ritual (→ revisit Q2 scripting and Q1); the blacklist gate produces another real near-miss (→ Q4 allowlist inversion); a third repo tier or second maintainer appears (→ Q1).
+
+---
+
+## D-002 — No deep-research skill yet
+
+- **Date:** 2026-10-13
+- **Status:** Active
+- **Context:** Issue #9 audited research in this harness. The `researcher` agent could only search (no WebFetch), so its claims rested on search summaries. The audit asked whether a dedicated deep-research skill (a main-thread orchestrator that fans out researchers) should exist.
+- **Choice:** No skill. Harden the single `researcher` agent instead (WebFetch, `effort: high`, think-first, fetch-before-cite, quote check, Could-not-confirm list) and put the follow-up rule in CLAUDE.md Context Rules. Callers (`/explore`, `/blueprint`, spike, debug) already orchestrate their own researchers, so a skill would have one caller; CLAUDE.md says abstract only on the 3rd repetition.
+- **Trade-off accepted:** No built-in fan-out across many parallel researchers for broad questions; callers dispatch them by hand.
+- **Revisit if:** a re-run of the #9 before/after task fails the quote check (→ try `model: sonnet` on the researcher before adding a skill); re-run its false-premise question whenever the researcher's model changes; a third caller starts hand-rolling the same fan-out.

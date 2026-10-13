@@ -15,7 +15,7 @@ The harness integrates with external tools for research, code execution, and IDE
 
 **Purpose:** Live web search for current information
 
-**Scope:** Available to Researcher, Specialist Creator, Prompt Specialist, N8N Specialist, First Principles Thinker
+**Scope:** Available to Researcher, Specialist Creator, Prompt Specialist, N8N Specialist, First Principles Thinker. The Researcher also has WebFetch, to read the pages it cites.
 
 ### Usage Patterns
 
