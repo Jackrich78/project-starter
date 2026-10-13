@@ -67,7 +67,7 @@ From idea to merge; a GitHub issue goes through `/next` instead (see Build loop)
 
 ## Context Rules
 
-- **Web research**: always through a sub-agent, never on the main thread: the `researcher` agent in the Lifecycle; under `/next`, `general-purpose` briefed as a researcher.
+- **Web research**: always through a sub-agent, never on the main thread: the `researcher` agent in the Lifecycle; under `/next`, `general-purpose` briefed as a researcher. Send one follow-up researcher at the single-source or Could-not-confirm claims that would change the decision.
 - **QA context**: `qa-reviewer` reads `docs/features/FEAT-XXX/handover.md`, never the builder conversation. Under `/next`, the plan and test output are pasted in as its handover.
 
 ## Model Defaults

@@ -23,11 +23,19 @@ status: [in_progress|complete]
 
 ### [Topic Area 1]
 
-[Discoveries, patterns, technical details organized by topic, not by source]
+[Discoveries, patterns, technical details organized by topic, not by source. Every claim cites the page it was fetched from, with a short verbatim snippet:]
+
+- [Claim] ([Source](URL): "[verbatim snippet from the fetched page]")
 
 ### [Topic Area 2]
 
 [Additional findings]
+
+---
+
+## Could Not Confirm
+
+[Claims you could not support with a fetched page, claims whose quote check failed, and decision-changing claims with only one source (mark "single-source"). Write "None" if empty.]
 
 ---
 
@@ -52,8 +60,8 @@ status: [in_progress|complete]
 
 ## Resources
 
-1. [Source Title](URL) - Retrieved via WebSearch, [Date]
-2. [Source Title](URL) - Retrieved via WebSearch, [Date]
+1. [Source Title](URL) - fetched [Date]
+2. [Source Title](URL) - fetched [Date]
 
 ---
 
@@ -67,9 +75,12 @@ status: [in_progress|complete]
 
 **Required sections:**
 - Research Questions (what you're investigating)
-- Key Findings (what you discovered)
+- Key Findings (what you discovered, each claim with URL + snippet)
+- Could Not Confirm (what lacks a fetched source)
+- Resources (all sources fetched, with date)
+
+**Required when the caller asks:**
 - Recommendations (what you recommend based on findings)
-- Resources (all sources cited with retrieval method)
 
 **Optional sections:**
 - Trade-offs (if comparing multiple options)
@@ -81,8 +92,8 @@ status: [in_progress|complete]
 - Example: `research-auth-patterns-2026-01-24T14-30-00Z.md`
 
 **Location:**
-- MUST be in feature folder: `docs/features/FEAT-XXX_[slug]/`
-- NEVER in `/docs/` root or other locations
+- The path the caller gives, usually the feature folder: `docs/features/FEAT-XXX_[slug]/`
+- NEVER in `/docs/` root
 
 **Frontmatter fields:**
 - `id`: Unique identifier matching filename

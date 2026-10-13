@@ -85,8 +85,7 @@ Task(
 
   The feature folder exists and has been validated.
   Create research file with ISO timestamp format: YYYY-MM-DDTHH-MM-SSZ
-  Include: findings, recommendations with rationale, trade-offs.
-  Cap: 2,000 tokens per source query."
+  Include: findings, recommendations with rationale, trade-offs."
 )
 ```
 
