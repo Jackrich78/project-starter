@@ -77,8 +77,10 @@ status: [in_progress|complete]
 - Research Questions (what you're investigating)
 - Key Findings (what you discovered, each claim with URL + snippet)
 - Could Not Confirm (what lacks a fetched source)
-- Recommendations (what you recommend based on findings)
 - Resources (all sources fetched, with date)
+
+**Required when the caller asks:**
+- Recommendations (what you recommend based on findings)
 
 **Optional sections:**
 - Trade-offs (if comparing multiple options)
