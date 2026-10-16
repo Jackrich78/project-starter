@@ -27,7 +27,7 @@ Lifecycle commands are in the Lifecycle table. `/next` works GitHub issues (see 
 
 ## Lifecycle
 
-From idea to merge; a GitHub issue goes through `/next` instead (see Build loop). Not all work is a build: a research or mapping question goes straight to the `researcher` agent and ends in a memo or a decision (logged in `DECISIONS.md`); planning an automation or process runs `/explore` then `/blueprint` and ends at `plan.md`, skipping test stubs and `/build`; prompt and doc changes are edited directly and reviewed per Review depth.
+From idea to merge; an issue you label `needs-plan` goes through `/next` instead (see Build loop). Not all work is a build: a research or mapping question goes straight to the `researcher` agent and ends in a memo or a decision (logged in `DECISIONS.md`; under `/next`, one file per decision in `docs/decisions/`); planning an automation or process runs `/explore` then `/blueprint` and ends at `plan.md`, skipping test stubs and `/build`; prompt and doc changes are edited directly and reviewed per Review depth.
 
 | Step | Runs | Who | Output |
 |---|---|---|---|
@@ -63,7 +63,7 @@ From idea to merge; a GitHub issue goes through `/next` instead (see Build loop)
 - Base branch: main
 - How to prove a change: command output
 - Research notes: docs/research/
-- Tracker: GitHub
+- Labels: create once with `for l in needs-plan needs-info ready-for-agent ready-for-human size:large P0 P1 P2 P3; do gh label create "$l" --force; done`
 
 ## Context Rules
 
