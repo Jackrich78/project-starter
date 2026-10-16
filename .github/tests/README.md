@@ -9,6 +9,7 @@ These tests validate the STARTER structure itself, not your code.
 - `.github/workflows/validate.yml` exists and has required steps
 - Required files exist (CLAUDE.md, PROJECT.md, etc.)
 - Workflow syntax is valid (via validate-workflow.test.ts)
+- Root `package.json` has a non-empty `description` (via package-json.test.ts)
 
 ## For Your Project
 
