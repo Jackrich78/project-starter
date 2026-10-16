@@ -1,6 +1,7 @@
 {
   "name": "project-starter",
   "version": "2.0.0",
+  "description": "Lean agent harness template for AI-assisted development",
   "private": true,
   "type": "module",
   "scripts": {
